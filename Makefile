@@ -1,6 +1,7 @@
 NAME = ft_containers
 CC = c++
 FLAGS = -Wall -Wextra -Werror -std=c++98
+LIBLINKS	=	-I./includes
 SRC_PATH	=	srcs/
 OBJ_PATH	=	bin/
 CPP_EXTENSION = .cpp
@@ -8,7 +9,7 @@ CPP_EXTENSION = .cpp
 #		눈_눈			SOURCES			눈_눈
 
 MAIN_PATH	=	
-MAIN_FILES	=	main
+MAIN_FILES	=	main ArrayException
 SRCS_FILES	+=	$(addprefix $(MAIN_PATH), $(MAIN_FILES))
 
 SRCS_FILES_EXT	+=	$(addsuffix $(CPP_EXTENSION), $(SRCS_FILES))
@@ -35,7 +36,7 @@ $(NAME):  $(OBJS)
 	@$(CC) $(FLAGS) -o $(NAME) $(OBJS)
 
 .c.o:
-	@$(CC) $(FLAGS) -c $< -o ${<:.cpp=.o}
+	@$(CC) $(FLAGS) $(LIBLINKS) -c $< -o ${<:.cpp=.o}
 
 $(OBJ_PATH)%.o: $(SRC_PATH)%.cpp
 	@mkdir -p $(dir $@)
