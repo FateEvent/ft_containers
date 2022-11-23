@@ -31,4 +31,6 @@
 *.out
 *.app
 
+*.json
+.DS_Store
 ft_containers

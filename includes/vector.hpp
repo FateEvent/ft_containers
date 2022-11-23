@@ -97,13 +97,13 @@ namespace ft
 
 		typedef struct Iterator
 		{
-			Iterator(int	*ptr) : _ptr(ptr) {}
+			Iterator(int *ptr) : _ptr(ptr) {}
 
 			int	&operator * () const { return *_ptr; }
 			int	*operator -> () { return _ptr; }
 
-			Iterator& operator ++() { _ptr++; return *this; }
-			Iterator operator ++(int) { Iterator tmp = *this; ++(*this); return tmp; }
+			Iterator&	operator ++() { _ptr++; return *this; }
+			Iterator	operator ++(int) { Iterator tmp = *this; ++(*this); return tmp; }
 			Iterator&	operator --() { _ptr--; return *this; }
 			Iterator	operator --(int) { Iterator tmp = *this; --(*this); return tmp; }
 

@@ -1,37 +1,41 @@
-#ifndef ITERATOR_H
-# define ITERATOR_H
+#ifndef ITERATOR_TRAITS_H
+# define ITERATOR_TRAITS_H
 
 # include <iostream>
 # include <memory>
 # include "ArrayException.hpp"
 
-template<
-	class Category, 
-	class T,
-	class Distance = std::ptrdiff_t,
-	class Pointer = T*,
-	class Reference = T&
-> struct iterator
+namespace ft
 {
-	iterator(int *ptr) : _ptr(ptr) {}
+	template<class Cat,class T,class Dist=ptrdiff_t,class Ptr=T*,class Ref=T&> struct iterator
+	{
+		typedef Cat iterator_category; // §19.2.3
+		typedef T value_type; // type of element
+		typedef Dist difference_type; // type of iterator difference typedef Ptr pointer; // return type for – > typedef Ref reference; // return type for *
+	};
 
-	int	&operator*() const { return *_ptr; }
-	int	*operator->() { return _ptr; }
+	typedef struct Iterator
+	{
+		Iterator(int *ptr) : _ptr(ptr) {}
 
-	iterator&	operator ++ () { _ptr++; return *this; }  
-	iterator	operator ++ (int) { iterator tmp = *this; ++(*this); return tmp; }
-	iterator&	operator -- () { _ptr--; return *this; }
-	iterator	operator -- (int) { iterator tmp = *this; --(*this); return tmp; }
+		int	&operator * () const { return *_ptr; }
+		int	*operator -> () { return _ptr; }
 
-	friend bool	operator == (const iterator& a, const iterator& b) { return a._ptr == b._ptr; };
-	friend bool operator != (const iterator& a, const iterator& b) { return a._ptr != b._ptr; };   
+		Iterator&	operator ++() { _ptr++; return *this; }
+		Iterator	operator ++(int) { Iterator tmp = *this; ++(*this); return tmp; }
+		Iterator&	operator --() { _ptr--; return *this; }
+		Iterator	operator --(int) { Iterator tmp = *this; --(*this); return tmp; }
 
-private:
-	int	*_ptr;
+		bool operator == (const Iterator& it) { return this->_ptr == it._ptr; };
+		bool operator != (const Iterator& it) { return this->_ptr != it._ptr; };
 
-};
+	private:
+		int	*_ptr;
 
-//iterator	begin()	{ return iterator(&c[0]); }
-//iterator	end()	{ return iterator(&c[c.size()]); }
+	}				iterator;
+
+	Iterator	begin()	{ return Iterator(&arr[0]); }
+	Iterator	end()	{ return Iterator(&arr[size()]); }
+}
 
 #endif
