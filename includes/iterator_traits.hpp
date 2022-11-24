@@ -3,6 +3,7 @@
 
 # include <iostream>
 # include <memory>
+# include "iterator.hpp"
 # include "ArrayException.hpp"
 
 namespace ft

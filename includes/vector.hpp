@@ -1,19 +1,20 @@
-#ifndef ITERATOR_H
-# define ITERATOR_H
+#ifndef VECTOR_H
+# define VECTOR_H
 
 # include <iostream>
 # include <memory>
+# include "iterator.hpp"
 # include "ArrayException.hpp"
 
 namespace ft
 {
-	template <class T, class Allocator = std::allocator<T> >
-	class vector
-	{
+	template <class T, class Allocator = std::allocator<T> > class vector {
 	private:
-		T* arr;
-		int capacity;
-		int current;
+		T*			arr;
+		int 		capacity;
+		int 		current;
+		Allocator	alloc;
+		iterator	v;
 
 	public:
 		typedef T									value_type;
@@ -24,12 +25,16 @@ namespace ft
 		typedef const value_type&					const_reference;
 		typedef typename Allocator::pointer			pointer;
 		typedef typename Allocator::const_pointer	const_pointer;
-//		iterator
-//		const_iterator
-//		reverse_iterator
-//		const_reverse_iterator
+		typedef ft::iterator						iterator;
+		typedef ft::const_iterator					const_iterator;
+		typedef ft::reverse_iterator				reverse_iterator;
+		typedef ft::const_reverse_iterator			const_reverse_iterator;
 
-
+		vector ( size_type count, const T& value = T(), const Allocator& alloc = Allocator() ) : alloc(alloc)
+		{
+			v = alloc.allocate(count);
+			for(iterator p=v;p<v+count;++p)alloc.construct(p,value);
+		}
 		vector()
 		{
 			arr = new T[1];
@@ -38,7 +43,7 @@ namespace ft
 		}
 		~vector()
 		{
-			delete [] arr;
+			delete[] arr;
 		}
 
 		void push(T data)
@@ -95,28 +100,8 @@ namespace ft
 			std::cout << std::endl;
 		}
 
-		typedef struct Iterator
-		{
-			Iterator(int *ptr) : _ptr(ptr) {}
-
-			int	&operator * () const { return *_ptr; }
-			int	*operator -> () { return _ptr; }
-
-			Iterator&	operator ++() { _ptr++; return *this; }
-			Iterator	operator ++(int) { Iterator tmp = *this; ++(*this); return tmp; }
-			Iterator&	operator --() { _ptr--; return *this; }
-			Iterator	operator --(int) { Iterator tmp = *this; --(*this); return tmp; }
-
-			bool operator == (const Iterator& it) { return this->_ptr == it._ptr; };
-			bool operator != (const Iterator& it) { return this->_ptr != it._ptr; };
-
-		private:
-			int	*_ptr;
-
-		}				iterator;
-
-		Iterator	begin()	{ return Iterator(&arr[0]); }
-		Iterator	end()	{ return Iterator(&arr[size()]); }
+		iterator	begin()	{ return Iterator(&arr[0]); }
+		iterator	end()	{ return Iterator(&arr[size()]); }
 	};
 }
 
