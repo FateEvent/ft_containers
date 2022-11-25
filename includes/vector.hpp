@@ -9,6 +9,21 @@
 namespace ft
 {
 	template <class T, class Allocator = std::allocator<T> > class vector {
+
+	public:
+		typedef T										value_type;
+		typedef std::size_t								size_type;
+		typedef Allocator								allocator_type;
+		typedef std::ptrdiff_t							difference_type;
+		typedef value_type&								reference;
+		typedef const value_type&						const_reference;
+		typedef typename Allocator::pointer				pointer;
+		typedef typename Allocator::const_pointer		const_pointer;
+		typedef ft::iterator<value_type>				iterator;
+		typedef ft::const_iterator<value_type>			const_iterator;
+		typedef ft::reverse_iterator<value_type>		reverse_iterator;
+		typedef ft::const_reverse_iterator<value_type>	const_reverse_iterator;
+
 	private:
 		T*			arr;
 		int 		capacity;
@@ -17,30 +32,26 @@ namespace ft
 		iterator	v;
 
 	public:
-		typedef T									value_type;
-		typedef std::size_t							size_type;
-		typedef Allocator							allocator_type;
-		typedef std::ptrdiff_t						difference_type;
-		typedef value_type&							reference;
-		typedef const value_type&					const_reference;
-		typedef typename Allocator::pointer			pointer;
-		typedef typename Allocator::const_pointer	const_pointer;
-		typedef ft::iterator						iterator;
-		typedef ft::const_iterator					const_iterator;
-		typedef ft::reverse_iterator				reverse_iterator;
-		typedef ft::const_reverse_iterator			const_reverse_iterator;
-
-		vector ( size_type count, const T& value = T(), const Allocator& alloc = Allocator() ) : alloc(alloc)
-		{
-			v = alloc.allocate(count);
-			for(iterator p=v;p<v+count;++p)alloc.construct(p,value);
-		}
 		vector()
 		{
 			arr = new T[1];
 			capacity = 1;
 			current = 0;
 		}
+
+		explicit vector( const Allocator& alloc );
+
+		explicit vector ( size_type count, const T& value = T(), const Allocator& alloc = Allocator() ) : alloc(alloc)
+		{
+			v = alloc.allocate(count);
+			for (iterator p = v; p < v + count; ++p) alloc.construct(p, value);
+		}
+
+		template <class InputIt>
+		vector ( InputIt first, InputIt last, const Allocator& alloc = Allocator() );
+
+		vector( const vector& other );
+
 		~vector()
 		{
 			delete[] arr;
@@ -100,8 +111,31 @@ namespace ft
 			std::cout << std::endl;
 		}
 
-		iterator	begin()	{ return Iterator(&arr[0]); }
-		iterator	end()	{ return Iterator(&arr[size()]); }
+		iterator		begin()	{ return iterator(&arr[0]); }
+		const_iterator	begin() const	{ return const_iterator(&arr[0]); }
+		iterator		end()	{ return iterator(&arr[size()]); }
+		const_iterator	end() const	{ return const_iterator(&arr[size()]); }
+
+		reverse_iterator		rbegin()	{ return reverse_iterator(&arr[size() - 1]); }
+		const_reverse_iterator	rbegin() const	{ return const_reverse_iterator(&arr[size() - 1]); }
+		reverse_iterator		rend()	{ return reverse_iterator(&arr[-1]); }
+		const_reverse_iterator	rend() const	{ return const_reverse_iterator(&arr[-1]); }
+
+		reference	operator[]( size_type pos ) { return &arr[pos]; };
+		const_reference	operator[]( size_type pos ) const { return &arr[pos]; }
+
+		reference	at( size_type pos ) {
+			if (pos >= size())
+				throw (ArrayException("out_of_range"));
+			return (&arr[pos]);
+		};
+		
+		const_reference	at( size_type pos ) const {
+			if (pos >= size())
+				throw (ArrayException("out_of_range"));
+			return (&arr[pos]);
+		};
+
 	};
 }
 
