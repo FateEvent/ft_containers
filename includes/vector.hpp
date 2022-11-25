@@ -46,7 +46,7 @@ namespace ft
 		{
 			v = allocator.allocate(count);
 			for (iterator p = v; p < v + count; ++p)
-				alloc.construct(p, value);
+				allocator.construct(p, value);
 		}
 
 		template <class InputIt>
