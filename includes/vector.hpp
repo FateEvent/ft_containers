@@ -28,27 +28,35 @@ namespace ft
 		T*			arr;
 		int 		capacity;
 		int 		current;
-		Allocator	alloc;
+		Allocator	allocator;
 		iterator	v;
 
 	public:
 		vector()
 		{
-			arr = new T[1];
-			capacity = 1;
-			current = 0;
+			v = allocator.allocate(1);
 		}
 
-		explicit vector( const Allocator& alloc );
-
-		explicit vector ( size_type count, const T& value = T(), const Allocator& alloc = Allocator() ) : alloc(alloc)
+		explicit vector( const Allocator& alloc ) : allocator(alloc)
 		{
-			v = alloc.allocate(count);
-			for (iterator p = v; p < v + count; ++p) alloc.construct(p, value);
+			v = allocator.allocate(1);
+		};
+
+		explicit vector ( size_type count, const T& value = T(), const Allocator& alloc = Allocator() ) : allocator(alloc)
+		{
+			v = allocator.allocate(count);
+			for (iterator p = v; p < v + count; ++p)
+				alloc.construct(p, value);
 		}
 
 		template <class InputIt>
-		vector ( InputIt first, InputIt last, const Allocator& alloc = Allocator() );
+		vector ( InputIt first, InputIt last, const Allocator& alloc = Allocator() )
+		{
+			ptrdiff_t	dist = last - first;
+			v = allocator.allocate(dist);
+			for (iterator p = v; p < v + dist && first < last; ++p && ++first)
+				alloc.construct(p, *first);
+		};
 
 		vector( const vector& other );
 
