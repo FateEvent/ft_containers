@@ -22,6 +22,7 @@ namespace ft
 	{
 		typedef T	value_type;
 
+		iterator() : _ptr() {}
 		iterator(value_type *ptr) : _ptr(ptr) {}
 
 		value_type	&operator* ()	{ return *_ptr; }

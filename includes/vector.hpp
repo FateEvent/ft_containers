@@ -55,10 +55,9 @@ namespace ft
 		{
 			ptrdiff_t	dist = last - first;
 			v = allocator.allocate(dist);
-			for (iterator p = v; p < v + dist && first < last; p++)
+			for (iterator p = v; p < v + dist && first < last; ++p, first++)
 			{
-				alloc.construct(p, *first);
-				first++;
+				allocator.construct(p, *first);
 			}
 		};
 
