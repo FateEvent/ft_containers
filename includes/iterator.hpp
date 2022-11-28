@@ -7,9 +7,11 @@
 
 namespace ft
 {
+//	template <class Cat, class T, class Dist = ptrdiff_t, class Ptr = T *, class Ref = T&>
 	template <class T, class Dist = ptrdiff_t, class Ptr = T *, class Ref = T&>
 	struct iterator
 	{
+//		typedef Cat		iterator_category;
 		typedef T		value_type;
 		typedef Dist	difference_type;
 		typedef Ptr		pointer;

@@ -20,7 +20,7 @@ namespace ft
 		typedef const value_type&						const_reference;
 		typedef typename Allocator::pointer				pointer;
 		typedef typename Allocator::const_pointer		const_pointer;		
-		typedef ft::iterator<value_type>				iterator;
+		typedef ft::move_iterator<value_type>			iterator;
 		typedef ft::const_iterator<value_type>			const_iterator;
 		typedef ft::reverse_iterator<value_type>		reverse_iterator;
 		typedef ft::const_reverse_iterator<value_type>	const_reverse_iterator;
@@ -30,7 +30,7 @@ namespace ft
 		int 		capacity;
 		int 		current;
 		Allocator	allocator;
-		iterator	v;
+		pointer		v;
 
 	public:
 		vector() : v(nullptr)
@@ -47,7 +47,7 @@ namespace ft
 		{
 			v = allocator.allocate(count);
 			for (iterator p = v; p < v + count; ++p)
-				allocator.construct(p, value);
+				allocator.construct(&*p, value);
 		}
 
 		template <class InputIt>
@@ -57,7 +57,7 @@ namespace ft
 			v = allocator.allocate(dist);
 			for (iterator p = v; p < v + dist && first < last; ++p, first++)
 			{
-				allocator.construct(p, *first);
+				allocator.construct(&*p, *first);
 			}
 		};
 
