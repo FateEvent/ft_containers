@@ -7,10 +7,9 @@
 
 namespace ft
 {
-	template <class Cat, class T, class Dist = ptrdiff_t, class Ptr = T *, class Ref = T&>
-	struct iterator_traits
+	template <class T, class Dist = ptrdiff_t, class Ptr = T *, class Ref = T&>
+	struct iterator
 	{
-		typedef Cat		iterator_category;
 		typedef T		value_type;
 		typedef Dist	difference_type;
 		typedef Ptr		pointer;
@@ -18,32 +17,34 @@ namespace ft
 	};
 
 	template <class T>
-	struct iterator
+	class move_iterator
+		: public iterator<T>
 	{
+	public:
 		typedef T	value_type;
 
-		iterator() : _ptr() {}
-		iterator(value_type *ptr) : _ptr(ptr) {}
+		move_iterator() : _ptr() {}
+		move_iterator(value_type *ptr) : _ptr(ptr) {}
 
-		value_type	&operator* ()	{ return *_ptr; }
-		value_type	*operator-> ()	{ return _ptr; }
+		value_type	&operator* () { return *_ptr; }
+		value_type	*operator-> () { return _ptr; }
 
-		iterator	&operator++ () { _ptr++; return *this; }
-		iterator	operator++ (int) { iterator tmp = *this; ++(*this); return tmp; }
-		iterator	&operator-- () { _ptr--; return *this; }
-		iterator	operator-- (int) { iterator tmp = *this; --(*this); return tmp; }		
-		iterator	&operator+= (std::size_t dist) { _ptr += dist; return *this; }
-		iterator	&operator-= (std::size_t dist) { _ptr -= dist; return *this; }
-		iterator	operator+ (std::size_t dist) const { return (_ptr + dist); }
-		iterator	operator- (std::size_t dist) const { return (_ptr - dist); }
-		iterator	&operator[] (std::size_t index) const { return *(*this + index); }
+		move_iterator	&operator++ () { _ptr++; return *this; }
+		move_iterator	operator++ (int) { move_iterator tmp = *this; ++(*this); return tmp; }
+		move_iterator	&operator-- () { _ptr--; return *this; }
+		move_iterator	operator-- (int) { move_iterator tmp = *this; --(*this); return tmp; }		
+		move_iterator	&operator+= (std::size_t dist) { _ptr += dist; return *this; }
+		move_iterator	&operator-= (std::size_t dist) { _ptr -= dist; return *this; }
+		move_iterator	operator+ (std::size_t dist) const { return (_ptr + dist); }
+		move_iterator	operator- (std::size_t dist) const { return (_ptr - dist); }
+		move_iterator	&operator[] (std::size_t index) const { return *(*this + index); }
 
-		bool		operator== (const iterator &it) { return this->_ptr == it._ptr; }
-		bool		operator!= (const iterator &it) { return this->_ptr != it._ptr; }
-		bool		operator< (const iterator& it) { return this->_ptr < it._ptr; }
-		bool		operator<= (const iterator& it) { return this->_ptr <= it._ptr; }
-		bool		operator> (const iterator& it) { return this->_ptr > it._ptr; }
-		bool		operator>= (const iterator& it) { return this->_ptr >= it._ptr; }
+		bool		operator== (const move_iterator &it) { return this->_ptr == it._ptr; }
+		bool		operator!= (const move_iterator &it) { return this->_ptr != it._ptr; }
+		bool		operator< (const move_iterator& it) { return this->_ptr < it._ptr; }
+		bool		operator<= (const move_iterator& it) { return this->_ptr <= it._ptr; }
+		bool		operator> (const move_iterator& it) { return this->_ptr > it._ptr; }
+		bool		operator>= (const move_iterator& it) { return this->_ptr >= it._ptr; }
 
 	private:
 		value_type	*_ptr;
