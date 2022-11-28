@@ -114,9 +114,10 @@ int main(int argc, char** argv) {
 	}
 	std::cout << std::endl;
 
-	MutantStack<char>::iterator itLetter = iterable_stack.begin() + 18;
-	MutantStack<char>::iterator itLetter2 = iterable_stack.end() - 1;
-//	ft::vector<char>::vector((itLetter, itLetter2));
+	MutantStack<char>::iterator itLetter = iterable_stack.begin();
+	MutantStack<char>::iterator itLetter2 = iterable_stack.end();
+
+	ft::vector<char>	newVector(itLetter, itLetter2);
 
 	return (0);
 }

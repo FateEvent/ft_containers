@@ -34,6 +34,23 @@ namespace ft
 
 		bool operator ==(const iterator& it) { return this->_ptr == it._ptr; }
 		bool operator !=(const iterator& it) { return this->_ptr != it._ptr; }
+		
+		iterator&	operator +=(std::size_t dist) {
+			for (std::size_t i = 0; i < dist; i++)
+				_ptr++;
+			return *this;
+		}
+		iterator&	operator -=(std::size_t dist) {
+			for (std::size_t i = 0; i < dist; i++)
+				_ptr--;
+			return *this;
+		}
+		value_type	operator [](std::size_t index) {
+			for (std::size_t i = 0; i < index; i++)
+				_ptr++;
+			return *this;
+		}
+
 
 	private:
 		value_type	*_ptr;

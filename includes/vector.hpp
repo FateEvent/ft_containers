@@ -18,7 +18,7 @@ namespace ft
 		typedef value_type&								reference;
 		typedef const value_type&						const_reference;
 		typedef typename Allocator::pointer				pointer;
-		typedef typename Allocator::const_pointer		const_pointer;
+		typedef typename Allocator::const_pointer		const_pointer;		
 		typedef ft::iterator<value_type>				iterator;
 		typedef ft::const_iterator<value_type>			const_iterator;
 		typedef ft::reverse_iterator<value_type>		reverse_iterator;
@@ -32,17 +32,17 @@ namespace ft
 		iterator	v;
 
 	public:
-		vector()
+		vector() : v(nullptr)
 		{
 			v = allocator.allocate(1);
 		}
 
-		explicit vector( const Allocator& alloc ) : allocator(alloc)
+		explicit vector( const Allocator& alloc ) : allocator(alloc), v(nullptr)
 		{
 			v = allocator.allocate(1);
 		};
 
-		explicit vector ( size_type count, const T& value = T(), const Allocator& alloc = Allocator() ) : allocator(alloc)
+		explicit vector ( size_type count, const T& value = T(), const Allocator& alloc = Allocator() ) : allocator(alloc), v(nullptr)
 		{
 			v = allocator.allocate(count);
 			for (iterator p = v; p < v + count; ++p)
@@ -50,11 +50,11 @@ namespace ft
 		}
 
 		template <class InputIt>
-		vector ( InputIt first, InputIt last, const Allocator& alloc = Allocator() )
+		vector ( InputIt first, InputIt last, const Allocator& alloc = Allocator() ) : allocator(alloc), v(nullptr)
 		{
 			ptrdiff_t	dist = last - first;
 			v = allocator.allocate(dist);
-			for (iterator p = v; p < v + dist && first < last; ++p && ++first)
+			for (iterator p = v; p < v[dist] && first < last; ++p && ++first)
 				alloc.construct(p, *first);
 		};
 
