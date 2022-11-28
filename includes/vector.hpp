@@ -4,6 +4,7 @@
 # include <iostream>
 # include <memory>
 # include "iterator.hpp"
+#include <iterator>
 # include "ArrayException.hpp"
 
 namespace ft
@@ -42,7 +43,7 @@ namespace ft
 			v = allocator.allocate(1);
 		};
 
-		explicit vector ( size_type count, const T& value = T(), const Allocator& alloc = Allocator() ) : allocator(alloc), v(nullptr)
+		explicit vector( size_type count, const T& value = T(), const Allocator& alloc = Allocator() ) : allocator(alloc), v(nullptr)
 		{
 			v = allocator.allocate(count);
 			for (iterator p = v; p < v + count; ++p)
@@ -50,12 +51,15 @@ namespace ft
 		}
 
 		template <class InputIt>
-		vector ( InputIt first, InputIt last, const Allocator& alloc = Allocator() ) : allocator(alloc), v(nullptr)
+		vector( InputIt first, InputIt last, const Allocator& alloc = Allocator() ) : allocator(alloc), v(nullptr)
 		{
 			ptrdiff_t	dist = last - first;
 			v = allocator.allocate(dist);
-			for (iterator p = v; p < v[dist] && first < last; ++p && ++first)
+			for (iterator p = v; p < v + dist && first < last; p++)
+			{
 				alloc.construct(p, *first);
+				first++;
+			}
 		};
 
 		vector( const vector& other );

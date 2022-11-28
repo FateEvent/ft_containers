@@ -24,33 +24,25 @@ namespace ft
 
 		iterator(value_type *ptr) : _ptr(ptr) {}
 
-		value_type	&operator *()	{ return *_ptr; }
-		value_type	*operator ->()	{ return _ptr; }
+		value_type	&operator* ()	{ return *_ptr; }
+		value_type	*operator-> ()	{ return _ptr; }
 
-		iterator&	operator ++() { _ptr++; return *this; }
-		iterator	operator ++(int) { iterator tmp = *this; ++(*this); return tmp; }
-		iterator&	operator --() { _ptr--; return *this; }
-		iterator	operator --(int) { iterator tmp = *this; --(*this); return tmp; }
+		iterator	&operator++ () { _ptr++; return *this; }
+		iterator	operator++ (int) { iterator tmp = *this; ++(*this); return tmp; }
+		iterator	&operator-- () { _ptr--; return *this; }
+		iterator	operator-- (int) { iterator tmp = *this; --(*this); return tmp; }		
+		iterator	&operator+= (std::size_t dist) { _ptr += dist; return *this; }
+		iterator	&operator-= (std::size_t dist) { _ptr -= dist; return *this; }
+		iterator	operator+ (std::size_t dist) const { return (_ptr + dist); }
+		iterator	operator- (std::size_t dist) const { return (_ptr - dist); }
+		iterator	&operator[] (std::size_t index) const { return *(*this + index); }
 
-		bool operator ==(const iterator& it) { return this->_ptr == it._ptr; }
-		bool operator !=(const iterator& it) { return this->_ptr != it._ptr; }
-		
-		iterator&	operator +=(std::size_t dist) {
-			for (std::size_t i = 0; i < dist; i++)
-				_ptr++;
-			return *this;
-		}
-		iterator&	operator -=(std::size_t dist) {
-			for (std::size_t i = 0; i < dist; i++)
-				_ptr--;
-			return *this;
-		}
-		value_type	operator [](std::size_t index) {
-			for (std::size_t i = 0; i < index; i++)
-				_ptr++;
-			return *this;
-		}
-
+		bool		operator== (const iterator &it) { return this->_ptr == it._ptr; }
+		bool		operator!= (const iterator &it) { return this->_ptr != it._ptr; }
+		bool		operator< (const iterator& it) { return this->_ptr < it._ptr; }
+		bool		operator<= (const iterator& it) { return this->_ptr <= it._ptr; }
+		bool		operator> (const iterator& it) { return this->_ptr > it._ptr; }
+		bool		operator>= (const iterator& it) { return this->_ptr >= it._ptr; }
 
 	private:
 		value_type	*_ptr;
@@ -71,8 +63,8 @@ namespace ft
 		const const_iterator&	operator --() const { _ptr--; return *this; }
 		const const_iterator	operator --(int) const { const_iterator tmp = *this; --(*this); return tmp; }
 
-		bool operator ==(const const_iterator& it) { return this->_ptr == it._ptr; }
-		bool operator !=(const const_iterator& it) { return this->_ptr != it._ptr; }
+		bool operator == (const const_iterator& it) { return this->_ptr == it._ptr; }
+		bool operator != (const const_iterator& it) { return this->_ptr != it._ptr; }
 
 	private:
 		const value_type	*_ptr;
