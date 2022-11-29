@@ -118,8 +118,7 @@ int main(int argc, char** argv) {
 	MutantStack<char>::iterator itLetter2 = iterable_stack.end();
 
 	ft::vector<char>	newVector(itLetter, itLetter2);
-	std::cout << "ciao" << std::endl;
-	for (ft::vector<char>::iterator it = newVector.begin(); it != newVector.end(); it++)
+	for (ft::vector<char>::iterator it = newVector.begin() + 5; it != newVector.end(); it++)
 	{
 		std::cout << "iterator: " << *it << std::endl;
 	}
