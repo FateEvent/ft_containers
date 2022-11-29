@@ -98,10 +98,10 @@ namespace ft
 				_alloc.destroy(&*first);
 			_alloc.deallocate(_v, _capacity);
 		}
-		// log 2 _capacity pour trouver la taille suivante (entre les limites de max_size?)
+
 		void	reserve(size_type n)
 		{
-			if (n > _capacity)	// capacity() peut remplacer _capacity
+			if (n > capacity())
 			{
 				pointer	temp = _alloc.allocate(n);
 				for (size_type i = 0; i < _capacity; i++) {
@@ -114,57 +114,58 @@ namespace ft
 			}
 		}
 
-		void push(T data)
+		void	push_back(value_type data)
 		{
-			if (_size == _capacity) {
-				pointer	temp = _alloc.allocate(_capacity + 1);
+			if (_size == capacity()) {
+				pointer	temp = _alloc.allocate(_capacity * 2);
 				for (size_type i = 0; i < _capacity; i++) {
 					temp[i] = _v[i];
 					_alloc.destroy(&_v[i]);
 				}
 				_alloc.deallocate(_v, _capacity);
-				_capacity += 1;
+				_capacity *= 2;
 				_v = temp;
 			}
 			_v[_size] = data;
 			_size++;
 		}
 
-		void push(value_type data, size_type index)
+		void	push_back(value_type data, size_type index)
 		{
-			if (index == _capacity)
-				push(data);
+			if (index == capacity())
+				push_back(data);
 			else
 				_v[index] = data;
 		}
 
-		T get(size_type index)
+		void	pop_back()
 		{
-			if (index < _size)
-				return _v[index];
-			throw (ArrayException("MOVC::InvalidIndexException"));
-		}
+			if (size())
+			{
+				iterator	lastButOne = this->end() - 1;
 
-		void pop()
-		{
-			pointer	temp = _alloc.allocate(_capacity - 1);
-			for (size_type i = 0; i < _capacity - 1; i++) {
-				temp[i] = _v[i];
-				_alloc.destroy(&_v[i]);
+				_alloc.destroy(&*lastButOne);
+				_size -= 1;
+				if (_size > _capacity / 2)
+				{
+					pointer	temp = _alloc.allocate(_capacity / 2);
+					for (size_type i = 0; i < _capacity / 2; i++) {
+						temp[i] = _v[i];
+					}
+					_alloc.deallocate(_v, _capacity);
+					_capacity /= 2;
+					_v = temp;
+				}
 			}
-			_alloc.deallocate(_v, _capacity);
-			_capacity -= 1;
-			_v = temp;
-			_size--;
 		}
 
 		int size() { return _size; }
 
-		int get_capacity() { return _capacity; }
+		int capacity() { return _capacity; }
 
 		void print()
 		{
-			for (size_type i = 0; i < _size; i++) {
+			for (size_type i = 0; i < size(); i++) {
 				std::cout << _v[i] << " ";
 			}
 			std::cout << std::endl;
@@ -183,13 +184,13 @@ namespace ft
 		reference				operator[]( size_type pos ) { return &_v[pos]; };
 		const_reference			operator[]( size_type pos ) const { return &_v[pos]; }
 
-		reference	at( size_type pos ) {
+		reference				at( size_type pos ) {
 			if (pos >= _size)
 				throw (ArrayException("out_of_range"));
 			return (&_v[pos]);
 		};
 		
-		const_reference	at( size_type pos ) const {
+		const_reference			at( size_type pos ) const {
 			if (pos >= _size)
 				throw (ArrayException("out_of_range"));
 			return (&_v[pos]);
