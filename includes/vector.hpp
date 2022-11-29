@@ -70,35 +70,59 @@ namespace ft
 		{
 			if (this == rhs)
 				return (*this);
+			iterator	last = this->end();
+
+			for (iterator first = this->begin(); first < last; first++)
+				_alloc.destroy(&*first);
 			_alloc.deallocate(_v, _capacity);
 
-			iterator 	first = rhs.begin();
-			iterator 	last = rhs.end();
-			ptrdiff_t	dist = last - first;
+			iterator	first = rhs.begin();
+			iterator	last2 = rhs.end();
+			ptrdiff_t	dist = last2 - first;
 
 			_size = rhs._size;
 			_max_size = rhs._max_size;
 			_capacity = rhs._capacity;
 			_alloc = rhs._alloc;
 			_v = _alloc.allocate(_capacity);
-			for (iterator p = _v; p < _v + dist && first < last; ++p, first++)
+			for (iterator p = _v; p < _v + dist && first < last2; ++p, first++)
 				_alloc.construct(&*p, *first);
 			return (*this);
 		}
 
 		~vector()
 		{
+			iterator 	last = this->end();
+
+			for (iterator first = this->begin(); first < last; first++)
+				_alloc.destroy(&*first);
 			_alloc.deallocate(_v, _capacity);
+		}
+		// log 2 _capacity pour trouver la taille suivante (entre les limites de max_size?)
+		void	reserve(size_type n)
+		{
+			if (n > _capacity)	// capacity() peut remplacer _capacity
+			{
+				pointer	temp = _alloc.allocate(n);
+				for (size_type i = 0; i < _capacity; i++) {
+					temp[i] = _v[i];
+					_alloc.destroy(&_v[i]);
+				}
+				_alloc.deallocate(_v, _capacity);
+				_capacity += 1;
+				_v = temp;
+			}
 		}
 
 		void push(T data)
 		{
 			if (_size == _capacity) {
-				T* temp = new T[_capacity + 1];
-				for (int i = 0; i < _capacity; i++) {
+				pointer	temp = _alloc.allocate(_capacity + 1);
+				for (size_type i = 0; i < _capacity; i++) {
 					temp[i] = _v[i];
+					_alloc.destroy(&_v[i]);
 				}
-				delete[] _v;
+				_alloc.deallocate(_v, _capacity);
 				_capacity += 1;
 				_v = temp;
 			}
@@ -106,7 +130,7 @@ namespace ft
 			_size++;
 		}
 
-		void push(T data, size_type index)
+		void push(value_type data, size_type index)
 		{
 			if (index == _capacity)
 				push(data);
@@ -123,11 +147,12 @@ namespace ft
 
 		void pop()
 		{
-			T* temp = new T[_capacity - 1];
-			for (int i = 0; i < _capacity - 1; i++) {
+			pointer	temp = _alloc.allocate(_capacity - 1);
+			for (size_type i = 0; i < _capacity - 1; i++) {
 				temp[i] = _v[i];
+				_alloc.destroy(&_v[i]);
 			}
-			delete[] _v;
+			_alloc.deallocate(_v, _capacity);
 			_capacity -= 1;
 			_v = temp;
 			_size--;
@@ -139,7 +164,7 @@ namespace ft
 
 		void print()
 		{
-			for (int i = 0; i < _size; i++) {
+			for (size_type i = 0; i < _size; i++) {
 				std::cout << _v[i] << " ";
 			}
 			std::cout << std::endl;
