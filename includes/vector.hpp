@@ -52,19 +52,38 @@ namespace ft
 			_size = _capacity = dist;
 			_v = _alloc.allocate(dist);
 			for (iterator p = _v; p < _v + dist && first < last; ++p, first++)
-			{
 				_alloc.construct(&*p, *first);
-			}
 		};
 
-		vector( const vector& other )
+		vector( const vector& other ) : _size(other._size), _max_size(other._max_size), _capacity(other._capacity), _alloc(other._alloc)
 		{
+			iterator 	first = other.begin();
+			iterator 	last = other.end();
+			ptrdiff_t	dist = last - first;
 
+			_v = _alloc.allocate(_capacity);
+			for (iterator p = _v; p < _v + dist && first < last; ++p, first++)
+				_alloc.construct(&*p, *first);
 		};
 
-		operator= ( const vector& other )
+		vector&	operator= ( const vector& rhs )
 		{
-			
+			if (this == rhs)
+				return (*this);
+			_alloc.deallocate(_v, _capacity);
+
+			iterator 	first = rhs.begin();
+			iterator 	last = rhs.end();
+			ptrdiff_t	dist = last - first;
+
+			_size = rhs._size;
+			_max_size = rhs._max_size;
+			_capacity = rhs._capacity;
+			_alloc = rhs._alloc;
+			_v = _alloc.allocate(_capacity);
+			for (iterator p = _v; p < _v + dist && first < last; ++p, first++)
+				_alloc.construct(&*p, *first);
+			return (*this);
 		}
 
 		~vector()
