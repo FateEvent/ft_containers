@@ -125,13 +125,13 @@ namespace ft
 		allocator_type	get_allocator() const { return _alloc; }
 
 		reference				at( size_type pos ) {
-			if (pos >= _size)
+			if (pos >= size())
 				throw (ArrayException("out_of_range"));
 			return (&_v[pos]);
 		};
 		
 		const_reference			at( size_type pos ) const {
-			if (pos >= _size)
+			if (pos >= size())
 				throw (ArrayException("out_of_range"));
 			return (&_v[pos]);
 		};
@@ -186,7 +186,39 @@ namespace ft
 
 		size_type	capacity() { return _capacity; }
 
-		void	push_back(value_type data)
+		void	clear() {
+			for (iterator p = _v; p < _v + size(); ++p)
+				_alloc.destroy(&*p);
+			_size = 0;
+		}
+/*		// j'utilise reserve
+		iterator insert(const_iterator pos, const value_type& value)
+		{
+			for (iterator p = _v; p < _v + size(); ++p)
+				_alloc.destroy(&*p);
+			_alloc.deallocate(_v, _capacity);
+
+			iterator	first = rhs.begin();
+			iterator	last = rhs.end();
+			ptrdiff_t	dist = last - first;
+
+			_size = rhs._size;
+			_capacity = rhs._capacity;
+			_alloc = rhs._alloc;
+			_v = _alloc.allocate(_capacity);
+			for (iterator p = _v; p < _v + dist && first < last; ++p, first++)
+				_alloc.construct(&*p, *first);
+			if (index == capacity())
+				push_back(data);
+			else
+				_v[index] = data;
+		}
+*/
+		iterator insert(const_iterator pos, size_type count, const T& value);
+		template< class InputIt >
+		iterator insert(const_iterator pos, InputIt first, InputIt last);
+
+		void	push_back(const value_type& value)
 		{
 			if (_size == capacity()) {
 				pointer	temp = _alloc.allocate(_capacity * 2);
@@ -199,16 +231,8 @@ namespace ft
 				_capacity *= 2;
 				_v = temp;
 			}
-			_alloc.construct(&*(_v + size()), data);
+			_alloc.construct(&*(_v + size()), value);
 			_size++;
-		}
-
-		void	push_back(value_type data, size_type index)
-		{
-			if (index == capacity())
-				push_back(data);
-			else
-				_v[index] = data;
 		}
 
 		void	pop_back()
