@@ -128,6 +128,22 @@ int main(int argc, char** argv) {
 		std::cout << "last letters: " << *it << std::endl;
 	}
 
-	std::cout << newVector.max_size();
+	std::cout << "The maximum storage capacity of the container is " << newVector.max_size() << std::endl;
+
+	ft::vector<char>	copy(newVector);
+
+	std::cout << "What the copy contains:" << std::endl;
+	for (ft::vector<char>::iterator it = copy.begin(); it != copy.end(); it++)
+	{
+		std::cout << *it << std::endl;
+	}
+
+	copy.assign(5, 'a');
+	std::cout << "What the copy contains:" << std::endl;
+	for (ft::vector<char>::iterator it = copy.begin(); it != copy.end(); it++)
+	{
+		std::cout << *it << std::endl;
+	}
+
 	return (0);
 }

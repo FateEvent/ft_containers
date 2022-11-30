@@ -16,8 +16,8 @@ namespace ft
 		typedef std::size_t								size_type;
 		typedef Allocator								allocator_type;
 		typedef std::ptrdiff_t							difference_type;
-		typedef value_type&								reference;
-		typedef const value_type&						const_reference;
+		typedef value_type								&reference;
+		typedef const value_type						&const_reference;
 		typedef typename Allocator::pointer				pointer;
 		typedef typename Allocator::const_pointer		const_pointer;		
 		typedef ft::move_iterator<value_type>			iterator;
@@ -60,9 +60,9 @@ namespace ft
 
 		vector( const vector& other ) : _size(other._size), _capacity(other._capacity), _alloc(other._alloc)
 		{
-			iterator 	first = other.begin();
-			iterator 	last = other.end();
-			ptrdiff_t	dist = last - first;
+			const_iterator	first = other.begin();
+			const_iterator	last = other.end();
+			ptrdiff_t		dist = last - first;
 
 			_v = _alloc.allocate(_capacity);
 			for (iterator p = _v; p < _v + dist && first < last; ++p, first++)
@@ -73,37 +73,68 @@ namespace ft
 		{
 			if (this == rhs)
 				return (*this);
-			iterator	last = this->end();
-
-			for (iterator first = this->begin(); first < last; first++)
-				_alloc.destroy(&*first);
+			for (iterator p = _v; p < _v + size(); ++p)
+				_alloc.destroy(&*p);
 			_alloc.deallocate(_v, _capacity);
 
 			iterator	first = rhs.begin();
-			iterator	last2 = rhs.end();
-			ptrdiff_t	dist = last2 - first;
+			iterator	last = rhs.end();
+			ptrdiff_t	dist = last - first;
 
 			_size = rhs._size;
 			_capacity = rhs._capacity;
 			_alloc = rhs._alloc;
 			_v = _alloc.allocate(_capacity);
-			for (iterator p = _v; p < _v + dist && first < last2; ++p, first++)
+			for (iterator p = _v; p < _v + dist && first < last; ++p, first++)
 				_alloc.construct(&*p, *first);
 			return (*this);
 		}
 
 		~vector()
 		{
-			iterator 	last = this->end();
-
-			for (iterator first = this->begin(); first < last; first++)
-				_alloc.destroy(&*first);
+			for (iterator p = _v; p < _v + size(); ++p)
+				_alloc.destroy(&*p);
 			_alloc.deallocate(_v, _capacity);
 		}
 
+		void	assign( size_type count, const T& value ) {
+			for (iterator p = _v; p < _v + _size(); ++p)
+				_alloc.destroy(&*p);
+			_alloc.deallocate(_v, _capacity);
+			_size = _capacity = count;
+			pointer	temp = _alloc.allocate(count);
+			for (iterator p = temp; p < temp + count; ++p)
+				_alloc.construct(&*p, value);
+			_v = temp;
+		}
+
+		template< class InputIt >
+		void	assign( InputIt first, InputIt last )
+		{
+			for (iterator p = _v; p < _v + _size(); ++p)
+				_alloc.destroy(&*p);
+			_alloc.deallocate(_v, _capacity);
+			ptrdiff_t	dist = last - first;
+			_size = _capacity = dist;
+			pointer	temp = _alloc.allocate(dist);
+			for (iterator p = temp; p < temp + dist && first < last; ++p, first++)
+				_alloc.construct(&*p, *first);
+			_v = temp;
+		}
+
+		allocator_type	get_allocator() const { return _alloc; }
+
+		reference front() { return (&begin()); }
+
+		const_reference front() const { return (&begin()); }
+
+		reference back() { return (&end() - 1); };
+
+		const_reference back() const { return (&end() - 1); };
+		
 		void	reserve(size_type n)
 		{
-			if (n > capacity())
+			if (n > capacity() && n < max_size())
 			{
 				pointer	temp = _alloc.allocate(n);
 				for (iterator p = temp, q = _v; p < temp + _capacity; ++p, ++q)
@@ -150,7 +181,7 @@ namespace ft
 
 				_alloc.destroy(&*last);
 				_size -= 1;
-				if (_size > _capacity / 2)
+				if (_size < _capacity / 2)
 				{
 					pointer	temp = _alloc.allocate(_capacity / 2);
 					for (iterator p = temp, q = _v; p < temp + _capacity / 2; ++p, ++q)
@@ -167,7 +198,8 @@ namespace ft
 
 		size_type	size() { return _size; }
 
-		size_type	max_size() { return std::min<size_type>(_alloc.max_size(), std::numeric_limits<difference_type>::max()); }
+		size_type	max_size() { return std::min<size_type>(_alloc.max_size(),
+								std::numeric_limits<difference_type>::max()); }
 
 		size_type	capacity() { return _capacity; }
 
