@@ -27,15 +27,18 @@ namespace ft
 
 	private:
 		size_type	_size;
-		size_type	_max_size;
 		size_type	_capacity;
 		Allocator	_alloc;
 		pointer		_v;
 
 	public:
-		vector() : _size(), _capacity(), _v(nullptr) {}
+		vector() : _size(1), _capacity(1), _v(nullptr) {
+			_v = _alloc.allocate(_capacity);
+		}
 
-		explicit vector( const Allocator& alloc ) : _size(), _capacity(), _alloc(alloc), _v(nullptr) {}
+		explicit vector( const Allocator& alloc ) : _size(1), _capacity(1), _alloc(alloc), _v(nullptr) {
+			_v = _alloc.allocate(_capacity);
+		}
 
 		explicit vector( size_type count, const T& value = T(), const Allocator& alloc = Allocator() ) : _alloc(alloc), _v(nullptr)
 		{
@@ -55,7 +58,7 @@ namespace ft
 				_alloc.construct(&*p, *first);
 		};
 
-		vector( const vector& other ) : _size(other._size), _max_size(other._max_size), _capacity(other._capacity), _alloc(other._alloc)
+		vector( const vector& other ) : _size(other._size), _capacity(other._capacity), _alloc(other._alloc)
 		{
 			iterator 	first = other.begin();
 			iterator 	last = other.end();
@@ -81,7 +84,6 @@ namespace ft
 			ptrdiff_t	dist = last2 - first;
 
 			_size = rhs._size;
-			_max_size = rhs._max_size;
 			_capacity = rhs._capacity;
 			_alloc = rhs._alloc;
 			_v = _alloc.allocate(_capacity);
@@ -104,12 +106,13 @@ namespace ft
 			if (n > capacity())
 			{
 				pointer	temp = _alloc.allocate(n);
-				for (size_type i = 0; i < _capacity; i++) {
-					temp[i] = _v[i];
-					_alloc.destroy(&_v[i]);
+				for (iterator p = temp, q = _v; p < temp + _capacity; ++p, ++q)
+				{
+					_alloc.construct(&*p, *q);
+					_alloc.destroy(&*q);
 				}
 				_alloc.deallocate(_v, _capacity);
-				_capacity += 1;
+				_capacity = n;
 				_v = temp;
 			}
 		}
@@ -118,15 +121,16 @@ namespace ft
 		{
 			if (_size == capacity()) {
 				pointer	temp = _alloc.allocate(_capacity * 2);
-				for (size_type i = 0; i < _capacity; i++) {
-					temp[i] = _v[i];
-					_alloc.destroy(&_v[i]);
+				for (iterator p = temp, q = _v; p < temp + _capacity; ++p, ++q)
+				{
+					_alloc.construct(&*p, *q);
+					_alloc.destroy(&*q);
 				}
 				_alloc.deallocate(_v, _capacity);
 				_capacity *= 2;
 				_v = temp;
 			}
-			_v[_size] = data;
+			_alloc.construct(&*(_v + size()), data);
 			_size++;
 		}
 
@@ -142,15 +146,17 @@ namespace ft
 		{
 			if (size())
 			{
-				iterator	lastButOne = this->end() - 1;
+				pointer	last = _v[size() - 1];
 
-				_alloc.destroy(&*lastButOne);
+				_alloc.destroy(&*last);
 				_size -= 1;
 				if (_size > _capacity / 2)
 				{
 					pointer	temp = _alloc.allocate(_capacity / 2);
-					for (size_type i = 0; i < _capacity / 2; i++) {
-						temp[i] = _v[i];
+					for (iterator p = temp, q = _v; p < temp + _capacity / 2; ++p, ++q)
+					{
+						_alloc.construct(&*p, *q);
+						_alloc.destroy(&*q);
 					}
 					_alloc.deallocate(_v, _capacity);
 					_capacity /= 2;
@@ -159,9 +165,11 @@ namespace ft
 			}
 		}
 
-		int size() { return _size; }
+		size_type	size() { return _size; }
 
-		int capacity() { return _capacity; }
+		size_type	max_size() { return std::min<size_type>(_alloc.max_size(), std::numeric_limits<difference_type>::max()); }
+
+		size_type	capacity() { return _capacity; }
 
 		void print()
 		{

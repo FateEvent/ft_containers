@@ -122,10 +122,12 @@ int main(int argc, char** argv) {
 	{
 		std::cout << "iterator: " << *it << std::endl;
 	}
-	newVector.push('j');
+	newVector.push_back('j');
 	for (ft::vector<char>::iterator it = newVector.end() - 2; it != newVector.end(); it++)
 	{
 		std::cout << "last letters: " << *it << std::endl;
 	}
+
+	std::cout << newVector.max_size();
 	return (0);
 }
