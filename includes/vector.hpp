@@ -5,6 +5,7 @@
 # include <memory>
 # include "iterator.hpp"
 #include <vector>
+#include <iterator>
 # include "ArrayException.hpp"
 
 namespace ft
@@ -54,7 +55,7 @@ namespace ft
 			ptrdiff_t	dist = last - first;
 			_size = _capacity = dist;
 			_v = _alloc.allocate(dist);
-			for (iterator p = _v; p < _v + dist && first < last; ++p, first++)
+			for (iterator p = _v; p < _v + dist && first < last; ++p, ++first)
 				_alloc.construct(&*p, *first);
 		};
 
@@ -65,7 +66,7 @@ namespace ft
 			ptrdiff_t		dist = last - first;
 
 			_v = _alloc.allocate(_capacity);
-			for (iterator p = _v; p < _v + dist && first < last; ++p, first++)
+			for (iterator p = _v; p < _v + dist && first < last; ++p, ++first)
 				_alloc.construct(&*p, *first);
 		};
 
@@ -92,7 +93,7 @@ namespace ft
 			_capacity = rhs._capacity;
 			_alloc = rhs._alloc;
 			_v = _alloc.allocate(_capacity);
-			for (iterator p = _v; p < _v + dist && first < last; ++p, first++)
+			for (iterator p = _v; p < _v + dist && first < last; ++p, ++first)
 				_alloc.construct(&*p, *first);
 			return (*this);
 		}
@@ -108,7 +109,7 @@ namespace ft
 			_v = temp;
 		}
 
-		template< class InputIt >
+		template <class InputIt >
 		void	assign( InputIt first, InputIt last )
 		{
 			for (iterator p = _v; p < _v + size(); ++p)
@@ -117,7 +118,7 @@ namespace ft
 			ptrdiff_t	dist = last - first;
 			_size = _capacity = dist;
 			pointer	temp = _alloc.allocate(dist);
-			for (iterator p = temp; p < temp + dist && first < last; ++p, first++)
+			for (iterator p = temp; p < temp + dist && first < last; ++p, ++first)
 				_alloc.construct(&*p, *first);
 			_v = temp;
 		}
@@ -194,26 +195,74 @@ namespace ft
 
 		// https://stackoverflow.com/questions/40767476/how-does-rhs-work
 
-		iterator insert(iterator pos, const value_type& value) // avec const_iterator
+		iterator	insert(iterator pos, const value_type& value)
 		{
-			iterator	p, q;
-
-			if (pos > begin() && pos < end())
+			if (pos >= begin() && pos <= end())
 			{
-				if (size() + 1 == capacity())
+				iterator	p, q;
+
+				if (size() == capacity())
 				{
 					pointer temp = _alloc.allocate(capacity() * 2);
 					_capacity *= 2;
 					_size++;
-					std::cout << "ciao" << std::endl;
 					for (p = temp, q = _v; q < pos - 1; ++p, ++q)
 					{
 						_alloc.construct(&*p, *q);
 						_alloc.destroy(&*q);
 					}
 					_alloc.construct(&*(p++), value);
-					difference_type dist = end() - pos;
-					for (iterator p2 = p, q2 = q; q2 < end() - dist; ++p2, ++q2)
+					difference_type dist = pos - begin();
+					for (iterator p2 = p, q2 = q; q2 < end() - dist + 1; ++p2, ++q2)
+					{
+						_alloc.construct(&*p2, *q2);
+						_alloc.destroy(&*q2);
+					}
+					_alloc.deallocate(_v, _capacity);
+					_v = temp;
+					return (p);
+				}
+				else
+				{
+					difference_type dist = pos - 1 - begin();
+					iterator p = _v + dist;
+
+					for (iterator q = p + size(); q > p; --q)
+						_alloc.construct(&*q, *(q - 1));	
+					_alloc.construct(&*p, value);
+					_size++;
+					return (p);
+				}
+			}
+			else
+				throw (ArrayException("out_of_range"));
+		}
+/*
+		void	insert(iterator pos, size_type count, const value_type& value)
+		{
+			iterator	p, q;
+
+			if (pos >= begin() && pos <= end())
+			{
+				ptrdiff_t	dist = last - first;
+			_size = _capacity = dist;
+			pointer	temp = _alloc.allocate(dist);
+			for (iterator p = temp; p < temp + dist && first < last; ++p, ++first)
+				_alloc.construct(&*p, *first);
+			_v = temp;
+				if (size() == capacity())
+				{
+					pointer temp = _alloc.allocate(capacity() * 2);
+					_capacity *= 2;
+					_size++;
+					for (p = temp, q = _v; q < pos - 1; ++p, ++q)
+					{
+						_alloc.construct(&*p, *q);
+						_alloc.destroy(&*q);
+					}
+					_alloc.construct(&*(p++), value);
+					difference_type dist = pos - begin();
+					for (iterator p2 = p, q2 = q; q2 < end() - dist + 1; ++p2, ++q2)
 					{
 						_alloc.construct(&*p2, *q2);
 						_alloc.destroy(&*q2);
@@ -227,7 +276,7 @@ namespace ft
 					iterator p = _v + dist;
 
 					for (iterator q = p + size(); q > p; --q)
-						_alloc.construct(&*q, *(q - 1));				
+						_alloc.construct(&*q, *(q - 1));	
 					_alloc.construct(&*p, value);
 					_size++;
 					return (p);
@@ -235,13 +284,53 @@ namespace ft
 			}
 			else
 				throw (ArrayException("out_of_range"));
-			
 		}
+*/
+		template <class InputIt>
+		iterator	insert(iterator pos, InputIt first, InputIt last)
+		{
+			if (pos >= begin() && pos <= end())
+			{
+				iterator		p, p2, q, q2;
+				difference_type	interval = last - first;
 
-//		iterator insert(const_iterator pos, size_type count, const T& value);
+				if (size() + interval >= capacity())
+				{
+					pointer temp = _alloc.allocate(capacity() + interval);
+					std::cerr << size() << " " << capacity() << std::endl;
+					_size = _capacity += interval;
+					for (p = temp, q = _v; q < pos - 1; ++p, ++q)
+					{
+						_alloc.construct(&*p, *q);
+						_alloc.destroy(&*q);
+					}
+					for (p2 = p; first < last; ++p2, ++first)
+						_alloc.construct(&*(p2), *first);
+					for (p = p2, q2 = q; q2 < end() - interval + 1; ++p, ++q2)
+					{
+						_alloc.construct(&*p2, *q2);
+						_alloc.destroy(&*q2);
+					}
+					_alloc.deallocate(_v, _capacity);
+					_v = temp;
+					return (p);
+				}
+				else
+				{
+					difference_type dist = pos - 1 - begin();
+					iterator p = _v + dist;
 
-//		template< class InputIt >
-//		iterator insert(const_iterator pos, InputIt first, InputIt last);
+					for (iterator q = p + size(); q > p; --q)
+						_alloc.construct(&*q, *(q - interval));
+//					for (iterator r = p; first < last; ++r, ++first)
+//						_alloc.construct(&*r, *first);
+					_size += interval;
+					return (p);
+				}
+			}
+			else
+				throw (ArrayException("out_of_range"));
+		}
 
 		void	push_back(const value_type& value)
 		{
@@ -289,15 +378,6 @@ namespace ft
 		bool		operator<= (const vector &other) { return this->_v <= other._v; }
 		bool		operator> (const vector &other) { return this->_v > other._v; }
 		bool		operator>= (const vector &other) { return this->_v >= other._v; }
-
-//		value_type	&operator++ () { _v++; return *_v; }
-//		value_type	operator++ (int) { value_type tmp = *_v; ++_v; return tmp; }
-//		value_type	&operator-- () { _v--; return *_v; }
-//		value_type	operator-- (int) { value_type tmp = *_v; --_v; return tmp; }		
-//		value_type	&operator+= (std::size_t dist) { _v += dist; return *_v; }
-//		value_type	&operator-= (std::size_t dist) { _v -= dist; return *_v; }
-//		value_type	operator+ (std::size_t dist) const { return (_v + dist); }
-//		value_type	operator- (std::size_t dist) const { return (_v - dist); }
 	};
 }
 

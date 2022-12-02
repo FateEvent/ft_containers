@@ -130,7 +130,7 @@ int main(int argc, char** argv) {
 
 //	std::cout << "The maximum storage capacity of the container is " << newVector.max_size() << std::endl;
 
-	ft::vector<char>	copy(newVector);
+	ft::vector<char>	vecCopy(newVector);
 
 //	std::cout << "What the copy contains:" << std::endl;
 //	for (ft::vector<char>::iterator it = copy.begin(); it != copy.end(); it++)
@@ -138,16 +138,30 @@ int main(int argc, char** argv) {
 //		std::cout << *it << std::endl;
 //	}
 
-	copy.assign(4, 'a');
+	vecCopy.assign(60, 'a');
 //	std::cout << "What the copy contains:" << std::endl;
 //	for (ft::vector<char>::iterator it = copy.begin(); it != copy.end(); it++)
 //	{
 //		std::cout << *it << std::endl;
 //	}
 
-	newVector.insert((newVector.begin() + 5), 'z');
+	newVector.insert((newVector.begin() + 2), 'z');
+	newVector.push_back('c');
+//	std::cerr << "size and capacity: " << newVector.size() << ", " << newVector.capacity() << std::endl;
+//	std::cout << "What the copy contains:" << std::endl;
+//	for (ft::vector<char>::iterator it = newVector.begin(); it != newVector.end(); it++)
+//	{
+//		std::cout << *it << std::endl;
+//	}
+	vecCopy.push_back('c');
+	vecCopy.push_back('c');
+	vecCopy.push_back('c');
+	vecCopy.push_back('c');
+	vecCopy.push_back('c');
+	vecCopy.insert(vecCopy.begin() + 2, itLetter, itLetter2);
+	std::cerr << "size and capacity: " << vecCopy.size() << ", " << vecCopy.capacity() << std::endl;
 	std::cout << "What the copy contains:" << std::endl;
-	for (ft::vector<char>::iterator it = newVector.begin(); it != newVector.end(); it++)
+	for (ft::vector<char>::iterator it = vecCopy.begin(); it != vecCopy.begin() + vecCopy.size(); it++)
 	{
 		std::cout << *it << std::endl;
 	}
