@@ -118,29 +118,36 @@ int main(int argc, char** argv) {
 	MutantStack<char>::iterator itLetter2 = iterable_stack.end();
 
 	ft::vector<char>	newVector(itLetter, itLetter2);
-	for (ft::vector<char>::iterator it = newVector.begin() + 5; it != newVector.end(); it++)
-	{
-		std::cout << "iterator: " << *it << std::endl;
-	}
+//	for (ft::vector<char>::iterator it = newVector.begin() + 5; it != newVector.end(); it++)
+//	{
+//		std::cout << "iterator: " << *it << std::endl;
+//	}
 	newVector.push_back('j');
-	for (ft::vector<char>::iterator it = newVector.end() - 2; it != newVector.end(); it++)
-	{
-		std::cout << "last letters: " << *it << std::endl;
-	}
+//	for (ft::vector<char>::iterator it = newVector.end() - 2; it != newVector.end(); it++)
+//	{
+//		std::cout << "last letters: " << *it << std::endl;
+//	}
 
-	std::cout << "The maximum storage capacity of the container is " << newVector.max_size() << std::endl;
+//	std::cout << "The maximum storage capacity of the container is " << newVector.max_size() << std::endl;
 
 	ft::vector<char>	copy(newVector);
 
-	std::cout << "What the copy contains:" << std::endl;
-	for (ft::vector<char>::iterator it = copy.begin(); it != copy.end(); it++)
-	{
-		std::cout << *it << std::endl;
-	}
+//	std::cout << "What the copy contains:" << std::endl;
+//	for (ft::vector<char>::iterator it = copy.begin(); it != copy.end(); it++)
+//	{
+//		std::cout << *it << std::endl;
+//	}
 
-	copy.assign(5, 'a');
+	copy.assign(4, 'a');
+//	std::cout << "What the copy contains:" << std::endl;
+//	for (ft::vector<char>::iterator it = copy.begin(); it != copy.end(); it++)
+//	{
+//		std::cout << *it << std::endl;
+//	}
+
+	newVector.insert((newVector.begin() + 5), 'z');
 	std::cout << "What the copy contains:" << std::endl;
-	for (ft::vector<char>::iterator it = copy.begin(); it != copy.end(); it++)
+	for (ft::vector<char>::iterator it = newVector.begin(); it != newVector.end(); it++)
 	{
 		std::cout << *it << std::endl;
 	}

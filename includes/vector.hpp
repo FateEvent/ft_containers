@@ -191,32 +191,57 @@ namespace ft
 				_alloc.destroy(&*p);
 			_size = 0;
 		}
-/*		// j'utilise reserve
-		iterator insert(const_iterator pos, const value_type& value)
+
+		// https://stackoverflow.com/questions/40767476/how-does-rhs-work
+
+		iterator insert(iterator pos, const value_type& value) // avec const_iterator
 		{
-			for (iterator p = _v; p < _v + size(); ++p)
-				_alloc.destroy(&*p);
-			_alloc.deallocate(_v, _capacity);
+			iterator	p, q;
 
-			iterator	first = rhs.begin();
-			iterator	last = rhs.end();
-			ptrdiff_t	dist = last - first;
+			if (pos > begin() && pos < end())
+			{
+				if (size() + 1 == capacity())
+				{
+					pointer temp = _alloc.allocate(capacity() * 2);
+					_capacity *= 2;
+					_size++;
+					std::cout << "ciao" << std::endl;
+					for (p = temp, q = _v; q < pos - 1; ++p, ++q)
+					{
+						_alloc.construct(&*p, *q);
+						_alloc.destroy(&*q);
+					}
+					_alloc.construct(&*(p++), value);
+					difference_type dist = end() - pos;
+					for (iterator p2 = p, q2 = q; q2 < end() - dist; ++p2, ++q2)
+					{
+						_alloc.construct(&*p2, *q2);
+						_alloc.destroy(&*q2);
+					}
+					_v = temp;
+					return (p);
+				}
+				else
+				{
+					difference_type dist = pos - 1 - begin();
+					iterator p = _v + dist;
 
-			_size = rhs._size;
-			_capacity = rhs._capacity;
-			_alloc = rhs._alloc;
-			_v = _alloc.allocate(_capacity);
-			for (iterator p = _v; p < _v + dist && first < last; ++p, first++)
-				_alloc.construct(&*p, *first);
-			if (index == capacity())
-				push_back(data);
+					for (iterator q = p + size(); q > p; --q)
+						_alloc.construct(&*q, *(q - 1));				
+					_alloc.construct(&*p, value);
+					_size++;
+					return (p);
+				}
+			}
 			else
-				_v[index] = data;
+				throw (ArrayException("out_of_range"));
+			
 		}
-*/
-		iterator insert(const_iterator pos, size_type count, const T& value);
-		template< class InputIt >
-		iterator insert(const_iterator pos, InputIt first, InputIt last);
+
+//		iterator insert(const_iterator pos, size_type count, const T& value);
+
+//		template< class InputIt >
+//		iterator insert(const_iterator pos, InputIt first, InputIt last);
 
 		void	push_back(const value_type& value)
 		{
