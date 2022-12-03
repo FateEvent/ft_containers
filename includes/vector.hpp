@@ -205,7 +205,7 @@ namespace ft
 				{
 					pointer temp = _alloc.allocate(capacity() * 2);
 					_capacity *= 2;
-					_size++;
+					++_size;
 					for (p = temp, q = _v; q < pos - 1; ++p, ++q)
 					{
 						_alloc.construct(&*p, *q);
@@ -230,62 +230,58 @@ namespace ft
 					for (iterator q = p + size() - dist; q > p; --q)
 						_alloc.construct(&*q, *(q - 1));	
 					_alloc.construct(&*p, value);
-					_size++;
+					++_size;
 					return (p);
 				}
 			}
 			else
 				throw (ArrayException("out_of_range"));
 		}
-/*
+
 		void	insert(iterator pos, size_type count, const value_type& value)
 		{
-			iterator	p, q;
-
 			if (pos >= begin() && pos <= end())
 			{
-				ptrdiff_t	dist = last - first;
-			_size = _capacity = dist;
-			pointer	temp = _alloc.allocate(dist);
-			for (iterator p = temp; p < temp + dist && first < last; ++p, ++first)
-				_alloc.construct(&*p, *first);
-			_v = temp;
-				if (size() == capacity())
+				iterator	p, p2, q, q2, r;
+
+				if (size() + count >= capacity())
 				{
-					pointer temp = _alloc.allocate(capacity() * 2);
-					_capacity *= 2;
-					_size++;
+					size_type	diff = size() + count - capacity();
+					pointer temp = _alloc.allocate(capacity() + diff);
+					_capacity += diff;
 					for (p = temp, q = _v; q < pos - 1; ++p, ++q)
 					{
 						_alloc.construct(&*p, *q);
 						_alloc.destroy(&*q);
 					}
-					_alloc.construct(&*(p++), value);
-					difference_type dist = pos - begin();
-					for (iterator p2 = p, q2 = q; q2 < end() - dist + 1; ++p2, ++q2)
+					for (p2 = p; count > 0; ++p2, --count)
+						_alloc.construct(&*p2, value);
+					for (r = p2, q2 = q; q2 < _v + size(); ++r, ++q2)
 					{
-						_alloc.construct(&*p2, *q2);
+						_alloc.construct(&*r, *q2);
 						_alloc.destroy(&*q2);
 					}
+					_alloc.deallocate(_v, _capacity);
 					_v = temp;
-					return (p);
+					_size = capacity();
+					std::cerr << "here" << std::endl;
 				}
 				else
 				{
+					_size += count;
 					difference_type dist = pos - 1 - begin();
 					iterator p = _v + dist;
 
 					for (iterator q = p + size(); q > p; --q)
-						_alloc.construct(&*q, *(q - 1));	
-					_alloc.construct(&*p, value);
-					_size++;
-					return (p);
+						_alloc.construct(&*q, *(q - count));
+					for (iterator r = p; count > 0; ++r, --count)
+						_alloc.construct(&*r, value);
 				}
 			}
 			else
 				throw (ArrayException("out_of_range"));
 		}
-*/
+
 		template <class InputIt>
 		iterator	insert(iterator pos, InputIt first, InputIt last)
 		{
@@ -299,7 +295,6 @@ namespace ft
 					size_type	diff = size() + interval - capacity();
 					pointer temp = _alloc.allocate(capacity() + diff);
 					_capacity += diff;
-					std::cerr << size() << " " << capacity() << std::endl;
 					for (p = temp, q = _v; q < pos - 1; ++p, ++q)
 					{
 						_alloc.construct(&*p, *q);
@@ -319,14 +314,14 @@ namespace ft
 				}
 				else
 				{
+					_size += interval;
 					difference_type dist = pos - 1 - begin();
 					iterator p = _v + dist;
 
-					for (iterator q = p + size() - dist + 1; q > p; --q)
+					for (iterator q = p + size(); q > p; --q)
 						_alloc.construct(&*q, *(q - interval));
 					for (iterator r = p; first < last; ++r, ++first)
 						_alloc.construct(&*r, *first);
-					_size += interval;
 					return (p);
 				}
 			}
@@ -348,7 +343,7 @@ namespace ft
 				_v = temp;
 			}
 			_alloc.construct(&*(_v + size()), value);
-			_size++;
+			++_size;
 		}
 
 		void	pop_back()

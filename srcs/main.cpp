@@ -145,6 +145,7 @@ int main(int argc, char** argv) {
 //		std::cout << *it << std::endl;
 //	}
 
+//	vecCopy.reserve(45);
 	newVector.insert((newVector.begin() + 2), 'z');
 	newVector.push_back('c');
 //	std::cerr << "size and capacity: " << newVector.size() << ", " << newVector.capacity() << std::endl;
@@ -157,7 +158,15 @@ int main(int argc, char** argv) {
 	vecCopy.push_back('c');
 	vecCopy.push_back('c');
 	vecCopy.push_back('c');
-	vecCopy.insert(vecCopy.begin() + 2, itLetter, itLetter2);
+//	vecCopy.insert(vecCopy.begin() + 2, itLetter, itLetter2);
+//	std::cerr << "size and capacity: " << vecCopy.size() << ", " << vecCopy.capacity() << std::endl;
+//	std::cout << "What the copy contains:" << std::endl;
+//	for (ft::vector<char>::iterator it = vecCopy.begin(); it != vecCopy.begin() + vecCopy.size(); it++)
+//	{
+//		std::cout << *it << std::endl;
+//	}
+
+	vecCopy.insert(vecCopy.begin() + 2, 5, 'Z');
 	std::cerr << "size and capacity: " << vecCopy.size() << ", " << vecCopy.capacity() << std::endl;
 	std::cout << "What the copy contains:" << std::endl;
 	for (ft::vector<char>::iterator it = vecCopy.begin(); it != vecCopy.begin() + vecCopy.size(); it++)
