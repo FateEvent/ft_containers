@@ -213,7 +213,7 @@ namespace ft
 					}
 					_alloc.construct(&*(p++), value);
 					difference_type dist = pos - begin();
-					for (iterator p2 = p, q2 = q; q2 < end() - dist + 1; ++p2, ++q2)
+					for (iterator p2 = p, q2 = q; q2 < begin() + size() + 1 - dist; ++p2, ++q2)
 					{
 						_alloc.construct(&*p2, *q2);
 						_alloc.destroy(&*q2);
@@ -227,7 +227,7 @@ namespace ft
 					difference_type dist = pos - 1 - begin();
 					iterator p = _v + dist;
 
-					for (iterator q = p + size(); q > p; --q)
+					for (iterator q = p + size() - dist; q > p; --q)
 						_alloc.construct(&*q, *(q - 1));	
 					_alloc.construct(&*p, value);
 					_size++;
@@ -291,28 +291,30 @@ namespace ft
 		{
 			if (pos >= begin() && pos <= end())
 			{
-				iterator		p, p2, q, q2;
+				iterator		p, p2, q, q2, r;
 				difference_type	interval = last - first;
 
 				if (size() + interval >= capacity())
 				{
-					pointer temp = _alloc.allocate(capacity() + interval);
+					size_type	diff = size() + interval - capacity();
+					pointer temp = _alloc.allocate(capacity() + diff);
+					_capacity += diff;
 					std::cerr << size() << " " << capacity() << std::endl;
-					_size = _capacity += interval;
 					for (p = temp, q = _v; q < pos - 1; ++p, ++q)
 					{
 						_alloc.construct(&*p, *q);
 						_alloc.destroy(&*q);
 					}
 					for (p2 = p; first < last; ++p2, ++first)
-						_alloc.construct(&*(p2), *first);
-					for (p = p2, q2 = q; q2 < end() - interval + 1; ++p, ++q2)
+						_alloc.construct(&*p2, *first);
+					for (r = p2, q2 = q; q2 < _v + size(); ++r, ++q2)
 					{
-						_alloc.construct(&*p2, *q2);
+						_alloc.construct(&*r, *q2);
 						_alloc.destroy(&*q2);
 					}
 					_alloc.deallocate(_v, _capacity);
 					_v = temp;
+					_size = capacity();
 					return (p);
 				}
 				else
@@ -320,10 +322,10 @@ namespace ft
 					difference_type dist = pos - 1 - begin();
 					iterator p = _v + dist;
 
-					for (iterator q = p + size(); q > p; --q)
+					for (iterator q = p + size() - dist + 1; q > p; --q)
 						_alloc.construct(&*q, *(q - interval));
-//					for (iterator r = p; first < last; ++r, ++first)
-//						_alloc.construct(&*r, *first);
+					for (iterator r = p; first < last; ++r, ++first)
+						_alloc.construct(&*r, *first);
 					_size += interval;
 					return (p);
 				}
@@ -336,7 +338,7 @@ namespace ft
 		{
 			if (_size == capacity()) {
 				pointer	temp = _alloc.allocate(_capacity * 2);
-				for (iterator p = temp, q = _v; p < temp + _capacity; ++p, ++q)
+				for (iterator p = temp, q = _v; p < temp + size(); ++p, ++q)
 				{
 					_alloc.construct(&*p, *q);
 					_alloc.destroy(&*q);
@@ -360,7 +362,7 @@ namespace ft
 				if (_size < _capacity / 2)
 				{
 					pointer	temp = _alloc.allocate(_capacity / 2);
-					for (iterator p = temp, q = _v; p < temp + _capacity / 2; ++p, ++q)
+					for (iterator p = temp, q = _v; p < temp + size(); ++p, ++q)
 					{
 						_alloc.construct(&*p, *q);
 						_alloc.destroy(&*q);

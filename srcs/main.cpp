@@ -122,7 +122,7 @@ int main(int argc, char** argv) {
 //	{
 //		std::cout << "iterator: " << *it << std::endl;
 //	}
-	newVector.push_back('j');
+//	newVector.push_back('j');
 //	for (ft::vector<char>::iterator it = newVector.end() - 2; it != newVector.end(); it++)
 //	{
 //		std::cout << "last letters: " << *it << std::endl;
@@ -138,7 +138,7 @@ int main(int argc, char** argv) {
 //		std::cout << *it << std::endl;
 //	}
 
-	vecCopy.assign(60, 'a');
+	vecCopy.assign(4, 'a');
 //	std::cout << "What the copy contains:" << std::endl;
 //	for (ft::vector<char>::iterator it = copy.begin(); it != copy.end(); it++)
 //	{
@@ -153,7 +153,6 @@ int main(int argc, char** argv) {
 //	{
 //		std::cout << *it << std::endl;
 //	}
-	vecCopy.push_back('c');
 	vecCopy.push_back('c');
 	vecCopy.push_back('c');
 	vecCopy.push_back('c');
