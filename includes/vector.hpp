@@ -264,7 +264,6 @@ namespace ft
 					_alloc.deallocate(_v, _capacity);
 					_v = temp;
 					_size = capacity();
-					std::cerr << "here" << std::endl;
 				}
 				else
 				{
@@ -329,6 +328,44 @@ namespace ft
 				throw (ArrayException("out_of_range"));
 		}
 
+		iterator	erase(iterator pos)
+		{
+			if (pos >= begin() && pos < end())
+			{
+				difference_type dist = pos - begin();
+				iterator p = _v + dist;
+
+				for (iterator q = p; q < p + size(); ++q)
+					_alloc.construct(&*q, *(q + 1));
+				_alloc.destroy(&*(end()));
+				--_size;
+				return (p);
+			}
+			else
+				throw (ArrayException("out_of_range"));
+		};
+
+		iterator	erase(iterator first, iterator last)
+		{
+			if ((first >= begin() && first < end()) && (last >= begin() && last < end())
+				&& first <= last)
+			{
+				difference_type	dist = last - first;
+				iterator p = first;
+				iterator	q, r;
+
+				for (q = p, r = p + dist; r < end(); ++q, ++r)
+					_alloc.construct(&*q, *r);
+				size_type	size_diff = capacity() - size();
+				for (iterator r2 = r; r2 < r2 + size_diff; ++r2)
+					_alloc.destroy(&*r2);
+				_size -= dist;
+				return (p);
+			}
+			else
+				throw (ArrayException("out_of_range"));
+		}
+
 		void	push_back(const value_type& value)
 		{
 			if (_size == capacity()) {
@@ -353,7 +390,7 @@ namespace ft
 				pointer	last = _v[size() - 1];
 
 				_alloc.destroy(&*last);
-				_size -= 1;
+				--_size;
 				if (_size < _capacity / 2)
 				{
 					pointer	temp = _alloc.allocate(_capacity / 2);
