@@ -3,9 +3,8 @@
 
 # include <iostream>
 # include <memory>
+# include <algorithm>
 # include "iterator.hpp"
-#include <vector>
-#include <iterator>
 # include "ArrayException.hpp"
 
 namespace ft
@@ -41,7 +40,7 @@ namespace ft
 			_v = _alloc.allocate(_capacity);
 		}
 
-		explicit vector( size_type count, const T& value = T(), const Allocator& alloc = Allocator() ) : _alloc(alloc), _v(nullptr)
+		explicit vector( size_type count, const value_type& value = value_type(), const Allocator& alloc = Allocator() ) : _alloc(alloc), _v(nullptr)
 		{
 			_size = _capacity = count;
 			_v = _alloc.allocate(_capacity);
@@ -404,6 +403,52 @@ namespace ft
 					_v = temp;
 				}
 			}
+		}
+
+		void	resize(size_type count, value_type val = value_type())
+		{
+			if (count <= max_size())
+			{
+				if (count > capacity())
+				{
+					iterator	p, q;
+
+					pointer	temp = _alloc.allocate(count); 
+					for(p = temp, q = _v; q < end(); ++p, ++q)
+						_alloc.construct(&*p, *q);
+					for(iterator p2 = p, q2 = q; q2 < _v + count; ++p2, ++q2)
+						_alloc.construct(&*p2, val);
+					for(iterator r = _v; r < _v + size(); ++r)
+						_alloc.destroy(&*r);
+					_alloc.deallocate(_v, capacity());
+					_v = temp;
+					_size = _capacity = count;
+				}
+				else
+				{
+					if (count > size())
+					{
+						for (iterator p = end(); p < _v + count; ++p)
+							_alloc.construct(&*p, val);
+						_size = count;
+					}
+					else if (count < size())
+					{
+						for (iterator p = _v + count; p < _v + size(); ++p)
+							_alloc.destroy(&*p);
+						_size = count;
+					}
+				}
+			}
+			else
+				throw (ArrayException("out_of_range"));
+		}
+
+		void	swap(vector& other)
+		{
+			pointer tmp = other._v;
+			other._v = _v;
+			_v = tmp;
 		}
 
 		bool		operator== (const vector &other) { return this->_v == other._v; }
