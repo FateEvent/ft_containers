@@ -327,13 +327,14 @@ namespace ft
 				throw (ArrayException("out_of_range"));
 		}
 
-		iterator	erase(iterator pos)
+		iterator	erase(iterator pos)	// utiliser std::copy
 		{
 			if (pos >= begin() && pos < end())
 			{
 				difference_type dist = pos - begin();
 				iterator p = _v + dist;
 
+				_alloc.destroy(&*p);
 				for (iterator q = p; q < p + size(); ++q)
 					_alloc.construct(&*q, *(q + 1));
 				_alloc.destroy(&*(end()));
@@ -344,7 +345,7 @@ namespace ft
 				throw (ArrayException("out_of_range"));
 		};
 
-		iterator	erase(iterator first, iterator last)
+		iterator	erase(iterator first, iterator last)	// utiliser std::copy
 		{
 			if ((first >= begin() && first < end()) && (last >= begin() && last < end())
 				&& first <= last)
@@ -353,6 +354,8 @@ namespace ft
 				iterator p = first;
 				iterator	q, r;
 
+				for (iterator it = first; it < last; ++it)
+					_alloc.destroy(&*it);
 				for (q = p, r = p + dist; r < end(); ++q, ++r)
 					_alloc.construct(&*q, *r);
 				size_type	size_diff = capacity() - size();
