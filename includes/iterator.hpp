@@ -3,7 +3,8 @@
 
 # include <iostream>
 # include <memory>
-# include "ArrayException.hpp"
+# include "ContainerException.hpp"
+#include <iterator>	// implement iterator_traits
 
 namespace ft
 {

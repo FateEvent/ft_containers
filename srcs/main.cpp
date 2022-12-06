@@ -155,19 +155,20 @@ int main(int argc, char** argv) {
 //	for (ft::vector<char>::iterator it = vecCopy.begin(); it != vecCopy.begin() + vecCopy.size(); it++)
 //		std::cout << *it << std::endl;
 
-	vecCopy.erase(vecCopy.begin(), vecCopy.begin() + 7);
+	vecCopy.insert(vecCopy.begin() + 2, 'x');
+	std::cout << "return: " << *(vecCopy.erase(vecCopy.begin() + 1, vecCopy.begin() + 7)) << std::endl;
 	vecCopy.resize(35);
 	std::cout << "What the copy contains now:" << std::endl;
 	for (ft::vector<char>::iterator it = vecCopy.begin(); it != vecCopy.begin() + vecCopy.size(); it++)
 		std::cout << *it << std::endl;
 
-	vecCopy.swap(newVector);
-	std::cout << "What the vector contains now:" << std::endl;
-	for (ft::vector<char>::iterator it = newVector.begin(); it != newVector.begin() + newVector.size(); it++)
-		std::cout << *it << std::endl;
-	std::cout << "What the copy contains now:" << std::endl;
-	for (ft::vector<char>::iterator it = vecCopy.begin(); it != vecCopy.begin() + vecCopy.size(); it++)
-		std::cout << *it << std::endl;
+//	vecCopy.swap(newVector);
+//	std::cout << "What the vector contains now:" << std::endl;
+//	for (ft::vector<char>::iterator it = newVector.begin(); it != newVector.begin() + newVector.size(); it++)
+//		std::cout << *it << std::endl;
+//	std::cout << "What the copy contains now:" << std::endl;
+//	for (ft::vector<char>::iterator it = vecCopy.begin(); it != vecCopy.begin() + vecCopy.size(); it++)
+//		std::cout << *it << std::endl;
 
 	return (0);
 }

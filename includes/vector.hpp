@@ -5,7 +5,7 @@
 # include <memory>
 # include <algorithm>
 # include "iterator.hpp"
-# include "ArrayException.hpp"
+# include "ContainerException.hpp"
 
 namespace ft
 {
@@ -126,13 +126,13 @@ namespace ft
 
 		reference				at( size_type pos ) {
 			if (pos >= size())
-				throw (ArrayException("out_of_range"));
+				throw (ContainerException("out_of_range"));
 			return (&_v[pos]);
 		};
 		
 		const_reference			at( size_type pos ) const {
 			if (pos >= size())
-				throw (ArrayException("out_of_range"));
+				throw (ContainerException("out_of_range"));
 			return (&_v[pos]);
 		};
 
@@ -234,7 +234,7 @@ namespace ft
 				}
 			}
 			else
-				throw (ArrayException("out_of_range"));
+				throw (ContainerException("out_of_range"));
 		}
 
 		void	insert(iterator pos, size_type count, const value_type& value)
@@ -277,7 +277,7 @@ namespace ft
 				}
 			}
 			else
-				throw (ArrayException("out_of_range"));
+				throw (ContainerException("out_of_range"));
 		}
 
 		template <class InputIt>
@@ -324,48 +324,37 @@ namespace ft
 				}
 			}
 			else
-				throw (ArrayException("out_of_range"));
+				throw (ContainerException("out_of_range"));
 		}
 
-		iterator	erase(iterator pos)	// utiliser std::copy
+		iterator	erase(iterator pos)
 		{
 			if (pos >= begin() && pos < end())
 			{
-				difference_type dist = pos - begin();
-				iterator p = _v + dist;
-
-				_alloc.destroy(&*p);
-				for (iterator q = p; q < p + size(); ++q)
-					_alloc.construct(&*q, *(q + 1));
-				_alloc.destroy(&*(end()));
+				_alloc.destroy(&*pos);
+				std::copy(pos + 1, end(), pos);
 				--_size;
-				return (p);
+				return (pos);
 			}
 			else
-				throw (ArrayException("out_of_range"));
+				throw (ContainerException("out_of_range"));
 		};
 
-		iterator	erase(iterator first, iterator last)	// utiliser std::copy
+		iterator	erase(iterator first, iterator last)
 		{
 			if ((first >= begin() && first < end()) && (last >= begin() && last < end())
 				&& first <= last)
 			{
 				difference_type	dist = last - first;
-				iterator p = first;
-				iterator	q, r;
 
 				for (iterator it = first; it < last; ++it)
 					_alloc.destroy(&*it);
-				for (q = p, r = p + dist; r < end(); ++q, ++r)
-					_alloc.construct(&*q, *r);
-				size_type	size_diff = capacity() - size();
-				for (iterator r2 = r; r2 < r2 + size_diff; ++r2)
-					_alloc.destroy(&*r2);
+				std::copy(last, end(), first);
 				_size -= dist;
-				return (p);
+				return (first);
 			}
 			else
-				throw (ArrayException("out_of_range"));
+				throw (ContainerException("out_of_range"));
 		}
 
 		void	push_back(const value_type& value)
@@ -444,7 +433,7 @@ namespace ft
 				}
 			}
 			else
-				throw (ArrayException("out_of_range"));
+				throw (ContainerException("out_of_range"));
 		}
 
 		void	swap(vector& other)

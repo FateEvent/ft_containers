@@ -5,8 +5,9 @@
 # include <memory>
 # include <algorithm>
 # include "iterator.hpp"
-# include "ArrayException.hpp"
+# include "ContainerException.hpp"
 #include <map>
+#include <utility>
 
 namespace ft
 {
@@ -43,7 +44,7 @@ namespace ft
 		map();
 		map(map const& base);
 		~map();
-		map& operator =(map const& base);
+		map& operator=(map const& base);
 	};
 }
 
