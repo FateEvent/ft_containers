@@ -164,29 +164,6 @@ namespace ft
 	private:
 		iterator_type	*_ptr;
 	};
-
-	template <class T>
-	struct random_access_iterator
-	{
-		typedef T	iterator_type;
-
-		random_access_iterator(iterator_type *ptr) : _ptr(ptr) {}
-
-		iterator_type	&operator *()	{ return *_ptr; };
-		iterator_type	*operator ->()	{ return _ptr; }
-		iterator_type	&operator [](std::size_t const & index)	{ return _ptr[index]; }
-
-		random_access_iterator&	operator ++() { _ptr++; return *this; }
-		random_access_iterator	operator ++(int) { random_access_iterator tmp = *this; ++(*this); return tmp; }
-		random_access_iterator&	operator --() { _ptr--; return *this; }
-		random_access_iterator	operator --(int) { random_access_iterator tmp = *this; --(*this); return tmp; }
-
-		bool operator ==(const random_access_iterator& it) { return this->_ptr == it._ptr; }
-		bool operator !=(const random_access_iterator& it) { return this->_ptr != it._ptr; }
-
-	private:
-		iterator_type	*_ptr;
-	};
 }
 
 #endif

@@ -10,6 +10,7 @@
 //	#include <map.hpp>
 	#include <stack.hpp>
 	#include <vector.hpp>
+	#include "pair.hpp"
 #endif
 
 #include <stdlib.h>
@@ -169,6 +170,4 @@ int main(int argc, char** argv) {
 //	std::cout << "What the copy contains now:" << std::endl;
 //	for (ft::vector<char>::iterator it = vecCopy.begin(); it != vecCopy.begin() + vecCopy.size(); it++)
 //		std::cout << *it << std::endl;
-
-	return (0);
 }

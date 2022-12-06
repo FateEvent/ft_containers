@@ -442,14 +442,20 @@ namespace ft
 			other._v = _v;
 			_v = tmp;
 		}
-
-		bool		operator== (const vector &other) { return this->_v == other._v; }
-		bool		operator!= (const vector &other) { return this->_v != other._v; }
-		bool		operator< (const vector &other) { return this->_v < other._v; }
-		bool		operator<= (const vector &other) { return this->_v <= other._v; }
-		bool		operator> (const vector &other) { return this->_v > other._v; }
-		bool		operator>= (const vector &other) { return this->_v >= other._v; }
 	};
+
+	template<class T, class Alloc>
+	bool	operator== (const ft::vector<T, Alloc> &lhs, const ft::vector<T, Alloc> &rhs) { return lhs->_v == rhs->_v; }
+	template<class T, class Alloc>
+	bool	operator!= (const ft::vector<T, Alloc> &lhs, const ft::vector<T, Alloc> &rhs) { return lhs->_v != rhs->_v; }
+	template<class T, class Alloc>
+	bool	operator< (const ft::vector<T, Alloc> &lhs, const ft::vector<T, Alloc> &rhs) { return lhs->_v < rhs->_v; }
+	template<class T, class Alloc>
+	bool	operator<= (const ft::vector<T, Alloc> &lhs, const ft::vector<T, Alloc> &rhs) { return lhs->_v <= rhs->_v; }
+	template<class T, class Alloc>
+	bool	operator> (const ft::vector<T, Alloc> &lhs, const ft::vector<T, Alloc> &rhs) { return lhs->_v > rhs->_v; }
+	template<class T, class Alloc>
+	bool	operator>= (const ft::vector<T, Alloc> &lhs, const ft::vector<T, Alloc> &rhs) { return lhs->_v >= rhs->_v; }
 }
 
 #endif
