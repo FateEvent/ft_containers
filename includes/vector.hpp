@@ -20,16 +20,10 @@ namespace ft
 		typedef const value_type						&const_reference;
 		typedef typename Allocator::pointer				pointer;
 		typedef typename Allocator::const_pointer		const_pointer;		
-		typedef ft::move_iterator<value_type>			iterator;
-		typedef ft::const_iterator<value_type>			const_iterator;
-		typedef ft::reverse_iterator<value_type>		reverse_iterator;
-		typedef ft::const_reverse_iterator<value_type>	const_reverse_iterator;
-
-	private:
-		size_type	_size;
-		size_type	_capacity;
-		Allocator	_alloc;
-		pointer		_v;
+		typedef move_iterator<value_type>				iterator;
+		typedef const_iterator<value_type>				const_iterator;
+		typedef reverse_iterator<value_type>			reverse_iterator;
+		typedef const_reverse_iterator<value_type>		const_reverse_iterator;
 
 	public:
 		vector() : _size(1), _capacity(1), _v(nullptr) {
@@ -124,28 +118,28 @@ namespace ft
 
 		allocator_type	get_allocator() const { return _alloc; }
 
-		reference				at( size_type pos ) {
+		reference	at( size_type pos ) {
 			if (pos >= size())
 				throw (ContainerException("out_of_range"));
-			return (&_v[pos]);
+			return (_v[pos]);
 		};
 		
-		const_reference			at( size_type pos ) const {
+		const_reference	at( size_type pos ) const {
 			if (pos >= size())
 				throw (ContainerException("out_of_range"));
-			return (&_v[pos]);
+			return (_v[pos]);
 		};
 
-		reference		operator[]( size_type pos ) { return &_v[pos]; };
-		const_reference	operator[]( size_type pos ) const { return &_v[pos]; }
+		reference		operator[]( size_type pos ) { return _v[pos]; };
+		const_reference	operator[]( size_type pos ) const { return _v[pos]; }
 
-		reference front() { return (&begin()); }
+		reference front() { return (*begin()); }
 
-		const_reference front() const { return (&begin()); }
+		const_reference front() const { return (*begin()); }
 
-		reference back() { return (&end() - 1); };
+		reference back() { return *(end() - 1); };
 
-		const_reference back() const { return (&end() - 1); };
+		const_reference back() const { return *(end() - 1); };
 
 		value_type*	data() { return (size() ? _v : NULL); };
 
@@ -170,15 +164,15 @@ namespace ft
 
 		void	reserve(size_type n)
 		{
-			if (n > capacity() && n < max_size())
+			if (n > capacity() && n <= max_size())
 			{
 				pointer	temp = _alloc.allocate(n);
-				for (iterator p = temp, q = _v; p < temp + _capacity; ++p, ++q)
+				for (iterator p = temp, q = _v; p < temp + capacity(); ++p, ++q)
 				{
 					_alloc.construct(&*p, *q);
 					_alloc.destroy(&*q);
 				}
-				_alloc.deallocate(_v, _capacity);
+				_alloc.deallocate(_v, capacity());
 				_capacity = n;
 				_v = temp;
 			}
@@ -442,6 +436,12 @@ namespace ft
 			other._v = _v;
 			_v = tmp;
 		}
+
+	private:
+		size_type		_size;
+		size_type		_capacity;
+		allocator_type	_alloc;
+		pointer			_v;
 	};
 
 	template<class T, class Alloc>

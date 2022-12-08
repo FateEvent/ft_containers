@@ -55,7 +55,7 @@ int main(int argc, char** argv) {
 	}
 	const int seed = atoi(argv[1]);
 	srand(seed);
-
+/*
 	ft::vector<std::string> vector_str;
 	ft::vector<int> vector_int;
 	ft::stack<int> stack_int;
@@ -63,10 +63,8 @@ int main(int argc, char** argv) {
 	ft::stack<Buffer, std::deque<Buffer> > stack_deq_buffer;
 //	ft::map<int, int> map_int;
 
-/*	for (int i = 0; i < COUNT; i++)
-	{
+	for (int i = 0; i < COUNT; i++)
 		vector_buffer.push_back(Buffer());
-	}
 
 	for (int i = 0; i < COUNT; i++)
 	{
@@ -88,7 +86,7 @@ int main(int argc, char** argv) {
 	{
 		//NORMAL ! :P
 	}
-*/	
+*/
 /*	for (int i = 0; i < COUNT; ++i)
 		map_int.insert(ft::make_pair(rand(), rand()));
 
