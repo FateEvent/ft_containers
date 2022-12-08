@@ -4,9 +4,9 @@
 # include <iostream>
 # include <memory>
 # include <algorithm>
-# include "iterator.hpp"
-//# include "pair.hpp"
 # include "ContainerException.hpp"
+# include "iterator.hpp"
+# include "pair.hpp"
 #include <map>
 #include <utility>
 
