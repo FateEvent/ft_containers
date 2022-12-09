@@ -62,7 +62,7 @@ int main(int argc, char** argv) {
 	ft::vector<Buffer> vector_buffer;
 	ft::stack<Buffer, std::deque<Buffer> > stack_deq_buffer;
 //	ft::map<int, int> map_int;
-
+/*
 	for (int i = 0; i < COUNT; i++)
 		vector_buffer.push_back(Buffer());
 
@@ -86,7 +86,7 @@ int main(int argc, char** argv) {
 	{
 		//NORMAL ! :P
 	}
-
+*/
 /*	for (int i = 0; i < COUNT; ++i)
 		map_int.insert(ft::make_pair(rand(), rand()));
 
@@ -156,10 +156,11 @@ int main(int argc, char** argv) {
 
 //	vecCopy.insert(vecCopy.begin() + 2, 'x');
 //	std::cout << "return: " << *(vecCopy.erase(vecCopy.begin() + 1, vecCopy.begin() + 7)) << std::endl;
+	std::cout << "return: " << *(vecCopy.erase(vecCopy.begin() + 1)) << std::endl;
 //	vecCopy.resize(35);
-//	std::cout << "What the copy contains now:" << std::endl;
-//	for (ft::vector<char>::iterator it = vecCopy.begin(); it != vecCopy.begin() + vecCopy.size(); it++)
-//		std::cout << *it << std::endl;
+	std::cout << "What the copy contains now:" << std::endl;
+	for (ft::vector<char>::iterator it = vecCopy.begin(); it != vecCopy.begin() + vecCopy.size(); it++)
+		std::cout << *it << std::endl;
 
 //	vecCopy.swap(newVector);
 //	std::cout << "What the vector contains now:" << std::endl;

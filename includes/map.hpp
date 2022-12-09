@@ -12,7 +12,7 @@
 
 namespace ft
 {
-	template <class Key, class T, class Compare = std::less<Key>, class Allocator = std::allocator<std::pair<const Key, T> > > class map {
+	template <class Key, class T, class Compare = std::less<Key>, class Allocator = std::allocator<ft::pair<const Key, T> > > class map {
 
 	public:
 		typedef Key											key_type;
@@ -54,8 +54,17 @@ namespace ft
 			allocator_type	_node_alloc;
 			Node			*_left;
 			Node			*_right;
+			pointer			_n;
 
-			
+			Node() : _first(key_type()), _second(mapped_type()), _left(nullptr), _right(nullptr) {
+				_data = make_pair(_first, _second);
+				_n = _node_alloc.allocate(sizeof(Node));
+			}
+
+			explicit Node( const Allocator& alloc ) : _first(key_type()), _second(mapped_type()), _left(nullptr), _right(nullptr), _node_alloc(alloc) {
+				_data = make_pair(_first, _second);
+			}
+
 		};
 
 	public:

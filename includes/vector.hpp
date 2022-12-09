@@ -12,26 +12,30 @@ namespace ft
 	template <class T, class Allocator = std::allocator<T> > class vector {
 
 	public:
-		typedef T										value_type;
-		typedef std::size_t								size_type;
-		typedef Allocator								allocator_type;
-		typedef std::ptrdiff_t							difference_type;
-		typedef value_type								&reference;
-		typedef const value_type						&const_reference;
-		typedef typename Allocator::pointer				pointer;
-		typedef typename Allocator::const_pointer		const_pointer;		
-		typedef move_iterator<value_type>				iterator;
-		typedef const_iterator<value_type>				const_iterator;
-		typedef reverse_iterator<value_type>			reverse_iterator;
-		typedef const_reverse_iterator<value_type>		const_reverse_iterator;
+		typedef T									value_type;
+		typedef std::size_t							size_type;
+		typedef Allocator							allocator_type;
+		typedef std::ptrdiff_t						difference_type;
+		typedef value_type							&reference;
+		typedef const value_type					&const_reference;
+		typedef typename Allocator::pointer			pointer;
+		typedef typename Allocator::const_pointer	const_pointer;		
+		typedef move_iterator<value_type>			iterator;
+		typedef const_iterator<value_type>			const_iterator;
+		typedef reverse_iterator<value_type>		reverse_iterator;
+		typedef const_reverse_iterator<value_type>	const_reverse_iterator;
 
 	public:
 		vector() : _size(1), _capacity(1), _v(nullptr) {
 			_v = _alloc.allocate(_capacity);
+			for (iterator p = _v; p < _v + _capacity; ++p)
+				_alloc.construct(&*p, value_type());
 		}
 
 		explicit vector( const Allocator& alloc ) : _size(1), _capacity(1), _alloc(alloc), _v(nullptr) {
 			_v = _alloc.allocate(_capacity);
+			for (iterator p = _v; p < _v + _capacity; ++p)
+				_alloc.construct(&*p, value_type());
 		}
 
 		explicit vector( size_type count, const value_type& value = value_type(), const Allocator& alloc = Allocator() ) : _alloc(alloc), _v(nullptr)
@@ -458,7 +462,7 @@ namespace ft
 			pointer tmp = other._v;
 			other._v = _v;
 			_v = tmp;
-			std::size_t temp = other._size;
+			size_type temp = other._size;
 			other._size = _size;
 			_size = temp;
 			temp = other._capacity;
