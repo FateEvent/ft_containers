@@ -28,14 +28,12 @@ namespace ft
 	public:
 		vector() : _size(1), _capacity(1), _v(nullptr) {
 			_v = _alloc.allocate(_capacity);
-			for (iterator p = _v; p < _v + _capacity; ++p)
-				_alloc.construct(&*p, value_type());
+			_alloc.construct(&*_v, value_type());
 		}
 
 		explicit vector( const Allocator& alloc ) : _size(1), _capacity(1), _alloc(alloc), _v(nullptr) {
 			_v = _alloc.allocate(_capacity);
-			for (iterator p = _v; p < _v + _capacity; ++p)
-				_alloc.construct(&*p, value_type());
+			_alloc.construct(&*_v, value_type());
 		}
 
 		explicit vector( size_type count, const value_type& value = value_type(), const Allocator& alloc = Allocator() ) : _alloc(alloc), _v(nullptr)
