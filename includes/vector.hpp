@@ -121,13 +121,15 @@ namespace ft
 		reference	at( size_type pos ) {
 			if (pos >= size())
 				throw (ContainerException("out_of_range"));
-			return (_v[pos]);
+			else
+				return (_v[pos]);
 		};
 		
 		const_reference	at( size_type pos ) const {
 			if (pos >= size())
 				throw (ContainerException("out_of_range"));
-			return (_v[pos]);
+			else
+				return (_v[pos]);
 		};
 
 		reference		operator[]( size_type pos ) { return _v[pos]; };
@@ -164,7 +166,17 @@ namespace ft
 
 		void	reserve(size_type n)
 		{
-			if (n > capacity() && n <= max_size())
+			if (n > capacity() && n < capacity() * 2 && n <= max_size())
+			{
+				pointer	temp = _alloc.allocate(capacity() * 2);
+				iterator p = temp;
+
+				std::copy(begin(), end(), p);
+				_alloc.deallocate(_v, capacity());
+				_capacity *= 2;
+				_v = temp;
+			}
+			else if (n > capacity() * 2 && n <= max_size())
 			{
 				pointer	temp = _alloc.allocate(n);
 				for (iterator p = temp, q = _v; p < temp + capacity(); ++p, ++q)
@@ -176,6 +188,8 @@ namespace ft
 				_capacity = n;
 				_v = temp;
 			}
+			else if (n > max_size())
+				throw (ContainerException("out_of_range"));
 		}
 
 		size_type	capacity() { return _capacity; }
@@ -395,17 +409,26 @@ namespace ft
 		{
 			if (count <= max_size())
 			{
-				if (count > capacity())
+				if (count > size() && count < capacity() * 2)
 				{
-					iterator	p, q;
+					pointer	temp = _alloc.allocate(capacity() * 2);
+					iterator p = temp; 
 
-					pointer	temp = _alloc.allocate(count); 
-					for(p = temp, q = _v; q < end(); ++p, ++q)
-						_alloc.construct(&*p, *q);
-					for(iterator p2 = p, q2 = q; q2 < _v + count; ++p2, ++q2)
-						_alloc.construct(&*p2, val);
-					for(iterator r = _v; r < _v + size(); ++r)
-						_alloc.destroy(&*r);
+					std::copy(begin(), end(), p);
+					for(iterator q = p; q < temp + count; ++q)
+						_alloc.construct(&*q, val);
+					_v = temp;
+					_size = count;
+					_capacity *= 2;
+				}
+				else if (count > capacity())
+				{
+					pointer	temp = _alloc.allocate(count);
+					iterator p = temp;
+
+					std::copy(begin(), end(), p);
+					for(iterator q = p; q < temp + count; ++q)
+						_alloc.construct(&*q, val);
 					_alloc.deallocate(_v, capacity());
 					_v = temp;
 					_size = _capacity = count;
@@ -435,6 +458,12 @@ namespace ft
 			pointer tmp = other._v;
 			other._v = _v;
 			_v = tmp;
+			std::size_t temp = other._size;
+			other._size = _size;
+			_size = temp;
+			temp = other._capacity;
+			other._capacity = _capacity;
+			_capacity = other._capacity;
 		}
 
 	private:

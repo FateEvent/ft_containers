@@ -48,9 +48,14 @@ namespace ft
 
 		struct Node {
 		private:
-			value_type	data;
-			Node		*left;
-			Node		*right;
+			value_type		_data;
+			key_type		_first;
+			mapped_type		_second;
+			allocator_type	_node_alloc;
+			Node			*_left;
+			Node			*_right;
+
+			
 		};
 
 	public:
