@@ -81,87 +81,82 @@ namespace ft
 			};
 		};
 
-		class Tree {
-			Node	*_root;
-		public:
-			Tree() : _root(nullptr) {}
-			~Tree() { _root->suppress_node(); }
+	public:
+		map() : _root(nullptr) {
+			_alloc_node.allocate(1);
 
-			Node	&root() { return _root; }
-			void	change_root(Node *current) { _root = current; }
-			void	prefix_traversal(Node *current, char sep) {
-				if (current)
-				{
-					current->treat();
-					prefix_traversal(current->left, sep);
-					prefix_traversal(current->right, sep);
-				}
+		};
+		map(map const& base);
+		~map() { _root->suppress_node(); };
+		map&	operator= (map const& base);
+		Node	*root() { return _root; }
+		void	change_root(Node *current) { _root = current; }
+		void	prefix_traversal(Node *current, char sep) {
+			if (current)
+			{
+				current->treat(sep);
+				prefix_traversal(current->left, sep);
+				prefix_traversal(current->right, sep);
 			}
+		}
 
-			void	infix_traversal(Node *current, char sep) {
-				if (current)
-				{
-					infix_traversal(current->left, sep);
-					current->treat();
-					infix_traversal(current->right, sep);
-				}
+		void	infix_traversal(Node *current, char sep) {
+			if (current)
+			{
+				infix_traversal(current->left, sep);
+				current->treat(sep);
+				infix_traversal(current->right, sep);
 			}
+		}
 
-			void	suffix_traversal(Node *current, char sep) {
-				if (current)
-				{
-					suffix_traversal(current->left, sep);
-					suffix_traversal(current->right, sep);
-					current->treat();
-				}
+		void	suffix_traversal(Node *current, char sep) {
+			if (current)
+			{
+				suffix_traversal(current->left, sep);
+				suffix_traversal(current->right, sep);
+				current->treat(sep);
 			}
+		}
 
-			void	level_order_traversal(Node *current, char sep) {
-				deque<Node *>	deck;
+		void	level_order_traversal(Node *current, char sep) {
+			deque<Node *>	deck;
 
-				deck.push_back(current);
-				while (!deck.empty())
+			deck.push_back(current);
+			while (!deck.empty())
+			{
+				current = deck.front();
+				deck.pop_front();
+				current->treat(sep);
+				if (current->left())
+					deck.push_back(current->left());
+				if (current->right())
+					deck.push_back(current->right());
+			}
+		}
+
+		void	insert(Node *current, value_type &pair) {
+			Node *newNode = new Node(pair);
+
+			if (current)
+			{
+				if (_key_comp(pair.first, current->data().first))
 				{
-					current = deck.front();
-					deck.pop_front();
-					current->treat();
 					if (current->left())
-						deck.push_back(current->left());
-					if (current->right())
-						deck.push_back(current->right());
-				}
-			}
-
-			void	insert(Node *root, value_type &pair, key_compare) {
-				Node *newNode = new Node(pair);
-
-				if (root)
-				{
-					if (key_compare(pair, root->_data) < 0)
-					{
-						if (root->left)
-							insert(root->left, pair, key_compare());
-						else
-							root->left = newNode;
-					}
+						insert(current->left(), pair);
 					else
-					{
-						if (root->right)
-							insert(root->right, pair, key_compare());
-						else
-							root->right = newNode;
-					}
+						current->change_left(newNode);
 				}
 				else
-					root = newNode;
+				{
+					if (current->right())
+						insert(current->right(), pair);
+					else
+						current->change_right(newNode);
+				}
 			}
-		};
-
-	public:
-		map();
-		map(map const& base);
-		~map();
-		map&	operator= (map const& base);
+			else
+				current = newNode;
+		}
 
 //		pair<iterator,bool> insert (const value_type& val);
 //		iterator insert (iterator position, const value_type& val);
@@ -171,7 +166,7 @@ namespace ft
 		Node			*_root;
 		node_allocator	_alloc_node;
 		allocator_type	_alloc_pair;
-		key_compare		_comp;
+		key_compare		_key_comp;
 		size_type		_size;
 	};
 }

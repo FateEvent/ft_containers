@@ -161,7 +161,7 @@ namespace ft
 		
 		bool empty() const { return !size(); }
 
-		size_type	size() { return _size; }
+		size_type	size() const { return _size; }
 
 		size_type	max_size() { return std::min<size_type>(_alloc.max_size(),
 								std::numeric_limits<difference_type>::max()); }
