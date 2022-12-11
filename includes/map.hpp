@@ -22,13 +22,14 @@ namespace ft
 		typedef pair<const key_type, mapped_type>					value_type;
 		typedef Compare												key_compare;
 		typedef Allocator											allocator_type;
-		typedef typename Allocator:: template rebind<Node>::other	node_allocator;
 		typedef typename allocator_type::reference					reference;
 		typedef typename allocator_type::const_reference			const_reference;
 		typedef typename allocator_type::pointer					pointer;
 		typedef typename allocator_type::const_pointer				const_pointer;
 		typedef typename allocator_type::size_type					size_type;
 		typedef typename allocator_type::difference_type			difference_type;
+		typedef typename Allocator:: template rebind<Node>::other	node_allocator;
+		typedef typename node_allocator::pointer					node_pointer;
 
 //		typedef implementation-defined                   iterator;
 //		typedef implementation-defined                   const_iterator;
@@ -82,15 +83,14 @@ namespace ft
 		};
 
 	public:
-		map() : _root(nullptr) {
-			_alloc_node.allocate(1);
+		map() : _root(nullptr) { std::cout << "seggy" << std::cout; };
 
-		};
 		map(map const& base);
 		~map() { _root->suppress_node(); };
 		map&	operator= (map const& base);
 		Node	*root() { return _root; }
 		void	change_root(Node *current) { _root = current; }
+
 		void	prefix_traversal(Node *current, char sep) {
 			if (current)
 			{
@@ -157,7 +157,29 @@ namespace ft
 			else
 				current = newNode;
 		}
+/*
+		Node	*new_node(value_type content = value_type())
+		{
+			Node *ptr = _alloc_node.allocate(1);
+			_alloc_node.construct(ptr);
+			try
+			{
+				_alloc_pair.construct(&ptr->content, content);
+			}
+			catch (...)
+			{
+				_alloc_node.deallocate(ptr, 1);
+				throw;
+			}
+			return (ptr);
+		}
 
+		void	delete_node(Node *n)
+		{
+			_alloc_node.destroy(n);
+			_alloc_node.deallocate(n, 1);
+		}
+*/
 //		pair<iterator,bool> insert (const value_type& val);
 //		iterator insert (iterator position, const value_type& val);
 //		template <class InputIterator>  void insert (InputIterator first, InputIterator last);
@@ -168,6 +190,7 @@ namespace ft
 		allocator_type	_alloc_pair;
 		key_compare		_key_comp;
 		size_type		_size;
+		node_pointer	_ptr;
 	};
 }
 
