@@ -1,5 +1,5 @@
-#ifndef VECTOR_H
-# define VECTOR_H
+#ifndef DEQUE_H
+# define DEQUE_H
 
 # include <iostream>
 # include <memory>
@@ -9,7 +9,7 @@
 
 namespace ft
 {
-	template <class T, class Allocator = std::allocator<T> > class vector {
+	template <class T, class Allocator = std::allocator<T> > class deque {
 
 	public:
 		typedef T									value_type;
@@ -26,17 +26,17 @@ namespace ft
 		typedef const_reverse_iterator<value_type>	const_reverse_iterator;
 
 	public:
-		vector() : _size(1), _capacity(1), _v(nullptr) {
+		deque() : _size(1), _capacity(1), _v(nullptr) {
 			_v = _alloc.allocate(_capacity);
 			_alloc.construct(&*_v, value_type());
 		}
 
-		explicit vector( const Allocator& alloc ) : _size(1), _capacity(1), _alloc(alloc), _v(nullptr) {
+		explicit deque( const Allocator& alloc ) : _size(1), _capacity(1), _alloc(alloc), _v(nullptr) {
 			_v = _alloc.allocate(_capacity);
 			_alloc.construct(&*_v, value_type());
 		}
 
-		explicit vector( size_type count, const value_type& value = value_type(), const Allocator& alloc = Allocator() ) : _alloc(alloc), _v(nullptr)
+		explicit deque( size_type count, const value_type& value = value_type(), const Allocator& alloc = Allocator() ) : _alloc(alloc), _v(nullptr)
 		{
 			_size = _capacity = count;
 			_v = _alloc.allocate(_capacity);
@@ -45,7 +45,7 @@ namespace ft
 		}
 
 		template <class InputIt>
-		vector( InputIt first, InputIt last, const Allocator& alloc = Allocator() ) : _alloc(alloc), _v(nullptr)
+		deque( InputIt first, InputIt last, const Allocator& alloc = Allocator() ) : _alloc(alloc), _v(nullptr)
 		{
 			ptrdiff_t	dist = last - first;
 			_size = _capacity = dist;
@@ -54,7 +54,7 @@ namespace ft
 				_alloc.construct(&*p, *first);
 		};
 
-		vector( const vector& other ) : _size(other._size), _capacity(other._capacity), _alloc(other._alloc)
+		deque( const deque& other ) : _size(other._size), _capacity(other._capacity), _alloc(other._alloc)
 		{
 			const_iterator	first = other.begin();
 			const_iterator	last = other.end();
@@ -65,14 +65,14 @@ namespace ft
 				_alloc.construct(&*p, *first);
 		};
 
-		~vector()
+		~deque()
 		{
 			for (iterator p = _v; p < _v + size(); ++p)
 				_alloc.destroy(&*p);
 			_alloc.deallocate(_v, capacity());
 		}
 
-		vector&	operator= ( const vector& rhs )
+		deque&	operator= ( const deque& rhs )
 		{
 			if (this == rhs)
 				return (*this);
@@ -201,8 +201,6 @@ namespace ft
 				_alloc.destroy(&*p);
 			_size = 0;
 		}
-
-		// https://stackoverflow.com/questions/40767476/how-does-rhs-work
 
 		iterator	insert(iterator pos, const value_type& value)
 		{
@@ -407,6 +405,32 @@ namespace ft
 			}
 		}
 
+		void push_front( const value_type& value )
+		{
+			insert(begin() + 1, value);
+		}
+		
+		void pop_front()
+		{
+			if (size())
+			{
+				pointer	first = _v;
+
+				_alloc.destroy(&*first);
+				if (size() - 1 == capacity() / 2)
+				{
+					pointer	temp = _alloc.allocate(capacity() / 2);
+					std::copy(begin() + 1, end(), temp);
+					_alloc.deallocate(_v, capacity());
+					_capacity /= 2;
+					_v = temp;
+				}
+				else
+					std::copy(begin() + 1, end(), _v);
+				--_size;
+			}
+		}
+
 		void	resize(size_type count, value_type val = value_type())
 		{
 			if (count <= max_size())
@@ -452,7 +476,7 @@ namespace ft
 				throw (ContainerException("out_of_range"));
 		}
 
-		void	swap(vector& other)
+		void	swap(deque& other)
 		{
 			pointer tmp = other._v;
 			other._v = _v;
@@ -473,17 +497,17 @@ namespace ft
 	};
 
 	template<class T, class Alloc>
-	bool	operator== (const ft::vector<T, Alloc> &lhs, const ft::vector<T, Alloc> &rhs) { return lhs->_v == rhs->_v; }
+	bool	operator== (const ft::deque<T, Alloc> &lhs, const ft::deque<T, Alloc> &rhs) { return lhs->_v == rhs->_v; }
 	template<class T, class Alloc>
-	bool	operator!= (const ft::vector<T, Alloc> &lhs, const ft::vector<T, Alloc> &rhs) { return lhs->_v != rhs->_v; }
+	bool	operator!= (const ft::deque<T, Alloc> &lhs, const ft::deque<T, Alloc> &rhs) { return lhs->_v != rhs->_v; }
 	template<class T, class Alloc>
-	bool	operator< (const ft::vector<T, Alloc> &lhs, const ft::vector<T, Alloc> &rhs) { return lhs->_v < rhs->_v; }
+	bool	operator< (const ft::deque<T, Alloc> &lhs, const ft::deque<T, Alloc> &rhs) { return lhs->_v < rhs->_v; }
 	template<class T, class Alloc>
-	bool	operator<= (const ft::vector<T, Alloc> &lhs, const ft::vector<T, Alloc> &rhs) { return lhs->_v <= rhs->_v; }
+	bool	operator<= (const ft::deque<T, Alloc> &lhs, const ft::deque<T, Alloc> &rhs) { return lhs->_v <= rhs->_v; }
 	template<class T, class Alloc>
-	bool	operator> (const ft::vector<T, Alloc> &lhs, const ft::vector<T, Alloc> &rhs) { return lhs->_v > rhs->_v; }
+	bool	operator> (const ft::deque<T, Alloc> &lhs, const ft::deque<T, Alloc> &rhs) { return lhs->_v > rhs->_v; }
 	template<class T, class Alloc>
-	bool	operator>= (const ft::vector<T, Alloc> &lhs, const ft::vector<T, Alloc> &rhs) { return lhs->_v >= rhs->_v; }
+	bool	operator>= (const ft::deque<T, Alloc> &lhs, const ft::deque<T, Alloc> &rhs) { return lhs->_v >= rhs->_v; }
 }
 
 #endif

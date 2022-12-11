@@ -11,6 +11,7 @@
 	#include <stack.hpp>
 	#include <vector.hpp>
 	#include "pair.hpp"
+	#include "deque.hpp"
 #endif
 
 #include <stdlib.h>
@@ -112,6 +113,7 @@ int main(int argc, char** argv) {
 	MutantStack<char>::iterator itLetter2 = iterable_stack.end();
 
 	ft::vector<char>	newVector(itLetter, itLetter2);
+	ft::deque<char>		newDeck(itLetter, itLetter2);
 //	for (ft::vector<char>::iterator it = newVector.begin() + 5; it != newVector.end(); it++)
 //		std::cout << "iterator: " << *it << std::endl;
 //	newVector.push_back('j');
@@ -156,11 +158,11 @@ int main(int argc, char** argv) {
 
 //	vecCopy.insert(vecCopy.begin() + 2, 'x');
 //	std::cout << "return: " << *(vecCopy.erase(vecCopy.begin() + 1, vecCopy.begin() + 7)) << std::endl;
-	std::cout << "return: " << *(vecCopy.erase(vecCopy.begin() + 1)) << std::endl;
+//	std::cout << "return: " << *(vecCopy.erase(vecCopy.begin() + 1)) << std::endl;
 //	vecCopy.resize(35);
-	std::cout << "What the copy contains now:" << std::endl;
-	for (ft::vector<char>::iterator it = vecCopy.begin(); it != vecCopy.begin() + vecCopy.size(); it++)
-		std::cout << *it << std::endl;
+//	std::cout << "What the copy contains now:" << std::endl;
+//	for (ft::vector<char>::iterator it = vecCopy.begin(); it != vecCopy.begin() + vecCopy.size(); it++)
+//		std::cout << *it << std::endl;
 
 //	vecCopy.swap(newVector);
 //	std::cout << "What the vector contains now:" << std::endl;
@@ -169,4 +171,16 @@ int main(int argc, char** argv) {
 //	std::cout << "What the copy contains now:" << std::endl;
 //	for (ft::vector<char>::iterator it = vecCopy.begin(); it != vecCopy.begin() + vecCopy.size(); it++)
 //		std::cout << *it << std::endl;
+
+	std::cerr << "size and capacity: " << newDeck.size() << ", " << newDeck.capacity() << std::endl;
+	newDeck.resize(53);
+	std::cout << "What the deck contains:" << std::endl;
+	for (ft::deque<char>::iterator it = newDeck.begin(); it != newDeck.end(); it++)
+		std::cout << *it << std::endl;
+	newDeck.pop_front();
+	newDeck.push_front('x');
+	std::cerr << "size and capacity: " << newDeck.size() << ", " << newDeck.capacity() << std::endl;
+	std::cout << "What the deck contains now:" << std::endl;
+	for (ft::deque<char>::iterator it = newDeck.begin(); it != newDeck.end(); it++)
+		std::cout << *it << std::endl;
 }
