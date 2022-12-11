@@ -7,11 +7,9 @@
 	#include <vector>
 	namespace ft = std;
 #else
-//	#include <map.hpp>
+	#include <map.hpp>
 	#include <stack.hpp>
 	#include <vector.hpp>
-	#include "pair.hpp"
-	#include "deque.hpp"
 #endif
 
 #include <stdlib.h>

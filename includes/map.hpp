@@ -7,6 +7,7 @@
 # include "ContainerException.hpp"
 # include "iterator.hpp"
 # include "pair.hpp"
+# include "stack.hpp"
 # include "deque.hpp"
 #include <map>
 #include <utility>
@@ -115,8 +116,45 @@ namespace ft
 				}
 			}
 
-			void	
+			void	level_order_traversal(Node *current, char sep) {
+				deque<Node *>	deck;
 
+				deck.push_back(current);
+				while (!deck.empty())
+				{
+					current = deck.front();
+					deck.pop_front();
+					current->treat();
+					if (current->left())
+						deck.push_back(current->left());
+					if (current->right())
+						deck.push_back(current->right());
+				}
+			}
+
+			void	insert(Node *root, value_type &pair, key_compare) {
+				Node *newNode = new Node(pair);
+
+				if (root)
+				{
+					if (key_compare(pair, root->_data) < 0)
+					{
+						if (root->left)
+							insert(root->left, pair, key_compare());
+						else
+							root->left = newNode;
+					}
+					else
+					{
+						if (root->right)
+							insert(root->right, pair, key_compare());
+						else
+							root->right = newNode;
+					}
+				}
+				else
+					root = newNode;
+			}
 		};
 
 	public:
@@ -129,56 +167,12 @@ namespace ft
 //		iterator insert (iterator position, const value_type& val);
 //		template <class InputIterator>  void insert (InputIterator first, InputIterator last);
 
-		Node	*btree_create_node(value_type data)
-		{
-			Node	*newNode;
-
-			newNode = _alloc_node(1);
-			if (newNode)
-			{
-				newNode->_data = data;
-				newNode->_left = NULL;
-				newNode->_right = NULL;
-				newNode->_balance = 0;
-			}
-			return (newNode);
-		}
-
-		void	btree_insert_data(Node **root, void *item, int (*cmpf)
-			(void *, void *))
-		{
-			Node	*newNode;
-
-			newNode = btree_create_node(item);
-			if (root)
-			{
-				if (*root)
-				{
-					if (cmpf(item, (*root)->item) < 0)
-					{
-						if ((*root)->left)
-							btree_insert_data(&(*root)->left, item, cmpf);
-						else
-							(*root)->left = newNode;
-					}
-					else
-					{
-						if ((*root)->right)
-							btree_insert_data(&(*root)->right, item, cmpf);
-						else
-							(*root)->right = newNode;
-					}
-				}
-				else
-					*root = newNode;
-			}
-		}
-
 	private :
 		Node			*_root;
 		node_allocator	_alloc_node;
 		allocator_type	_alloc_pair;
 		key_compare		_comp;
+		size_type		_size;
 	};
 }
 
