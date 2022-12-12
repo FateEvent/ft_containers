@@ -85,9 +85,13 @@ namespace ft
 		};
 
 	public:
-		map() : _root(NULL) { std::cout << "seggy" << std::cout; };
+		explicit map (const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type())
+			: _root(NULL), _alloc_node(node_allocator()), _alloc_pair(alloc), _key_comp(comp), _size(1) { std::cout << "seggy" << std::endl; }
 
-		map(map const& base);
+		template <class InputIterator>
+		map (InputIterator first, InputIterator last,       const key_compare& comp = key_compare(),       const allocator_type& alloc = allocator_type());
+		map (const map& x);
+
 		~map() { _root->suppress_node(); };
 		map&	operator= (map const& base);
 		Node	*root() { return _root; }

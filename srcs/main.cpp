@@ -22,7 +22,6 @@ struct Buffer
 	char buff[BUFFER_SIZE];
 };
 
-
 #define COUNT (MAX_RAM / (int)sizeof(Buffer))
 
 template<typename T>
@@ -183,6 +182,7 @@ int main(int argc, char** argv) {
 //		std::cout << *it << std::endl;
 
 	ft::map<const char, int> map;
+	std::cout << "shaggy" << std::endl;
 //	std::cout << map.root()->data().first;
 //	ft::pair<const char, int> a = ft::make_pair('a', 1);
 //	ft::pair<const char, int> b = ft::make_pair('b', 5);
