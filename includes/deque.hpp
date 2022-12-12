@@ -23,9 +23,9 @@ namespace ft
 		typedef typename Allocator::pointer			pointer;
 		typedef typename Allocator::const_pointer	const_pointer;		
 		typedef move_iterator<value_type>			iterator;
-		typedef const move_iterator<value_type>		const_iterator;
-		typedef reverse_iterator<value_type>		reverse_iterator;
-		typedef const reverse_iterator<value_type>	const_reverse_iterator;
+		typedef const_iter<value_type>				const_iterator;
+		typedef rev_iter<value_type>				reverse_iterator;
+		typedef const_rev_iter<value_type>			const_reverse_iterator;
 
 	public:
 		deque() : _size(1), _capacity(1), _v(NULL) {
