@@ -4,6 +4,8 @@
 # include <iostream>
 # include <memory>
 # include <algorithm>
+# include <cstddef>
+# include <limits>
 # include "ContainerException.hpp"
 # include "iterator.hpp"
 # include "pair.hpp"
@@ -59,8 +61,8 @@ namespace ft
 			int			_balance;
 
 		public:
-			Node() : _data(value_type()), _left(nullptr), _right(nullptr), _balance() {}
-			Node(value_type pair) : _data(pair), _left(nullptr), _right(nullptr), _balance() {}
+			Node() : _data(value_type()), _left(NULL), _right(NULL), _balance() {}
+			Node(value_type pair) : _data(pair), _left(NULL), _right(NULL), _balance() {}
 			~Node() {}
 
 			Node		&operator= (Node &other) { _left = other._left; _right = other._right; _balance = other._balance; return (*this); }
@@ -83,7 +85,7 @@ namespace ft
 		};
 
 	public:
-		map() : _root(nullptr) { std::cout << "seggy" << std::cout; };
+		map() : _root(NULL) { std::cout << "seggy" << std::cout; };
 
 		map(map const& base);
 		~map() { _root->suppress_node(); };

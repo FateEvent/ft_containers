@@ -4,6 +4,8 @@
 # include <iostream>
 # include <memory>
 # include <algorithm>
+# include <cstddef>
+# include <limits>
 # include "ContainerException.hpp"
 # include "iterator.hpp"
 # include "pair.hpp"
@@ -57,7 +59,7 @@ namespace ft
 			std::string	_color;
 
 		public:
-			Node() : _data(value_type()), _left(nullptr), _right(nullptr), _parent(nullptr), _color("black") {}
+			Node() : _data(value_type()), _left(NULL), _right(NULL), _parent(NULL), _color("black") {}
 			~Node() {}
 			Node&	operator= (Node& other) { _left = other._left; _right = other._right; _parent = other._parent; _color = other._color; return (*this); }
 		};

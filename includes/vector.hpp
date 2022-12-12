@@ -4,6 +4,7 @@
 # include <iostream>
 # include <memory>
 # include <algorithm>
+# include <cstddef>
 # include "ContainerException.hpp"
 # include "iterator.hpp"
 
@@ -26,17 +27,17 @@ namespace ft
 		typedef const_reverse_iterator<value_type>	const_reverse_iterator;
 
 	public:
-		vector() : _size(1), _capacity(1), _v(nullptr) {
+		vector() : _size(1), _capacity(1), _v(NULL) {
 			_v = _alloc.allocate(_capacity);
 			_alloc.construct(&*_v, value_type());
 		}
 
-		explicit vector( const Allocator& alloc ) : _size(1), _capacity(1), _alloc(alloc), _v(nullptr) {
+		explicit vector( const Allocator& alloc ) : _size(1), _capacity(1), _alloc(alloc), _v(NULL) {
 			_v = _alloc.allocate(_capacity);
 			_alloc.construct(&*_v, value_type());
 		}
 
-		explicit vector( size_type count, const value_type& value = value_type(), const Allocator& alloc = Allocator() ) : _alloc(alloc), _v(nullptr)
+		explicit vector( size_type count, const value_type& value = value_type(), const Allocator& alloc = Allocator() ) : _alloc(alloc), _v(NULL)
 		{
 			_size = _capacity = count;
 			_v = _alloc.allocate(_capacity);
@@ -45,7 +46,7 @@ namespace ft
 		}
 
 		template <class InputIt>
-		vector( InputIt first, InputIt last, const Allocator& alloc = Allocator() ) : _alloc(alloc), _v(nullptr)
+		vector( InputIt first, InputIt last, const Allocator& alloc = Allocator() ) : _alloc(alloc), _v(NULL)
 		{
 			ptrdiff_t	dist = last - first;
 			_size = _capacity = dist;
