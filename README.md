@@ -1,5 +1,8 @@
 # ft_containers
 
+As concerning the iterator_traits template:
+* <https://www.lix.polytechnique.fr/~liberti/public/computing/prog/libstdc++/iterator_traits.html>.
+
 * <https://stdcxx.apache.org/doc/stdlibug/16-3.html>
 
 About the trees, I followed the following tutorial video:
