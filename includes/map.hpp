@@ -10,7 +10,7 @@
 # include "iterator.hpp"
 # include "pair.hpp"
 # include "stack.hpp"
-# include "deque.hpp"
+# include "vector.hpp"
 #include <map>
 #include <utility>
 
@@ -71,22 +71,25 @@ namespace ft
 			void		change_data(value_type &data) { _data = data; }
 			Node		*left() { return _left; }
 			Node		*right() { return _right; }
-			value_type	&data() { return _data; }
+			value_type	data() { return _data; }
 			void		treat(char sep) { std::cout << data().first << sep << data().second << sep << std::endl; }
 
 			void		suppress_node()
 			{
+				std::cout << "seggy" << std::endl;
 				if (left())
 					left()->suppress_node();
+				std::cout << "seggy" << std::endl;
 				if (right())
 					right()->suppress_node();
+				std::cout << "seggy" << std::endl;
 				delete (this);
 			};
 		};
 
 	public:
 		explicit map (const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type())
-			: _root(NULL), _alloc_node(node_allocator()), _alloc_pair(alloc), _key_comp(comp), _size(1) { std::cout << "seggy" << std::endl; }
+			: _root(NULL), _alloc_node(node_allocator()), _alloc_pair(alloc), _key_comp(comp), _size(1) {}
 
 		template <class InputIterator>
 		map (InputIterator first, InputIterator last,       const key_compare& comp = key_compare(),       const allocator_type& alloc = allocator_type());
@@ -125,7 +128,7 @@ namespace ft
 		}
 
 		void	level_order_traversal(Node *current, char sep) {
-			deque<Node *>	deck;
+			vector<Node *>	deck;
 
 			deck.push_back(current);
 			while (!deck.empty())

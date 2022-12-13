@@ -408,6 +408,34 @@ namespace ft
 			}
 		}
 
+		void push_front( const value_type& value )
+		{
+			insert(begin() + 1, value);
+		}
+		
+		void pop_front()
+		{
+			if (size())
+			{
+				pointer	first = _v;
+
+				_alloc.destroy(&*first);
+				if (size() - 1 == capacity() / 2)
+				{
+					pointer	temp = _alloc.allocate(capacity() / 2);
+					iterator p = temp;
+
+					std::copy(begin() + 1, end(), p);
+					_alloc.deallocate(_v, capacity());
+					_capacity /= 2;
+					_v = temp;
+				}
+				else
+					std::copy(begin() + 1, end(), _v);
+				--_size;
+			}
+		}
+
 		void	resize(size_type count, value_type val = value_type())
 		{
 			if (count <= max_size())

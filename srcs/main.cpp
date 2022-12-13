@@ -1,6 +1,6 @@
 #include <iostream>
 #include <string>
-#include <deque>
+#include <vector>
 #if 0 //CREATE A REAL STL EXAMPLE
 	#include <map>
 	#include <stack>
@@ -10,6 +10,7 @@
 	#include <map.hpp>
 	#include <stack.hpp>
 	#include <vector.hpp>
+	#include <_tree.hpp>
 #endif
 
 #include <stdlib.h>
@@ -58,7 +59,7 @@ int main(int argc, char** argv) {
 	ft::vector<int> vector_int;
 	ft::stack<int> stack_int;
 	ft::vector<Buffer> vector_buffer;
-	ft::stack<Buffer, std::deque<Buffer> > stack_deq_buffer;
+	ft::stack<Buffer, std::vector<Buffer> > stack_deq_buffer;
 //	ft::map<int, int> map_int;
 /*
 	for (int i = 0; i < COUNT; i++)
@@ -110,7 +111,7 @@ int main(int argc, char** argv) {
 	MutantStack<char>::iterator itLetter2 = iterable_stack.end();
 
 	ft::vector<char>	newVector(itLetter, itLetter2);
-	ft::deque<char>		newDeck(itLetter, itLetter2);
+	ft::vector<char>		newDeck(itLetter, itLetter2);
 //	for (ft::vector<char>::iterator it = newVector.begin() + 5; it != newVector.end(); it++)
 //		std::cout << "iterator: " << *it << std::endl;
 //	newVector.push_back('j');
@@ -172,34 +173,34 @@ int main(int argc, char** argv) {
 //	std::cerr << "size and capacity: " << newDeck.size() << ", " << newDeck.capacity() << std::endl;
 //	newDeck.resize(53);
 //	std::cout << "What the deck contains:" << std::endl;
-//	for (ft::deque<char>::iterator it = newDeck.begin(); it != newDeck.end(); it++)
+//	for (ft::vector<char>::iterator it = newDeck.begin(); it != newDeck.end(); it++)
 //		std::cout << *it << std::endl;
 //	newDeck.pop_front();
 //	newDeck.push_front('x');
 //	std::cerr << "size and capacity: " << newDeck.size() << ", " << newDeck.capacity() << std::endl;
 //	std::cout << "What the deck contains now:" << std::endl;
-//	for (ft::deque<char>::iterator it = newDeck.begin(); it != newDeck.end(); it++)
+//	for (ft::vector<char>::iterator it = newDeck.begin(); it != newDeck.end(); it++)
 //		std::cout << *it << std::endl;
 
-	ft::map<const char, int> map;
+//	ft::map<const char, int> map;
+	_tree map;
 	std::cout << "shaggy" << std::endl;
-//	std::cout << map.root()->data().first;
-//	ft::pair<const char, int> a = ft::make_pair('a', 1);
-//	ft::pair<const char, int> b = ft::make_pair('b', 5);
-//	ft::pair<const char, int> c = ft::make_pair('c', 3);
-//	ft::pair<const char, int> d = ft::make_pair('d', 15);
-//	ft::pair<const char, int> f = ft::make_pair('f', 6);
-//	ft::pair<const char, int> g = ft::make_pair('g', 0);
-//	ft::pair<const char, int> l = ft::make_pair('l', -1);
+	std::cout << map.root()->data().first;
+	ft::pair<const char, int> a = ft::make_pair('a', 1);
+	ft::pair<const char, int> b = ft::make_pair('b', 5);
+	ft::pair<const char, int> c = ft::make_pair('c', 3);
+	ft::pair<const char, int> d = ft::make_pair('d', 15);
+	ft::pair<const char, int> f = ft::make_pair('f', 6);
+	ft::pair<const char, int> g = ft::make_pair('g', 0);
+	ft::pair<const char, int> l = ft::make_pair('l', -1);
 
-//	map.level_order_traversal(map.root(), ',');
-//	map.insert(map.root(), a);
-//	map.insert(map.root(), b);
-//	map.insert(map.root(), c);
-//	map.insert(map.root(), d);
-//	map.insert(map.root(), f);
-//	map.insert(map.root(), g);
-//	map.insert(map.root(), l);
+	map.insert(map.root(), a);
+	map.insert(map.root(), b);
+	map.insert(map.root(), c);
+	map.insert(map.root(), d);
+	map.insert(map.root(), f);
+	map.insert(map.root(), g);
+	map.insert(map.root(), l);
 
-//	map.level_order_traversal(map.root(), ',');
+	map.level_order_traversal(map.root(), ',');
 }

@@ -43,7 +43,7 @@ $(OBJ_PATH)%.o: $(SRC_PATH)%.cpp
 	${CC} ${FLAGS} ${LIBLINKS} -c $< -o $@
 
 clean:
-	@$(RM) -r $(OBJS)
+	@$(RM) -rf $(OBJ_PATH)
 
 fclean: clean
 	@$(RM) $(NAME)
