@@ -10,7 +10,6 @@
 	#include <map.hpp>
 	#include <stack.hpp>
 	#include <vector.hpp>
-	#include <_tree.hpp>
 #endif
 
 #include <stdlib.h>
@@ -182,8 +181,7 @@ int main(int argc, char** argv) {
 //	for (ft::vector<char>::iterator it = newDeck.begin(); it != newDeck.end(); it++)
 //		std::cout << *it << std::endl;
 
-//	ft::map<const char, int> map;
-	_tree map;
+	ft::map<const char, int> map;
 	std::cout << "shaggy" << std::endl;
 	std::cout << map.root()->data().first;
 	ft::pair<const char, int> a = ft::make_pair('a', 1);
