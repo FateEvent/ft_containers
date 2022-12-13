@@ -1,114 +1,73 @@
-template<class T>
-struct _node {
-private:
-	T				_data;
-	struct _node	*_left;
-	struct _node	*_right;
-	int				_balance;
+#include <bits/stdc++.h>
+using namespace std;
 
+class node {
 public:
-	_node(T c) : _data(c), _left(NULL), _right(NULL), _balance() {}
-	~_node() {}
-
-	_node	&operator= (_node &other) { _left = other._left; _right = other._right; _balance = other._balance; return (*this); }
-	void	change_left(_node *left) { _left = left; }
-	void	change_right(_node *right) { _right = right; }
-	void	change_data(T &data) { _data = data; }
-	_node	*left() { return _left; }
-	_node	*right() { return _right; }
-	T    data() { return _data; }
-	void	treat(char sep) { std::cout << data().first << sep << data().second << sep << std::endl; }
-
-	void	suppress_node()
-	{
-		std::cout << "seggy" << std::endl;
-		if (left())
-			left()->suppress_node();
-		std::cout << "seggy" << std::endl;
-		if (right())
-			right()->suppress_node();
-		std::cout << "seggy" << std::endl;
-		delete (this);
-	};
+	int data;
+	node *left, *right;
 };
 
-class _tree {
-private:
-	Node	*_root;
+void printCurrentLevel(node* root, int level);
+int height(node* node);
+node* newNode(int data);
 
-public:
-	_tree() { _root = NULL; }
-	~_tree() { _root->suppress_node(); }
-	_tree&	operator= (_tree const& base);
-	Node	*root() { return _root; }
-	void	change_root(Node *current) { _root = current; }
+void printLevelOrder(node* root)
+{
+	int h = height(root);
+	int i;
+	for (i = 1; i <= h; i++)
+		printCurrentLevel(root, i);
+}
 
-	void	prefix_traversal(Node *current, char sep) {
-		if (current)
-		{
-			current->treat(sep);
-			prefix_traversal(current->left(), sep);
-			prefix_traversal(current->right(), sep);
+void printCurrentLevel(node* root, int level)
+{
+	if (root == NULL)
+		return;
+	if (level == 1)
+		cout << root->data << " ";
+	else if (level > 1) {
+		printCurrentLevel(root->left, level - 1);
+		printCurrentLevel(root->right, level - 1);
+	}
+}
+
+int height(node* node)
+{
+	if (node == NULL)
+		return 0;
+	else {
+		int lheight = height(node->left);
+		int rheight = height(node->right);
+
+		if (lheight > rheight) {
+			return (lheight + 1);
+		}
+		else {
+			return (rheight + 1);
 		}
 	}
+}
 
-	void	infix_traversal(Node *current, char sep) {
-		if (current)
-		{
-			std::cout << '(' << std::endl;
-			infix_traversal(current->left(), sep);
-			current->treat(sep);
-			infix_traversal(current->right(), sep);
-			std::cout << ')' << std::endl;
-		}
-	}
+node* newNode(int data)
+{
+	node* Node = new node();
+	Node->data = data;
+	Node->left = NULL;
+	Node->right = NULL;
 
-	void	suffix_traversal(Node *current, char sep) {
-		if (current)
-		{
-			suffix_traversal(current->left(), sep);
-			suffix_traversal(current->right(), sep);
-			current->treat(sep);
-		}
-	}
+	return (Node);
+}
 
-	void	level_order_traversal(Node *current, char sep) {
-		std::deque<Node *>	deck;
+int main()
+{
+	node* root = newNode(1);
+	root->left = newNode(2);
+	root->right = newNode(3);
+	root->left->left = newNode(4);
+	root->left->right = newNode(5);
 
-		deck.push_back(current);
-		while (!deck.empty())
-		{
-			current = deck.front();
-			deck.pop_front();
-			current->treat(sep);
-			if (current->left())
-				deck.push_back(current->left());
-			if (current->right())
-				deck.push_back(current->right());
-		}
-	}
+	cout << "Level Order traversal of binary tree is \n";
+	printLevelOrder(root);
 
-	void	insert(Node *current, T data) {
-		Node *newNode = new Node(pair);
-
-		if (current)
-		{
-			if (_key_comp(pair.first, current->data().first))
-			{
-				if (current->left())
-					insert(current->left(), pair);
-				else
-					current->change_left(newNode);
-			}
-			else
-			{
-				if (current->right())
-					insert(current->right(), pair);
-				else
-					current->change_right(newNode);
-			}
-		}
-		else
-			current = newNode;
-	}
+	return 0;
 }

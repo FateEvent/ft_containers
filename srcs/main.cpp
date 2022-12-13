@@ -181,9 +181,6 @@ int main(int argc, char** argv) {
 //	for (ft::vector<char>::iterator it = newDeck.begin(); it != newDeck.end(); it++)
 //		std::cout << *it << std::endl;
 
-	ft::map<const char, int> map;
-	std::cout << "shaggy" << std::endl;
-	std::cout << map.root()->data().first;
 	ft::pair<const char, int> a = ft::make_pair('a', 1);
 	ft::pair<const char, int> b = ft::make_pair('b', 5);
 	ft::pair<const char, int> c = ft::make_pair('c', 3);
@@ -191,8 +188,11 @@ int main(int argc, char** argv) {
 	ft::pair<const char, int> f = ft::make_pair('f', 6);
 	ft::pair<const char, int> g = ft::make_pair('g', 0);
 	ft::pair<const char, int> l = ft::make_pair('l', -1);
+	ft::map<const char, int> map;
+	std::cout << "shaggy" << std::endl;
 
 	map.insert(map.root(), a);
+	std::cout << map.root()->data().second << std::endl;
 	map.insert(map.root(), b);
 	map.insert(map.root(), c);
 	map.insert(map.root(), d);

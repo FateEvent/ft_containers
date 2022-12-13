@@ -9,8 +9,6 @@
 # include "ContainerException.hpp"
 # include "iterator.hpp"
 # include "pair.hpp"
-# include "stack.hpp"
-# include "vector.hpp"
 #include <map>
 #include <utility>
 
@@ -104,47 +102,69 @@ namespace ft
 			if (current)
 			{
 				current->treat(sep);
-				prefix_traversal(current->left, sep);
-				prefix_traversal(current->right, sep);
+				prefix_traversal(current->left(), sep);
+				prefix_traversal(current->right(), sep);
 			}
 		}
 
 		void	infix_traversal(Node *current, char sep) {
 			if (current)
 			{
-				infix_traversal(current->left, sep);
+				infix_traversal(current->left(), sep);
 				current->treat(sep);
-				infix_traversal(current->right, sep);
+				infix_traversal(current->right(), sep);
 			}
 		}
 
 		void	suffix_traversal(Node *current, char sep) {
 			if (current)
 			{
-				suffix_traversal(current->left, sep);
-				suffix_traversal(current->right, sep);
+				suffix_traversal(current->left(), sep);
+				suffix_traversal(current->right(), sep);
 				current->treat(sep);
 			}
 		}
 
-		void	level_order_traversal(Node *current, char sep) {
-			vector<Node *>	deck;
-
-			deck.push_back(current);
-			while (!deck.empty())
-			{
-				current = deck.front();
-				deck.pop_front();
-				current->treat(sep);
-				if (current->left())
-					deck.push_back(current->left());
-				if (current->right())
-					deck.push_back(current->right());
+		void printCurrentLevel(Node *root, int level, char sep)
+		{
+			if (root == NULL)
+				return;
+			if (level == 1)
+				std::cout << root->data().second << sep;
+			else if (level > 1) {
+				printCurrentLevel(root->left(), level - 1, sep);
+				printCurrentLevel(root->right(), level - 1, sep);
 			}
+		}
+
+		int height(Node *node)
+		{
+			if (node == NULL)
+				return 0;
+			else {
+				int lheight = height(node->left());
+				int rheight = height(node->right());
+
+				if (lheight > rheight) {
+					return (lheight + 1);
+				}
+				else {
+					return (rheight + 1);
+				}
+			}
+		}
+
+		void	level_order_traversal(Node *root, char sep) {
+			int h = height(root);
+			int i;
+			for (i = 1; i <= h; i++)
+				printCurrentLevel(root, i, sep);
 		}
 
 		void	insert(Node *current, value_type &pair) {
 			Node *newNode = new Node(pair);
+			std::cout << newNode->data().second;
+			std::cout << pair.second;
 
 			if (current)
 			{
