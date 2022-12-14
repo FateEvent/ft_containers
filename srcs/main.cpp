@@ -131,7 +131,7 @@ int main(int argc, char** argv) {
 		std::cout << *it << std::endl;
 
 	newVector.reserve(45);
-	newVector.assign(vecCopy.begin(), vecCopy.end() - 5);
+	newVector.assign(vecCopy.begin(), vecCopy.end());
 	newVector.insert((newVector.begin() + 2), 'z');
 	newVector.push_back('c');
 	std::cerr << "size and capacity: " << newVector.size() << ", " << newVector.capacity() << std::endl;
@@ -193,7 +193,6 @@ int main(int argc, char** argv) {
 	std::cout << "shaggy" << std::endl;
 
 	map.insert(map.root(), a);
-	std::cout << map.root()->data().second << std::endl;
 	map.insert(map.root(), b);
 	map.insert(map.root(), c);
 	map.insert(map.root(), d);
@@ -201,6 +200,7 @@ int main(int argc, char** argv) {
 	map.insert(map.root(), g);
 	map.insert(map.root(), l);
 
+	std::cout << map.root()->data().second << std::endl;
 	map.level_order_traversal(map.root(), ',');
 */
 }

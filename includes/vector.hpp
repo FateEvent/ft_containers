@@ -121,9 +121,9 @@ namespace ft
 				{
 					temp = _alloc.allocate(dist);
 				}
-				catch (...)
+				catch (std::exception& e)
 				{
-					throw ;
+					std::cout << "Standard exception: " << e.what() << std::endl;
 				}
 				for (iterator p = temp; p < temp + dist && first < last; ++p, ++first)
 					_alloc.construct(&*p, *first);
