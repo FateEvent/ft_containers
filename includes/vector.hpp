@@ -13,18 +13,18 @@ namespace ft
 	template <class T, class Allocator = std::allocator<T> > class vector {
 
 	public:
-		typedef T									value_type;
-		typedef std::size_t							size_type;
-		typedef Allocator							allocator_type;
-		typedef std::ptrdiff_t						difference_type;
-		typedef value_type							&reference;
-		typedef const value_type					&const_reference;
-		typedef typename Allocator::pointer			pointer;
-		typedef typename Allocator::const_pointer	const_pointer;		
-		typedef move_iterator<value_type>			iterator;
-		typedef const_iter<value_type>				const_iterator;
-		typedef rev_iter<value_type>				reverse_iterator;
-		typedef const_rev_iter<value_type>			const_reverse_iterator;
+		typedef T										value_type;
+		typedef std::size_t								size_type;
+		typedef Allocator								allocator_type;
+		typedef std::ptrdiff_t							difference_type;
+		typedef value_type								&reference;
+		typedef const value_type						&const_reference;
+		typedef typename Allocator::pointer				pointer;
+		typedef typename Allocator::const_pointer		const_pointer;		
+		typedef ft::move_iterator<value_type>			iterator;
+		typedef ft::const_iter<value_type>				const_iterator;
+		typedef ft::reverse_iterator<iterator>			reverse_iterator;
+		typedef ft::reverse_iterator<const_iterator>	const_reverse_iterator;
 
 	public:
 		vector() : _size(1), _capacity(1), _v(NULL) {
@@ -108,15 +108,30 @@ namespace ft
 		template <class InputIt >
 		void	assign( InputIt first, InputIt last )
 		{
+			pointer	temp;
+
 			for (iterator p = _v; p < _v + size(); ++p)
 				_alloc.destroy(&*p);
 			_alloc.deallocate(_v, capacity());
 			ptrdiff_t	dist = last - first;
-			_size = _capacity = dist;
-			pointer	temp = _alloc.allocate(dist);
-			for (iterator p = temp; p < temp + dist && first < last; ++p, ++first)
-				_alloc.construct(&*p, *first);
-			_v = temp;
+			if (dist > 0)
+			{
+				_size = _capacity = dist;
+				try
+				{
+					temp = _alloc.allocate(dist);
+				}
+				catch (...)
+				{
+					throw ;
+				}
+				for (iterator p = temp; p < temp + dist && first < last; ++p, ++first)
+					_alloc.construct(&*p, *first);
+				_v = temp;
+			}
+			else
+				throw(ContainerException("out_of_range"));
+			
 		}
 
 		allocator_type	get_allocator() const { return _alloc; }
@@ -296,7 +311,7 @@ namespace ft
 		{
 			if (pos >= begin() && pos <= end())
 			{
-				iterator		p, p2, q, q2, r;
+				iterator		p, q, r;
 				difference_type	interval = last - first;
 
 				if (size() + interval >= capacity())
@@ -309,12 +324,12 @@ namespace ft
 						_alloc.construct(&*p, *q);
 						_alloc.destroy(&*q);
 					}
-					for (p2 = p; first < last; ++p2, ++first)
-						_alloc.construct(&*p2, *first);
-					for (r = p2, q2 = q; q2 < _v + size(); ++r, ++q2)
+					for (r = p; first < last; ++r, ++first)
+						_alloc.construct(&*r, *first);
+					for (; q < _v + size(); ++r, ++q)
 					{
-						_alloc.construct(&*r, *q2);
-						_alloc.destroy(&*q2);
+						_alloc.construct(&*r, *q);
+						_alloc.destroy(&*q);
 					}
 					_alloc.deallocate(_v, capacity());
 					_v = temp;

@@ -8,7 +8,7 @@
 
 namespace ft
 {
-/*
+
 	template <typename Iter>
 	struct iterator_traits
 	{
@@ -35,8 +35,8 @@ namespace ft
 	{
 		typedef std::ptrdiff_t					difference_type;
 		typedef Iter							value_type;
-		typedef const Iter *					pointer;
-		typedef const Iter &					reference;
+		typedef const Iter*						pointer;
+		typedef const Iter&						reference;
 		typedef std::random_access_iterator_tag	iterator_category;
 	};
 
@@ -48,21 +48,21 @@ namespace ft
 		typedef iterator_traits<Iter>					traits_type;
 
 	public:
-		typedef Iter									iterator_type;
+		typedef Iter									value_type;
 		typedef typename traits_type::difference_type	difference_type;
 		typedef typename traits_type::reference			reference;
 		typedef typename traits_type::pointer			pointer;
 		typedef std::size_t								size_type;
 
 		wrapper_it() : _current(Iter()) {}
-		wrapper_it(const iterator_type &it) : _current(it) {}
+		wrapper_it(const value_type &it) : _current(it) {}
 		template<class U>
-		Wrapper_it(const Wrapper_it<U>& other): current(other.base()) {}
+		wrapper_it(const wrapper_it<U>& other): _current(other.base()) {}
 
 		reference	operator* () const { return *_current; }
-		pointer		operator-> () const { return &(operator*())); }
+		pointer		operator-> () const { return &(operator*()); }
 
-		iterator_type	base() const { return _current; }
+		value_type	base() const { return _current; }
 
 		wrapper_it	&operator++ () { _current++; return *this; }
 		wrapper_it	operator++ (int) { wrapper_it tmp = *this; ++(*this); return tmp; }
@@ -74,7 +74,6 @@ namespace ft
 		wrapper_it	operator- (std::size_t dist) const { return (_current - dist); }
 		wrapper_it	&operator[] (std::size_t index) const { return *(*this + index); }
 		ptrdiff_t	operator- (const wrapper_it &it) { return (_current - it._current); }
-		Iter		base() const { return _current; }
 	};
 
 	template<class It1, class It2>
@@ -98,21 +97,21 @@ namespace ft
 		typedef iterator_traits<Iter>					traits_type;
 
 	public:
-		typedef Iter									iterator_type;
+		typedef Iter									value_type;
 		typedef typename traits_type::difference_type	difference_type;
 		typedef typename traits_type::reference			reference;
 		typedef typename traits_type::pointer			pointer;
 		typedef std::size_t								size_type;
 
 		reverse_iterator() : _current(Iter()) {}
-		reverse_iterator(const iterator_type &it) : _current(it) {}
+		reverse_iterator(const value_type &it) : _current(it) {}
 		template<class U>
-		reverse_iterator(const reverse_iterator<U>& other): current(other.base()) {}
+		reverse_iterator(const reverse_iterator<U>& other): _current(other.base()) {}
 
 		reference	operator* () const { return *_current; }
-		pointer		operator-> () const { return &(operator*())); }
+		pointer		operator-> () const { return &(operator*()); }
 
-		iterator_type	base() const { return _current; }
+		value_type	base() const { return _current; }
 
 		reverse_iterator	&operator++ () { _current--; return *this; }
 		reverse_iterator 	operator++ (int) { reverse_iterator tmp = *this; --(*this); return tmp; }
@@ -138,13 +137,12 @@ namespace ft
 	bool operator> (const ft::reverse_iterator<It1> &lhs, const ft::reverse_iterator<It2> &rhs) { return lhs.base() > rhs.base(); }
 	template<class It1, class It2>
 	bool operator>= (const ft::reverse_iterator<It1> &lhs, const ft::reverse_iterator<It2> &rhs) { return lhs.base() >= rhs.base(); }
-*/
 
 	template <class Cat, class T, class Dist = ptrdiff_t, class Ptr = T *, class Ref = T&>
 	struct iterator
 	{
 		typedef Cat		iterator_category;
-		typedef T		iterator_type;
+		typedef T		value_type;
 		typedef Dist	difference_type;
 		typedef Ptr		pointer;
 		typedef Ref		reference;
@@ -155,18 +153,18 @@ namespace ft
 		: public iterator<std::random_access_iterator_tag, T>
 	{
 	public:
-		typedef T																		iterator_type;
+		typedef T																		value_type;
 		typedef typename iterator<std::random_access_iterator_tag, T>::difference_type	difference_type;
 		typedef typename iterator<std::random_access_iterator_tag, T>::reference		reference;
 		typedef typename iterator<std::random_access_iterator_tag, T>::pointer			pointer;
 
 		move_iterator() : _ptr() {}
-		move_iterator(iterator_type *ptr) : _ptr(ptr) {}
+		move_iterator(value_type *ptr) : _ptr(ptr) {}
 
 		pointer			base() const { return _ptr; }
 
-		iterator_type	&operator* () { return *_ptr; }
-		iterator_type	*operator-> () { return _ptr; }
+		value_type	&operator* () { return *_ptr; }
+		value_type	*operator-> () { return _ptr; }
 
 		move_iterator	&operator++ () { _ptr++; return *this; }
 		move_iterator	operator++ (int) { move_iterator tmp = *this; ++(*this); return tmp; }
@@ -179,31 +177,34 @@ namespace ft
 		move_iterator	&operator[] (std::size_t index) const { return *(*this + index); }
 		ptrdiff_t		operator- (const move_iterator &it) { return (_ptr - it._ptr); }
 
+		bool		operator== (const move_iterator &it) { return this->base() == it.base(); }
+		bool		operator!= (const move_iterator &it) { return this->base() != it.base(); }
+		bool		operator< (const move_iterator &it) { return this->base() < it.base(); }
+		bool		operator<= (const move_iterator &it) { return this->base() <= it.base(); }
+		bool		operator> (const move_iterator &it) { return this->base() > it.base(); }
+		bool		operator>= (const move_iterator &it) { return this->base() >= it.base(); }
+
 	protected:
 		pointer	_ptr;
 	};
-
-	friend bool	operator== (const move_iterator &lhs, const move_iterator &rhs) { return lhs->base() == rhs->base(); }
-	friend bool	operator!= (const move_iterator &lhs, const move_iterator &rhs) { return lhs->base() != rhs->base(); }
-	friend bool	operator< (const move_iterator &lhs, const move_iterator &rhs) { return lhs->base() < rhs->base(); }
-	friend bool	operator<= (const move_iterator &lhs, const move_iterator &rhs) { return lhs->base() <= rhs->base(); }
-	friend bool	operator> (const move_iterator &lhs, const move_iterator &rhs) { return lhs->base() > rhs->base(); }
-	friend bool	operator>= (const move_iterator &lhs, const move_iterator &rhs) { return lhs->base() >= rhs->base(); }
 
 	template <class T>
 	class const_iter
 		: public iterator<std::random_access_iterator_tag, T>
 	{
 		public:
-		typedef T	iterator_type;
+		typedef T																		value_type;
+		typedef typename iterator<std::random_access_iterator_tag, T>::difference_type	difference_type;
+		typedef typename iterator<std::random_access_iterator_tag, T>::reference		reference;
+		typedef typename iterator<std::random_access_iterator_tag, T>::pointer			pointer;
 
 		const_iter() : _ptr() {}
-		const_iter(iterator_type *ptr) : _ptr(ptr) {}
+		const_iter(value_type *ptr) : _ptr(ptr) {}
 
 		pointer			base() const { return _ptr; }
 
-		iterator_type	&operator* () const { return *_ptr; }
-		iterator_type	*operator-> () const { return _ptr; }
+		value_type	&operator* () const { return *_ptr; }
+		value_type	*operator-> () const { return _ptr; }
 
 		const const_iter	&operator++ () { _ptr++; return *this; }
 		const const_iter 	operator++ (int) { const_iter tmp = *this; ++(*this); return tmp; }
@@ -216,90 +217,16 @@ namespace ft
 		const const_iter	&operator[] (std::size_t index) { return *(*this + index); }
 		ptrdiff_t			operator- (const const_iter &it) { return (_ptr - it._ptr); }
 
-	private:
-		iterator_type	*_ptr;
-	};
-
-	friend bool	operator== (const const_iter &lhs, const const_iter &rhs) { return lhs->base() == rhs->base(); }
-	friend bool	operator!= (const const_iter &lhs, const const_iter &rhs) { return lhs->base() != rhs->base(); }
-	friend bool	operator< (const const_iter &lhs, const const_iter &rhs) { return lhs->base() < rhs->base(); }
-	friend bool	operator<= (const const_iter &lhs, const const_iter &rhs) { return lhs->base() <= rhs->base(); }
-	friend bool	operator> (const const_iter &lhs, const const_iter &rhs) { return lhs->base() > rhs->base(); }
-	friend bool	operator>= (const const_iter &lhs, const const_iter &rhs) { return lhs->base() >= rhs->base(); }
-
-	template <class T>
-	class rev_iter
-		: public iterator<std::random_access_iterator_tag, T>
-	{
-		public:
-		typedef T	iterator_type;
-
-		rev_iter() : _ptr() {}
-		rev_iter(iterator_type *ptr) : _ptr(ptr) {}
-
-		pointer			base() const { return _ptr; }
-
-		iterator_type	&operator* () { return *_ptr; }
-		iterator_type	*operator-> () { return _ptr; }
-
-		rev_iter	&operator++ () { _ptr--; return *this; }
-		rev_iter 	operator++ (int) { rev_iter tmp = *this; --(*this); return tmp; }
-		rev_iter	&operator-- () { _ptr++; return *this; }
-		rev_iter	operator-- (int) { rev_iter tmp = *this; ++(*this); return tmp; }
-		rev_iter	&operator+= (std::size_t dist) { _ptr += dist; return *this; }
-		rev_iter	&operator-= (std::size_t dist) { _ptr -= dist; return *this; }
-		rev_iter	operator+ (std::size_t dist) { return (_ptr + dist); }
-		rev_iter	operator- (std::size_t dist) { return (_ptr - dist); }
-		rev_iter	&operator[] (std::size_t index) { return *(*this + index); }
-		ptrdiff_t	operator- (const rev_iter &it) { return (_ptr - it._ptr); }
+		bool		operator== (const const_iter &it) { return this->base() == it.base(); }
+		bool		operator!= (const const_iter &it) { return this->base() != it.base(); }
+		bool		operator< (const const_iter &it) { return this->base() < it.base(); }
+		bool		operator<= (const const_iter &it) { return this->base() <= it.base(); }
+		bool		operator> (const const_iter &it) { return this->base() > it.base(); }
+		bool		operator>= (const const_iter &it) { return this->base() >= it.base(); }
 
 	private:
-		iterator_type	*_ptr;
+		pointer	_ptr;
 	};
-
-	friend bool	operator== (const rev_iter &lhs, const rev_iter &rhs) { return lhs->base() == rhs->base(); }
-	friend bool	operator!= (const rev_iter &lhs, const rev_iter &rhs) { return lhs->base() != rhs->base(); }
-	friend bool	operator< (const rev_iter &lhs, const rev_iter &rhs) { return lhs->base() < rhs->base(); }
-	friend bool	operator<= (const rev_iter &lhs, const rev_iter &rhs) { return lhs->base() <= rhs->base(); }
-	friend bool	operator> (const rev_iter &lhs, const rev_iter &rhs) { return lhs->base() > rhs->base(); }
-	friend bool	operator>= (const rev_iter &lhs, const rev_iter &rhs) { return lhs->base() >= rhs->base(); }
-
-	template <class T>
-	class const_rev_iter
-		: public iterator<std::random_access_iterator_tag, T>
-	{
-		public:
-		typedef T	iterator_type;
-
-		const_rev_iter() : _ptr() {}
-		const_rev_iter(iterator_type *ptr) : _ptr(ptr) {}
-
-		pointer			base() const { return _ptr; }
-
-		iterator_type	&operator* () const { return *_ptr; }
-		iterator_type	*operator-> () const { return _ptr; }
-
-		const const_rev_iter	&operator++ () { _ptr--; return *this; }
-		const const_rev_iter 	operator++ (int) { const_rev_iter tmp = *this; --(*this); return tmp; }
-		const const_rev_iter	&operator-- () { _ptr++; return *this; }
-		const const_rev_iter	operator-- (int) { const_rev_iter tmp = *this; ++(*this); return tmp; }
-		const const_rev_iter	&operator+= (std::size_t dist) { _ptr += dist; return *this; }
-		const const_rev_iter	&operator-= (std::size_t dist) { _ptr -= dist; return *this; }
-		const const_rev_iter	operator+ (std::size_t dist) { return (_ptr + dist); }
-		const const_rev_iter	operator- (std::size_t dist) { return (_ptr - dist); }
-		const const_rev_iter	&operator[] (std::size_t index) { return *(*this + index); }
-		ptrdiff_t				operator- (const const_rev_iter &it) { return (_ptr - it._ptr); }
-
-	private:
-		iterator_type	*_ptr;
-	};
-
-	friend bool	operator== (const const_rev_iter &lhs, const const_rev_iter &rhs) { return lhs->base() == rhs->base(); }
-	friend bool	operator!= (const const_rev_iter &lhs, const const_rev_iter &rhs) { return lhs->base() != rhs->base(); }
-	friend bool	operator< (const const_rev_iter &lhs, const const_rev_iter &rhs) { return lhs->base() < rhs->base(); }
-	friend bool	operator<= (const const_rev_iter &lhs, const const_rev_iter &rhs) { return lhs->base() <= rhs->base(); }
-	friend bool	operator> (const const_rev_iter &lhs, const const_rev_iter &rhs) { return lhs->base() > rhs->base(); }
-	friend bool	operator>= (const const_rev_iter &lhs, const const_rev_iter &rhs) { return lhs->base() >= rhs->base(); }
 }
 
 #endif

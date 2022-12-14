@@ -110,77 +110,78 @@ int main(int argc, char** argv) {
 	MutantStack<char>::iterator itLetter2 = iterable_stack.end();
 
 	ft::vector<char>	newVector(itLetter, itLetter2);
-	ft::vector<char>		newDeck(itLetter, itLetter2);
-//	for (ft::vector<char>::iterator it = newVector.begin() + 5; it != newVector.end(); it++)
-//		std::cout << "iterator: " << *it << std::endl;
-//	newVector.push_back('j');
-//	for (ft::vector<char>::iterator it = newVector.end() - 2; it != newVector.end(); it++)
-//		std::cout << "last letters: " << *it << std::endl;
+	ft::vector<char>	newDeck(itLetter, itLetter2);
+	for (ft::vector<char>::iterator it = newVector.begin() + 5; it != newVector.end(); it++)
+		std::cout << "iterator: " << *it << std::endl;
+	newVector.push_back('j');
+	for (ft::vector<char>::iterator it = newVector.end() - 2; it != newVector.end(); it++)
+		std::cout << "last letters: " << *it << std::endl;
 
-//	std::cout << "The maximum storage capacity of the container is " << newVector.max_size() << std::endl;
+	std::cout << "The maximum storage capacity of the container is " << newVector.max_size() << std::endl;
 
 	ft::vector<char>	vecCopy(newVector);
 
-//	std::cout << "What the copy contains:" << std::endl;
-//	for (ft::vector<char>::iterator it = copy.begin(); it != copy.end(); it++)
-//		std::cout << *it << std::endl;
+	std::cout << "What the copy contains:" << std::endl;
+	for (ft::vector<char>::iterator it = vecCopy.begin(); it != vecCopy.end(); it++)
+		std::cout << *it << std::endl;
 
-//	vecCopy.assign(4, 'a');
-//	std::cout << "What the copy contains:" << std::endl;
-//	for (ft::vector<char>::iterator it = copy.begin(); it != copy.end(); it++)
-//		std::cout << *it << std::endl;
+	vecCopy.assign(4, 'a');
+	std::cout << "What the copy contains:" << std::endl;
+	for (ft::vector<char>::iterator it = vecCopy.begin(); it != vecCopy.end(); it++)
+		std::cout << *it << std::endl;
 
-//	newVector.reserve(45);
-//	newVector.insert((newVector.begin() + 2), 'z');
-//	newVector.push_back('c');
-//	std::cerr << "size and capacity: " << newVector.size() << ", " << newVector.capacity() << std::endl;
-//	std::cout << "What the copy contains:" << std::endl;
-//	for (ft::vector<char>::iterator it = newVector.begin(); it != newVector.end(); it++)
-//		std::cout << *it << std::endl;
-//	vecCopy.push_back('c');
-//	vecCopy.push_back('c');
-//	vecCopy.push_back('c');
-//	vecCopy.push_back('c');
-//	vecCopy.insert(vecCopy.begin() + 2, itLetter, itLetter2);
-//	std::cerr << "size and capacity: " << vecCopy.size() << ", " << vecCopy.capacity() << std::endl;
-//	std::cout << "What the copy contains:" << std::endl;
-//	for (ft::vector<char>::iterator it = vecCopy.begin(); it != vecCopy.begin() + vecCopy.size(); it++)
-//		std::cout << *it << std::endl;
+	newVector.reserve(45);
+	newVector.assign(vecCopy.begin(), vecCopy.end() - 5);
+	newVector.insert((newVector.begin() + 2), 'z');
+	newVector.push_back('c');
+	std::cerr << "size and capacity: " << newVector.size() << ", " << newVector.capacity() << std::endl;
+	std::cout << "What the copy contains:" << std::endl;
+	for (ft::vector<char>::iterator it = newVector.begin(); it != newVector.end(); it++)
+		std::cout << *it << std::endl;
+	vecCopy.push_back('c');
+	vecCopy.push_back('c');
+	vecCopy.push_back('c');
+	vecCopy.push_back('c');
+	vecCopy.insert(vecCopy.begin() + 2, itLetter, itLetter2);
+	std::cerr << "size and capacity: " << vecCopy.size() << ", " << vecCopy.capacity() << std::endl;
+	std::cout << "What the copy contains:" << std::endl;
+	for (ft::vector<char>::iterator it = vecCopy.begin(); it != vecCopy.begin() + vecCopy.size(); it++)
+		std::cout << *it << std::endl;
 
-//	vecCopy.insert(vecCopy.begin() + 2, 5, 'Z');
-//	std::cerr << "size and capacity: " << vecCopy.size() << ", " << vecCopy.capacity() << std::endl;
-//	std::cout << "What the copy contains:" << std::endl;
-//	for (ft::vector<char>::iterator it = vecCopy.begin(); it != vecCopy.begin() + vecCopy.size(); it++)
-//		std::cout << *it << std::endl;
+	vecCopy.insert(vecCopy.begin() + 2, 5, 'Z');
+	std::cerr << "size and capacity: " << vecCopy.size() << ", " << vecCopy.capacity() << std::endl;
+	std::cout << "What the copy contains:" << std::endl;
+	for (ft::vector<char>::iterator it = vecCopy.begin(); it != vecCopy.begin() + vecCopy.size(); it++)
+		std::cout << *it << std::endl;
 
-//	vecCopy.insert(vecCopy.begin() + 2, 'x');
-//	std::cout << "return: " << *(vecCopy.erase(vecCopy.begin() + 1, vecCopy.begin() + 7)) << std::endl;
-//	std::cout << "return: " << *(vecCopy.erase(vecCopy.begin() + 1)) << std::endl;
-//	vecCopy.resize(35);
-//	std::cout << "What the copy contains now:" << std::endl;
-//	for (ft::vector<char>::iterator it = vecCopy.begin(); it != vecCopy.begin() + vecCopy.size(); it++)
-//		std::cout << *it << std::endl;
+	vecCopy.insert(vecCopy.begin() + 2, 'x');
+	std::cout << "return: " << *(vecCopy.erase(vecCopy.begin() + 1, vecCopy.begin() + 7)) << std::endl;
+	std::cout << "return: " << *(vecCopy.erase(vecCopy.begin() + 1)) << std::endl;
+	vecCopy.resize(35);
+	std::cout << "What the copy contains now:" << std::endl;
+	for (ft::vector<char>::iterator it = vecCopy.begin(); it != vecCopy.begin() + vecCopy.size(); it++)
+		std::cout << *it << std::endl;
 
-//	vecCopy.swap(newVector);
-//	std::cout << "What the vector contains now:" << std::endl;
-//	for (ft::vector<char>::iterator it = newVector.begin(); it != newVector.begin() + newVector.size(); it++)
-//		std::cout << *it << std::endl;
-//	std::cout << "What the copy contains now:" << std::endl;
-//	for (ft::vector<char>::iterator it = vecCopy.begin(); it != vecCopy.begin() + vecCopy.size(); it++)
-//		std::cout << *it << std::endl;
+	vecCopy.swap(newVector);
+	std::cout << "What the vector contains now:" << std::endl;
+	for (ft::vector<char>::iterator it = newVector.begin(); it != newVector.begin() + newVector.size(); it++)
+		std::cout << *it << std::endl;
+	std::cout << "What the copy contains now:" << std::endl;
+	for (ft::vector<char>::iterator it = vecCopy.begin(); it != vecCopy.begin() + vecCopy.size(); it++)
+		std::cout << *it << std::endl;
 
-//	std::cerr << "size and capacity: " << newDeck.size() << ", " << newDeck.capacity() << std::endl;
-//	newDeck.resize(53);
-//	std::cout << "What the deck contains:" << std::endl;
-//	for (ft::vector<char>::iterator it = newDeck.begin(); it != newDeck.end(); it++)
-//		std::cout << *it << std::endl;
-//	newDeck.pop_front();
-//	newDeck.push_front('x');
-//	std::cerr << "size and capacity: " << newDeck.size() << ", " << newDeck.capacity() << std::endl;
-//	std::cout << "What the deck contains now:" << std::endl;
-//	for (ft::vector<char>::iterator it = newDeck.begin(); it != newDeck.end(); it++)
-//		std::cout << *it << std::endl;
-
+	std::cerr << "size and capacity: " << newDeck.size() << ", " << newDeck.capacity() << std::endl;
+	newDeck.resize(53);
+	std::cout << "What the deck contains:" << std::endl;
+	for (ft::vector<char>::iterator it = newDeck.begin(); it != newDeck.end(); it++)
+		std::cout << *it << std::endl;
+	newDeck.pop_front();
+	newDeck.push_front('x');
+	std::cerr << "size and capacity: " << newDeck.size() << ", " << newDeck.capacity() << std::endl;
+	std::cout << "What the deck contains now:" << std::endl;
+	for (ft::vector<char>::iterator it = newDeck.begin(); it != newDeck.end(); it++)
+		std::cout << *it << std::endl;
+/*
 	ft::pair<const char, int> a = ft::make_pair('a', 1);
 	ft::pair<const char, int> b = ft::make_pair('b', 5);
 	ft::pair<const char, int> c = ft::make_pair('c', 3);
@@ -201,4 +202,5 @@ int main(int argc, char** argv) {
 	map.insert(map.root(), l);
 
 	map.level_order_traversal(map.root(), ',');
+*/
 }
