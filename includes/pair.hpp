@@ -38,10 +38,7 @@ namespace ft
 
 	template<class T1, class T2>
 	ft::pair<T1, T2>	make_pair(T1 first, T2 second) {
-		ft::pair<T1, T2>	p;
-
-		p.first = first;
-		p.second = second;
+		ft::pair<T1, T2> p(first, second);
 		return (p);
 	}
 

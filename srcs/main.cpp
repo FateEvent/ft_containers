@@ -97,6 +97,8 @@ int main(int argc, char** argv) {
 	std::cout << "should be constant with the same seed: " << sum << std::endl;
 		ft::map<int, int> copy = map_int;
 */
+// --> My tests <-- //
+/*
 	MutantStack<char> iterable_stack;
 	for (char letter = 'a'; letter <= 'z'; letter++)
 		iterable_stack.push(letter);
@@ -181,7 +183,7 @@ int main(int argc, char** argv) {
 	std::cout << "What the deck contains now:" << std::endl;
 	for (ft::vector<char>::iterator it = newDeck.begin(); it != newDeck.end(); it++)
 		std::cout << *it << std::endl;
-/*
+*/
 	ft::pair<const char, int> a = ft::make_pair('a', 1);
 	ft::pair<const char, int> b = ft::make_pair('b', 5);
 	ft::pair<const char, int> c = ft::make_pair('c', 3);
@@ -202,5 +204,5 @@ int main(int argc, char** argv) {
 
 	std::cout << map.root()->data().second << std::endl;
 	map.level_order_traversal(map.root(), ',');
-*/
+
 }

@@ -14,7 +14,9 @@
 
 namespace ft
 {
-	template <class Key, class T, class Compare = std::less<Key>, class Allocator = std::allocator<ft::pair<const Key, T> > > class map {
+	template <class Key, class T, class Compare = std::less<Key>,
+	class Allocator = std::allocator<ft::pair<const Key, T> > >
+	class map {
 		struct Node;
 	public:
 		typedef Key													key_type;
@@ -52,23 +54,26 @@ namespace ft
 
 	private:
 		struct Node {
-		private:
+		public:
 			value_type	_data;
 			Node		*_left;
 			Node		*_right;
+			Node		*_parent;
 			int			_balance;
 
 		public:
-			Node() : _data(value_type()), _left(NULL), _right(NULL), _balance() {}
-			Node(value_type pair) : _data(pair), _left(NULL), _right(NULL), _balance() {}
+			Node() : _data(value_type()), _left(NULL), _right(NULL), _parent(NULL), _balance() {}
+			Node(value_type pair) : _data(pair), _left(NULL), _right(NULL), _parent(NULL), _balance() {}
 			~Node() {}
 
-			Node		&operator= (Node &other) { _left = other._left; _right = other._right; _balance = other._balance; return (*this); }
+			Node		&operator= (Node &other) { _left = other._left; _right = other._right; _parent = other._parent; _balance = other._balance; return (*this); }
 			void		change_left(Node *left) { _left = left; }
 			void		change_right(Node *right) { _right = right; }
+			void		change_parent(Node *parent) { _parent = parent; }
 			void		change_data(value_type &data) { _data = data; }
 			Node		*left() { return _left; }
 			Node		*right() { return _right; }
+			Node		*parent() { return _parent; }
 			value_type	data() { return _data; }
 			void		treat(char sep) { std::cout << data().first << sep << data().second << sep << std::endl; }
 
@@ -162,7 +167,9 @@ namespace ft
 		}
 
 		void	insert(Node *current, value_type &pair) {
-			Node *newNode = new Node(pair);
+			Node *newNode = _alloc_node.allocate(1);
+//			_alloc_node.construct(newNode, );
+			_alloc_pair.construct(&newNode->_data, pair);
 			std::cout << newNode->data().second;
 			std::cout << pair.second;
 

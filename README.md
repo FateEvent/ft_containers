@@ -1,7 +1,16 @@
 # ft_containers
 
+In addition to the official C++ documentation:
+* <https://cplusplus.com>;
+* <https://en.cppreference.com>;
+
 As concerning the iterator_traits template:
-* <https://www.lix.polytechnique.fr/~liberti/public/computing/prog/libstdc++/iterator_traits.html>.
+* <https://www.lix.polytechnique.fr/~liberti/public/computing/prog/libstdc++/iterator_traits.html>
+
+and more generally about iterators:
+* <https://www.simplilearn.com/tutorials/cpp-tutorial/iterators-in-cpp>;
+* <https://www.internalpointers.com/post/writing-custom-iterators-modern-cpp>;
+* <https://stackoverflow.com/questions/12259571/how-does-the-stdmap-iterator-work>.
 
 * <https://stdcxx.apache.org/doc/stdlibug/16-3.html>
 
