@@ -9,6 +9,7 @@
 # include "ContainerException.hpp"
 # include "iterator.hpp"
 # include "pair.hpp"
+# include "vector.hpp"
 #include <map>
 #include <utility>
 
@@ -92,7 +93,12 @@ namespace ft
 
 	public:
 		explicit map (const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type())
-			: _root(NULL), _alloc_node(node_allocator()), _alloc_pair(alloc), _key_comp(comp), _size(1) {}
+			: _root(NULL), _alloc_node(node_allocator()), _alloc_pair(alloc), _key_comp(comp), _size() {
+				Node *newNode = _alloc_node.allocate(1);
+				ft::pair<const char, int> z = ft::make_pair('z', 66);
+				_alloc_pair.construct(&newNode->_data, z);
+				_root = newNode;
+			}
 
 		template <class InputIterator>
 		map (InputIterator first, InputIterator last,       const key_compare& comp = key_compare(),       const allocator_type& alloc = allocator_type());
@@ -106,7 +112,8 @@ namespace ft
 		void	prefix_traversal(Node *current, char sep) {
 			if (current)
 			{
-				current->treat(sep);
+				std::cout << "bla" << sep << current->data().first << std::endl;
+//				current->treat(sep);
 				prefix_traversal(current->left(), sep);
 				prefix_traversal(current->right(), sep);
 			}
@@ -130,12 +137,29 @@ namespace ft
 			}
 		}
 
+		void	level_order_traversal(Node *current, char sep) {
+			vector<Node *>	deck;
+
+			deck.push_back(current);
+			while (!deck.empty())
+			{
+				current = deck.front();
+				deck.pop_front();
+				current->treat(sep);
+				if (current->left())
+					deck.push_back(current->left());
+				if (current->right())
+					deck.push_back(current->right());
+			}
+		}
+
+/*
 		void printCurrentLevel(Node *root, int level, char sep)
 		{
 			if (root == NULL)
 				return;
 			if (level == 1)
-				std::cout << root->data().second << sep;
+				std::cout << root->data().second << sep << std::endl;
 			else if (level > 1) {
 				printCurrentLevel(root->left(), level - 1, sep);
 				printCurrentLevel(root->right(), level - 1, sep);
@@ -165,33 +189,38 @@ namespace ft
 			for (i = 1; i <= h; i++)
 				printCurrentLevel(root, i, sep);
 		}
-
+*/
 		void	insert(Node *current, value_type &pair) {
 			Node *newNode = _alloc_node.allocate(1);
-//			_alloc_node.construct(newNode, );
+//			_alloc_node.construct(newNode);
 			_alloc_pair.construct(&newNode->_data, pair);
-			std::cout << newNode->data().second;
-			std::cout << pair.second;
 
 			if (current)
 			{
 				if (_key_comp(pair.first, current->data().first))
 				{
 					if (current->left())
+					{
+						std::cout << "left " << current->data().first << std::endl;
 						insert(current->left(), pair);
+					}
 					else
 						current->change_left(newNode);
 				}
 				else
 				{
 					if (current->right())
+					{
+						std::cout << "right " << current->data().first << std::endl;
 						insert(current->right(), pair);
+					}
 					else
 						current->change_right(newNode);
 				}
 			}
 			else
 				current = newNode;
+			std::cout << current->data().second << std::endl;
 		}
 /*
 		Node	*new_node(value_type content = value_type())
@@ -226,7 +255,7 @@ namespace ft
 		allocator_type	_alloc_pair;
 		key_compare		_key_comp;
 		size_type		_size;
-		node_pointer	_ptr;
+//		node_pointer	_ptr;
 	};
 }
 

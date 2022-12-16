@@ -191,18 +191,20 @@ int main(int argc, char** argv) {
 	ft::pair<const char, int> f = ft::make_pair('f', 6);
 	ft::pair<const char, int> g = ft::make_pair('g', 0);
 	ft::pair<const char, int> l = ft::make_pair('l', -1);
-	ft::map<const char, int> map;
-	std::cout << "shaggy" << std::endl;
 
-	map.insert(map.root(), a);
-	map.insert(map.root(), b);
-	map.insert(map.root(), c);
-	map.insert(map.root(), d);
-	map.insert(map.root(), f);
-	map.insert(map.root(), g);
-	map.insert(map.root(), l);
+	ft::map<const char, int> tree;
 
-	std::cout << map.root()->data().second << std::endl;
-	map.level_order_traversal(map.root(), ',');
+	tree.insert(tree.root(), a);
+	tree.insert(tree.root(), b);
+	tree.insert(tree.root(), c);
+	tree.insert(tree.root(), d);
+	tree.insert(tree.root(), f);
+	tree.insert(tree.root(), g);
+	tree.insert(tree.root(), l);
+	tree.prefix_traversal(tree.root(), ' ');
+	std::cout << "seggy" << std::endl;
+
+	std::cout << "ciao" << tree.root()->data().second << std::endl;
+	tree.level_order_traversal(tree.root(), ',');
 
 }
