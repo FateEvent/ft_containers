@@ -22,5 +22,6 @@ I found helpful tips about binary search trees and red-black trees in the follow
 Other materials about maps and map iterators:
 * <https://stackoverflow.com/questions/11373796/custom-memory-allocator-for-stl-map>;
 * <https://stackoverflow.com/questions/12259571/how-does-the-stdmap-iterator-work>;
-* <https://en.wikipedia.org/wiki/Tree_traversal>;
+* <https://stackoverflow.com/questions/17150544/what-is-the-definition-of-rb-tree-increment-in-bits-stl-tree-h/17150988#17150988>;
+* <https://en.wikipedia.org/wiki/Tree_traversal>.
 
