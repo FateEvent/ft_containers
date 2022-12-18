@@ -4,11 +4,9 @@
 # include <iostream>
 # include <memory>
 # include <cstddef>
-# include "ContainerException.hpp"
 
 namespace ft
 {
-
 	template <typename Iter>
 	struct iterator_traits
 	{
@@ -17,7 +15,6 @@ namespace ft
 		typedef typename Iter::pointer				pointer;
 		typedef typename Iter::reference			reference;
 		typedef typename Iter::iterator_category	iterator_category;
-
 	};
 
 	template <typename Iter>

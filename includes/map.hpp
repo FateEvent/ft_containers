@@ -7,11 +7,12 @@
 # include <cstddef>
 # include <limits>
 # include "ContainerException.hpp"
-# include "iterator.hpp"
 # include "pair.hpp"
 # include "vector.hpp"
-#include <map>
-#include <utility>
+# include "map_iterator.hpp"
+//#include <map>
+
+class map_iterator;
 
 namespace ft
 {
@@ -248,6 +249,10 @@ namespace ft
 //		pair<iterator,bool> insert (const value_type& val);
 //		iterator insert (iterator position, const value_type& val);
 //		template <class InputIterator>  void insert (InputIterator first, InputIterator last);
+
+	mapped_type&	operator[] (const key_type& k) {
+
+	}
 
 	private :
 		Node			*_root;
