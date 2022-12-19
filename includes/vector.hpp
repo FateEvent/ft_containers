@@ -27,15 +27,9 @@ namespace ft
 		typedef ft::reverse_iterator<const_iterator>	const_reverse_iterator;
 
 	public:
-		vector() : _size(1), _capacity(1), _v(NULL) {
-			_v = _alloc.allocate(_capacity);
-			_alloc.construct(&*_v, value_type());
-		}
+		vector() : _size(), _capacity(), _v(NULL) {}
 
-		explicit vector( const Allocator& alloc ) : _size(1), _capacity(1), _alloc(alloc), _v(NULL) {
-			_v = _alloc.allocate(_capacity);
-			_alloc.construct(&*_v, value_type());
-		}
+		explicit vector( const Allocator& alloc ) : _size(), _capacity(), _alloc(alloc), _v(NULL) {}
 
 		explicit vector( size_type count, const value_type& value = value_type(), const Allocator& alloc = Allocator() ) : _alloc(alloc), _v(NULL)
 		{
@@ -50,9 +44,8 @@ namespace ft
 		{
 			ptrdiff_t	dist = last - first;
 			_size = _capacity = dist;
-			_v = _alloc.allocate(dist);
-			for (iterator p = _v; p < _v + dist && first < last; ++p, ++first)
-				_alloc.construct(&*p, *first);
+			_v = _alloc.allocate(capacity());
+			std::copy(first, last, _v);
 		};
 
 		vector( const vector& other ) : _size(other._size), _capacity(other._capacity), _alloc(other._alloc)
@@ -267,11 +260,11 @@ namespace ft
 		{
 			if (pos >= begin() && pos <= end())
 			{
-				iterator	p, p2, q, q2, r;
+				iterator	p, q, r;
 
 				if (size() + count >= capacity())
 				{
-					size_type	diff = size() + count - capacity();
+					size_type diff = size() + count - capacity();
 					pointer temp = _alloc.allocate(capacity() + diff);
 					_capacity += diff;
 					for (p = temp, q = _v; q < pos - 1; ++p, ++q)
@@ -279,12 +272,12 @@ namespace ft
 						_alloc.construct(&*p, *q);
 						_alloc.destroy(&*q);
 					}
-					for (p2 = p; count > 0; ++p2, --count)
-						_alloc.construct(&*p2, value);
-					for (r = p2, q2 = q; q2 < _v + size(); ++r, ++q2)
+					for (; count > 0; ++p, --count)
+						_alloc.construct(&*p, value);
+					for (; q < _v + size(); ++p, ++q)
 					{
-						_alloc.construct(&*r, *q2);
-						_alloc.destroy(&*q2);
+						_alloc.construct(&*p, *q);
+						_alloc.destroy(&*q);
 					}
 					_alloc.deallocate(_v, capacity());
 					_v = temp;
@@ -311,7 +304,8 @@ namespace ft
 		{
 			if (pos >= begin() && pos <= end())
 			{
-				iterator		p, q, r;
+				difference_type	dist = pos - 1 - begin();
+				iterator		p = _v + dist;
 				difference_type	interval = last - first;
 
 				if (size() + interval >= capacity())
@@ -319,18 +313,9 @@ namespace ft
 					size_type	diff = size() + interval - capacity();
 					pointer temp = _alloc.allocate(capacity() + diff);
 					_capacity += diff;
-					for (p = temp, q = _v; q < pos - 1; ++p, ++q)
-					{
-						_alloc.construct(&*p, *q);
-						_alloc.destroy(&*q);
-					}
-					for (r = p; first < last; ++r, ++first)
-						_alloc.construct(&*r, *first);
-					for (; q < _v + size(); ++r, ++q)
-					{
-						_alloc.construct(&*r, *q);
-						_alloc.destroy(&*q);
-					}
+					std::copy(begin(), pos - 1, temp);
+					std::copy(first, last, temp + dist);
+					std::copy(pos - 1, end(), temp + dist + interval);
 					_alloc.deallocate(_v, capacity());
 					_v = temp;
 					_size = capacity();
@@ -339,13 +324,9 @@ namespace ft
 				else
 				{
 					_size += interval;
-					difference_type dist = pos - 1 - begin();
-					iterator p = _v + dist;
 
-					for (iterator q = p + size(); q > p; --q)
-						_alloc.construct(&*q, *(q - interval));
-					for (iterator r = p; first < last; ++r, ++first)
-						_alloc.construct(&*r, *first);
+					std::copy(pos - 1, end(), end() - 1);
+					std::copy(first, last, pos - 1);
 					return (p);
 				}
 			}

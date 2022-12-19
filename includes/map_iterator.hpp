@@ -5,21 +5,24 @@
 # include <memory>
 # include <cstddef>
 # include "map.hpp"
+# include "pair.hpp"
 
 class map;
 
 namespace ft
 {
-	template <typename T, typename Node, typename Content>
+	template <class Key, class T, class Node>
 	class map_iterator
 	{
 	public :
-		typedef	std::bidirectional_iterator_tag	iterator_category;
-		typedef T								value_type;
-		typedef std::size_t						size_type;
-		typedef std::ptrdiff_t					difference_type;
-		typedef Content*						pointer;
-		typedef Content&						reference;
+		typedef	std::bidirectional_iterator_tag		iterator_category;
+		typedef Key									key_type;
+		typedef T									mapped_type;
+		typedef pair<const key_type, mapped_type>	value_type;
+		typedef std::size_t							size_type;
+		typedef std::ptrdiff_t						difference_type;
+		typedef value_type*							pointer;
+		typedef value_type&							reference;
 
 		map_iterator() : _ptr(&_present), _last(NULL), _present(), _stop() {}
 		map_iterator(Node *ptr) : _ptr(ptr), _last(NULL), _present(), _stop() {}
@@ -71,6 +74,7 @@ namespace ft
 		}
 		const map_iterator 	operator-- (int) { map_iterator tmp = *this; --(*this); return tmp; }
 */
+
 		const map_iterator	&operator+= (std::size_t dist) { _ptr += dist; return *this; }
 		const map_iterator	&operator-= (std::size_t dist) { _ptr -= dist; return *this; }
 		const map_iterator	operator+ (std::size_t dist) { return (_ptr + dist); }

@@ -3,6 +3,7 @@
 In addition to the official C++ documentation:
 * <https://cplusplus.com>;
 * <https://en.cppreference.com>;
+* Stroustrup, Bjarne, __The C++ Programming Language__, 3rd ed., Addison-Wesley, 1997;
 
 and the two useful and interesting courses offered by OpenClassrooms:
 * <https://openclassrooms.com/fr/courses/1894236-apprenez-a-programmer-en-c>;

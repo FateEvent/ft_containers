@@ -97,23 +97,21 @@ int main(int argc, char** argv) {
 	std::cout << "should be constant with the same seed: " << sum << std::endl;
 		ft::map<int, int> copy = map_int;
 */
-// --> My tests <-- //
-/*
+	// --> My tests <-- //
+	std::cout << "// --> My tests <-- //" << std::endl << std::endl;
+
 	MutantStack<char> iterable_stack;
 	for (char letter = 'a'; letter <= 'z'; letter++)
 		iterable_stack.push(letter);
 	for (MutantStack<char>::iterator it = iterable_stack.begin(); it != iterable_stack.end(); it++)
-	{
 		std::cout << *it;
-	}
 	std::cout << std::endl;
 
 	MutantStack<char>::iterator itLetter = iterable_stack.begin();
 	MutantStack<char>::iterator itLetter2 = iterable_stack.end();
 
 	ft::vector<char>	newVector(itLetter, itLetter2);
-	ft::vector<char>	newDeck(itLetter, itLetter2);
-	for (ft::vector<char>::iterator it = newVector.begin() + 5; it != newVector.end(); it++)
+	for (ft::vector<char>::iterator it = newVector.begin(); it != newVector.end(); it++)
 		std::cout << "iterator: " << *it << std::endl;
 	newVector.push_back('j');
 	for (ft::vector<char>::iterator it = newVector.end() - 2; it != newVector.end(); it++)
@@ -123,12 +121,13 @@ int main(int argc, char** argv) {
 
 	ft::vector<char>	vecCopy(newVector);
 
-	std::cout << "What the copy contains:" << std::endl;
+	std::cout << "What vecCopy contains:" << std::endl;
 	for (ft::vector<char>::iterator it = vecCopy.begin(); it != vecCopy.end(); it++)
 		std::cout << *it << std::endl;
 
 	vecCopy.assign(4, 'a');
-	std::cout << "What the copy contains:" << std::endl;
+	std::cerr << "size and capacity: " << vecCopy.size() << ", " << vecCopy.capacity() << std::endl;
+	std::cout << "What vecCopy contains:" << std::endl;
 	for (ft::vector<char>::iterator it = vecCopy.begin(); it != vecCopy.end(); it++)
 		std::cout << *it << std::endl;
 
@@ -137,7 +136,7 @@ int main(int argc, char** argv) {
 	newVector.insert((newVector.begin() + 2), 'z');
 	newVector.push_back('c');
 	std::cerr << "size and capacity: " << newVector.size() << ", " << newVector.capacity() << std::endl;
-	std::cout << "What the copy contains:" << std::endl;
+	std::cout << "What newVector contains:" << std::endl;
 	for (ft::vector<char>::iterator it = newVector.begin(); it != newVector.end(); it++)
 		std::cout << *it << std::endl;
 	vecCopy.push_back('c');
@@ -146,7 +145,7 @@ int main(int argc, char** argv) {
 	vecCopy.push_back('c');
 	vecCopy.insert(vecCopy.begin() + 2, itLetter, itLetter2);
 	std::cerr << "size and capacity: " << vecCopy.size() << ", " << vecCopy.capacity() << std::endl;
-	std::cout << "What the copy contains:" << std::endl;
+	std::cout << "What vecCopy contains:" << std::endl;
 	for (ft::vector<char>::iterator it = vecCopy.begin(); it != vecCopy.begin() + vecCopy.size(); it++)
 		std::cout << *it << std::endl;
 
@@ -172,6 +171,7 @@ int main(int argc, char** argv) {
 	for (ft::vector<char>::iterator it = vecCopy.begin(); it != vecCopy.begin() + vecCopy.size(); it++)
 		std::cout << *it << std::endl;
 
+	ft::vector<char>	newDeck(itLetter, itLetter2);
 	std::cerr << "size and capacity: " << newDeck.size() << ", " << newDeck.capacity() << std::endl;
 	newDeck.resize(53);
 	std::cout << "What the deck contains:" << std::endl;
@@ -183,7 +183,7 @@ int main(int argc, char** argv) {
 	std::cout << "What the deck contains now:" << std::endl;
 	for (ft::vector<char>::iterator it = newDeck.begin(); it != newDeck.end(); it++)
 		std::cout << *it << std::endl;
-*/
+/*
 	ft::pair<const char, int> a = ft::make_pair('a', 1);
 	ft::pair<const char, int> b = ft::make_pair('b', 5);
 	ft::pair<const char, int> c = ft::make_pair('c', 3);
@@ -202,9 +202,10 @@ int main(int argc, char** argv) {
 	tree.insert(tree.root(), g);
 	tree.insert(tree.root(), l);
 	tree.prefix_traversal(tree.root(), ' ');
-	std::cout << "seggy" << std::endl;
 
-	std::cout << "ciao" << tree.root()->data().second << std::endl;
+//	std::cout << "ciao" << tree.root()->data().second << std::endl;
+//	ft::map<const char, int>::iterator it = tree.begin();
+//	std::cout << it.base()->data().first << std::endl;
 	tree.level_order_traversal(tree.root(), ',');
-
+*/
 }

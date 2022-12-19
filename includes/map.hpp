@@ -35,10 +35,10 @@ namespace ft
 		typedef typename Allocator:: template rebind<Node>::other	node_allocator;
 		typedef typename node_allocator::pointer					node_pointer;
 
-//		typedef implementation-defined                   iterator;
-//		typedef implementation-defined                   const_iterator;
-//		typedef std::reverse_iterator<iterator>          reverse_iterator;
-//		typedef std::reverse_iterator<const_iterator>    const_reverse_iterator;
+		typedef ft::map_iterator<key_type, mapped_type, Node>		iterator;
+//		typedef implementation-defined								const_iterator;
+//		typedef std::reverse_iterator<iterator>						reverse_iterator;
+//		typedef std::reverse_iterator<const_iterator>				const_reverse_iterator;
 
 		class value_compare
 			: public std::binary_function<value_type, value_type, bool>
@@ -102,7 +102,7 @@ namespace ft
 			}
 
 		template <class InputIterator>
-		map (InputIterator first, InputIterator last,       const key_compare& comp = key_compare(),       const allocator_type& alloc = allocator_type());
+		map (InputIterator first, InputIterator last, const key_compare& comp = key_compare(),       const allocator_type& alloc = allocator_type());
 		map (const map& x);
 
 		~map() { _root->suppress_node(); };
@@ -113,8 +113,7 @@ namespace ft
 		void	prefix_traversal(Node *current, char sep) {
 			if (current)
 			{
-				std::cout << "bla" << sep << current->data().first << std::endl;
-//				current->treat(sep);
+				current->treat(sep);
 				prefix_traversal(current->left(), sep);
 				prefix_traversal(current->right(), sep);
 			}
@@ -154,43 +153,16 @@ namespace ft
 			}
 		}
 
-/*
-		void printCurrentLevel(Node *root, int level, char sep)
-		{
-			if (root == NULL)
-				return;
-			if (level == 1)
-				std::cout << root->data().second << sep << std::endl;
-			else if (level > 1) {
-				printCurrentLevel(root->left(), level - 1, sep);
-				printCurrentLevel(root->right(), level - 1, sep);
-			}
+		iterator	begin()	{
+			Node	*temp(_root);
+			
+			while (temp != NULL)
+				temp = temp->left();
+			iterator	it(temp);
+
+			return (it);
 		}
 
-		int height(Node *node)
-		{
-			if (node == NULL)
-				return 0;
-			else {
-				int lheight = height(node->left());
-				int rheight = height(node->right());
-
-				if (lheight > rheight) {
-					return (lheight + 1);
-				}
-				else {
-					return (rheight + 1);
-				}
-			}
-		}
-
-		void	level_order_traversal(Node *root, char sep) {
-			int h = height(root);
-			int i;
-			for (i = 1; i <= h; i++)
-				printCurrentLevel(root, i, sep);
-		}
-*/
 		void	insert(Node *current, value_type &pair) {
 			Node *newNode = _alloc_node.allocate(1);
 //			_alloc_node.construct(newNode);

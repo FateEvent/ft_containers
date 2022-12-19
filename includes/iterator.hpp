@@ -158,7 +158,7 @@ namespace ft
 		move_iterator() : _ptr() {}
 		move_iterator(value_type *ptr) : _ptr(ptr) {}
 
-		pointer			base() const { return _ptr; }
+		pointer	base() const { return _ptr; }
 
 		value_type	&operator* () { return *_ptr; }
 		value_type	*operator-> () { return _ptr; }

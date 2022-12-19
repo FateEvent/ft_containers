@@ -1,6 +1,6 @@
 NAME = ft_containers
 CC = c++
-FLAGS = -Wall -Wextra -Werror -std=c++98
+FLAGS = -Wall -Wextra -Werror -std=c++98 -g3
 LIBLINKS	=	-I./includes
 SRC_PATH	=	srcs/
 OBJ_PATH	=	bin/
@@ -33,7 +33,7 @@ CURSIVE = \033[3m
 all: $(NAME)
 
 $(NAME):  $(OBJS)
-	@$(CC) $(FLAGS) -o $(NAME) $(OBJS)
+	@$(CC) $(FLAGS) -o $(NAME) $(OBJS) -fsanitize=address
 
 .c.o:
 	@$(CC) $(FLAGS) $(LIBLINKS) -c $< -o ${<:.cpp=.o}
