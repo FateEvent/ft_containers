@@ -4,6 +4,10 @@ In addition to the official C++ documentation:
 * <https://cplusplus.com>;
 * <https://en.cppreference.com>;
 
+and the two useful and interesting courses offered by OpenClassrooms:
+* <https://openclassrooms.com/fr/courses/1894236-apprenez-a-programmer-en-c>;
+* <https://openclassrooms.com/fr/courses/7137751-programmez-en-oriente-objet-avec-c>;
+
 As concerning the iterator_traits template:
 * <https://www.lix.polytechnique.fr/~liberti/public/computing/prog/libstdc++/iterator_traits.html>
 

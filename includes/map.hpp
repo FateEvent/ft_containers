@@ -10,7 +10,7 @@
 # include "pair.hpp"
 # include "vector.hpp"
 # include "map_iterator.hpp"
-//#include <map>
+#include <map>
 
 class map_iterator;
 
@@ -250,9 +250,9 @@ namespace ft
 //		iterator insert (iterator position, const value_type& val);
 //		template <class InputIterator>  void insert (InputIterator first, InputIterator last);
 
-	mapped_type&	operator[] (const key_type& k) {
+//		mapped_type&	operator[] (const key_type& k) {
 
-	}
+//		}
 
 	private :
 		Node			*_root;
