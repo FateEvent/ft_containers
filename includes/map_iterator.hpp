@@ -21,16 +21,16 @@ namespace ft
 		typedef pair<const key_type, mapped_type>	value_type;
 		typedef std::size_t							size_type;
 		typedef std::ptrdiff_t						difference_type;
-		typedef value_type*							pointer;
-		typedef value_type&							reference;
+		typedef Node*								pointer;
+		typedef Node&								reference;
 
 		map_iterator() : _ptr(&_present), _last(NULL), _present(), _stop() {}
-		map_iterator(Node *ptr) : _ptr(ptr), _last(NULL), _present(), _stop() {}
+		map_iterator(Node *ptr) : _ptr(ptr), _last(NULL), _present(*ptr), _stop() {}
 
-		Node	*base() const { return _ptr; }
+		pointer		base() const { return _ptr; }
 
-		value_type	&operator* () const { return *_ptr; }
-		value_type	*operator-> () const { return _ptr; }
+		reference	operator* () const { return *_ptr; }
+		pointer		operator-> () const { return _ptr; }
 
 		static Node	*local_Rb_tree_increment(Node *_x) throw ()
 		{

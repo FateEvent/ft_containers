@@ -305,7 +305,6 @@ namespace ft
 			if (pos >= begin() && pos <= end())
 			{
 				difference_type	dist = pos - 1 - begin();
-				iterator		p = _v + dist;
 				difference_type	interval = last - first;
 
 				if (size() + interval >= capacity())
@@ -319,10 +318,12 @@ namespace ft
 					_alloc.deallocate(_v, capacity());
 					_v = temp;
 					_size = capacity();
+					iterator p = _v + dist;
 					return (p);
 				}
 				else
 				{
+					iterator p = _v + dist;
 					_size += interval;
 
 					std::copy(pos - 1, end(), end() - 1);
