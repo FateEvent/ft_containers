@@ -201,7 +201,7 @@ int main(int argc, char** argv) {
 	tree.insert(c);
 	tree.insert(d);
 	tree.insert(f);
-	tree.insert(tree.begin(), g);
+	tree.insert(tree.begin() + 1, g);
 	tree.insert(tree.begin(), l);
 	tree.prefix_traversal(tree.root(), ' ');
 

@@ -168,7 +168,7 @@ namespace ft
 			_alloc_node.deallocate(node, 1);
 		}
 
-		pair<iterator,bool>	insert (const value_type& val)
+		pair<iterator,bool>	insert(const value_type& val)
 		{
 			Node		*newNode = new_node(val);
 			iterator	_x(_root);
@@ -177,6 +177,7 @@ namespace ft
 			if (_x == NULL)
 			{
 				_root = newNode;
+				++_size;
 				return (ft::make_pair(_x, true));
 			}
 			while (_x != NULL) {
@@ -196,38 +197,45 @@ namespace ft
 					return (ft::make_pair(_y, false));
 			else
 				_y->set_right(newNode);
+			++_size;
 			return (ft::make_pair(_y, true));
 		}
 
 		iterator	insert(iterator pos, const value_type& val)
 		{
-			Node		*newNode = new_node(val);
-			iterator	_x(pos);
-			iterator	_y;
+//			if (pos >= begin() && pos <= end())
+//			{
+				Node		*newNode = new_node(val);
+				iterator	_x(pos);
+				iterator	_y;
 
-			if (_x == NULL)
-			{
-				pos.set_ptr(newNode);
-				return (_x);
-			}
-			while (_x != NULL) {
-				_y.set_ptr(_x.base());
-				if (_key_comp(val.first, _x.base()->data().first))
-					_x.set_ptr(_x->left());
-				else if (val.first == _x.base()->data().first)
+				if (_x == NULL)
+				{
+					pos.set_ptr(newNode);
+					++_size;
 					return (_x);
+				}
+				while (_x != NULL) {
+					_y.set_ptr(_x.base());
+					if (_key_comp(val.first, _x.base()->data().first))
+						_x.set_ptr(_x->left());
+					else if (val.first == _x.base()->data().first)
+						return (_x);
+					else
+						_x.set_ptr(_x->right());
+				}
+				if (_y == NULL)
+					_y.set_ptr(newNode);
+				else if (_key_comp(val.first, _y.base()->data().first))
+					_y->set_left(newNode);
+				else if (val.first == _y.base()->data().first)
+						return (_y);
 				else
-					_x.set_ptr(_x->right());
-			}
-			if (_y == NULL)
-				_y.set_ptr(newNode);
-			else if (_key_comp(val.first, _y.base()->data().first))
-				_y->set_left(newNode);
-			else if (val.first == _y.base()->data().first)
-					return (_y);
-			else
-				_y->set_right(newNode);
-			return (_y);
+					_y->set_right(newNode);
+				++_size;
+				return (_y);
+//			else
+//				throw(ContainerException("out_of_range"));
 		}
 
 		template<class InputIterator> void	insert(InputIterator first, InputIterator last)
