@@ -186,24 +186,24 @@ int main(int argc, char** argv) {
 		std::cout << *it << std::endl;
 */
 
-//	ft::pair<const char, int> a = ft::make_pair('a', 1);
-//	ft::pair<const char, int> b = ft::make_pair('b', 5);
-//	ft::pair<const char, int> c = ft::make_pair('c', 3);
-//	ft::pair<const char, int> d = ft::make_pair('d', 15);
-//	ft::pair<const char, int> f = ft::make_pair('f', 6);
-//	ft::pair<const char, int> g = ft::make_pair('g', 0);
-//	ft::pair<const char, int> l = ft::make_pair('l', -1);
+	ft::pair<const char, int> b = ft::make_pair('b', 5);
+	ft::pair<const char, int> c = ft::make_pair('c', 3);
+	ft::pair<const char, int> d = ft::make_pair('d', 15);
+	ft::pair<const char, int> f = ft::make_pair('f', 6);
+	ft::pair<const char, int> g = ft::make_pair('g', 0);
+	ft::pair<const char, int> l = ft::make_pair('l', -1);
 
 	ft::map<const char, int> tree;
 
 	tree.insert(ft::make_pair('a', 1));
 	tree.insert(ft::make_pair('c', 4));
-//	tree.insert(c);
-//	tree.insert(d);
-//	tree.insert(f);
-//	tree.insert(g);
-//	tree.insert(l);
-//	tree.prefix_traversal(tree.root(), ' ');
+	tree.insert(b);
+	tree.insert(c);
+	tree.insert(d);
+	tree.insert(f);
+	tree.insert(g);
+	tree.insert(l);
+	tree.suffix_traversal(tree.root(), ' ');
 
 	ft::map<const char, int>::iterator it = tree.begin();
 	std::cout << &it << std::endl;

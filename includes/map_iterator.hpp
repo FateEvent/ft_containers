@@ -24,7 +24,7 @@ namespace ft
 		typedef Node*								pointer;
 		typedef Node&								reference;
 
-		map_iterator() : _ptr(&_present), _last(NULL), _present(), _stop() {}
+		map_iterator() : _ptr(NULL), _last(NULL), _present(), _stop() {}
 		map_iterator(Node *ptr) : _ptr(ptr), _last(NULL), _present(), _stop() {}
 
 		pointer		base() const { return _ptr; }
@@ -60,11 +60,8 @@ namespace ft
 
 		void	leftmost()
 		{
-			if (_ptr)
-			{
-				while (_ptr->left())
-					_ptr = _ptr->left();
-			}
+			while (_ptr->left())
+				_ptr = _ptr->left();
 		}
 
 		void	rightmost()

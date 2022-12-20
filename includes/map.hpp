@@ -82,9 +82,7 @@ namespace ft
 
 	public:
 		explicit map(const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type())
-			: _root(NULL), _alloc_node(node_allocator()), _alloc_pair(alloc), _key_comp(comp), _size() {
-				_root = new_node();
-			}
+			: _root(NULL), _alloc_node(node_allocator()), _alloc_pair(alloc), _key_comp(comp), _size() {}
 
 		template <class InputIterator>
 		map (InputIterator first, InputIterator last, const key_compare& comp = key_compare(),       const allocator_type& alloc = allocator_type());
@@ -148,9 +146,14 @@ namespace ft
 		iterator	insert(const value_type& val)
 		{
 			Node		*newNode = new_node(val);
-			iterator	_x(root());
+			iterator	_x(_root);
 			iterator	_y;
-		
+
+			if (_x == NULL)
+			{
+				_root = newNode;
+				return (_x);
+			}
 			while (_x != NULL) {
 				_y.set_ptr(_x.base());
 				if (_key_comp(val.first, _x.base()->data().first))
