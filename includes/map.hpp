@@ -10,7 +10,7 @@
 # include "pair.hpp"
 # include "vector.hpp"
 # include "map_iterator.hpp"
-#include <map>
+//#include <map>
 
 class map_iterator;
 
@@ -76,36 +76,21 @@ namespace ft
 			Node		*left() { return _left; }
 			Node		*right() { return _right; }
 			Node		*parent() { return _parent; }
-			value_type	data() { return _data; }
+			value_type	&data() { return _data; }
 			void		treat(char sep) { std::cout << data().first << sep << data().second << sep << std::endl; }
-
-			void		suppress_node()
-			{
-				std::cout << "seggy" << std::endl;
-				if (left())
-					left()->suppress_node();
-				std::cout << "seggy" << std::endl;
-				if (right())
-					right()->suppress_node();
-				std::cout << "seggy" << std::endl;
-				delete (this);
-			};
 		};
 
 	public:
-		explicit map (const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type())
+		explicit map(const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type())
 			: _root(NULL), _alloc_node(node_allocator()), _alloc_pair(alloc), _key_comp(comp), _size() {
-				Node *newNode = _alloc_node.allocate(1);
-				ft::pair<const char, int> z = ft::make_pair('z', 66);
-				_alloc_pair.construct(&newNode->_data, z);
-				_root = newNode;
+				_root = new_node();
 			}
 
 		template <class InputIterator>
 		map (InputIterator first, InputIterator last, const key_compare& comp = key_compare(),       const allocator_type& alloc = allocator_type());
 		map (const map& x);
 
-		~map() { _root->suppress_node(); };
+		~map() { delete_node(_root); }
 		map&	operator= (map const& base);
 		Node	*root() { return _root; }
 		void	change_root(Node *current) { _root = current; }
@@ -160,25 +145,26 @@ namespace ft
 			return (it);
 		}
 
-		Node	*insert(const value_type& val)
+		iterator	insert(const value_type& val)
 		{
 			Node		*newNode = new_node(val);
 			iterator	_x(root());
+			iterator	_y;
 		
 			while (_x != NULL) {
-				_x.set_last(_x.base());
-				if (_key_comp(val.first, _x->data().first))
+				_y.set_ptr(_x.base());
+				if (_key_comp(val.first, _x.base()->data().first))
 					_x.set_ptr(_x->left());
 				else
 					_x.set_ptr(_x->right());
 			}
-			if (_x.last() == NULL)
-				_x.set_last(newNode);
-			else if (_key_comp(val.first, _x.last()->data().first))
-				_x.last()->set_left(newNode);
+			if (_y == NULL)
+				_y.set_ptr(newNode);
+			else if (_key_comp(val.first, _y.base()->data().first))
+				_y->set_left(newNode);
 			else
-				_x.last()->set_right(newNode);
-			return (_x.last());
+				_y->set_right(newNode);
+			return (_y);
 		}
 
 		Node	*new_node(const value_type& pair = value_type())
@@ -194,15 +180,18 @@ namespace ft
 				_alloc_node.deallocate(ptr, 1);
 				throw;
 			}
+			ptr->_left = NULL;
+			ptr->_right = NULL;
+			ptr->_balance = 0;
 			return (ptr);
 		}
-/*
-		void	delete_node(Node *n)
+
+		void	delete_node(Node *node)
 		{
-			_alloc_node.destroy(n);
-			_alloc_node.deallocate(n, 1);
+			_alloc_node.destroy(node);
+			_alloc_node.deallocate(node, 1);
 		}
-*/
+
 //		pair<iterator,bool> insert (const value_type& val);
 //		iterator insert (iterator position, const value_type& val);
 //		template <class InputIterator>  void insert (InputIterator first, InputIterator last);

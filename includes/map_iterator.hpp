@@ -25,15 +25,15 @@ namespace ft
 		typedef Node&								reference;
 
 		map_iterator() : _ptr(&_present), _last(NULL), _present(), _stop() {}
-		map_iterator(Node *ptr) : _ptr(ptr), _last(NULL), _present(*ptr), _stop() {}
+		map_iterator(Node *ptr) : _ptr(ptr), _last(NULL), _present(), _stop() {}
 
 		pointer		base() const { return _ptr; }
 
 		reference	operator* () const { return *_ptr; }
 		pointer		operator-> () const { return _ptr; }
 
-		pointer		last() const { return _last; }
-		void		set_last(pointer last) { _last = last; }
+//		pointer		last() const { return _last; }
+//		void		set_last(pointer last) { _last = last; }
 		void		set_ptr(pointer ptr) { _ptr = ptr; }
 
 		static Node	*local_Rb_tree_increment(Node *_x) throw ()
@@ -60,8 +60,11 @@ namespace ft
 
 		void	leftmost()
 		{
-			while (_ptr->left())
-				_ptr = _ptr->left();
+			if (_ptr)
+			{
+				while (_ptr->left())
+					_ptr = _ptr->left();
+			}
 		}
 
 		void	rightmost()
