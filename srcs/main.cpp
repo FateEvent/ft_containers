@@ -196,13 +196,13 @@ int main(int argc, char** argv) {
 
 	ft::map<const char, int> tree;
 
-	tree.insert(tree.root(), a);
-	tree.insert(tree.root(), b);
-	tree.insert(tree.root(), c);
-	tree.insert(tree.root(), d);
-	tree.insert(tree.root(), f);
-	tree.insert(tree.root(), g);
-	tree.insert(tree.root(), l);
+	tree.insert(a);
+	tree.insert(b);
+	tree.insert(c);
+	tree.insert(d);
+	tree.insert(f);
+	tree.insert(g);
+	tree.insert(l);
 	tree.prefix_traversal(tree.root(), ' ');
 
 //	std::cout << "ciao" << tree.root()->data().second << std::endl;

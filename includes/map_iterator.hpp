@@ -32,6 +32,10 @@ namespace ft
 		reference	operator* () const { return *_ptr; }
 		pointer		operator-> () const { return _ptr; }
 
+		pointer		last() const { return _last; }
+		void		set_last(pointer last) { _last = last; }
+		void		set_ptr(pointer ptr) { _ptr = ptr; }
+
 		static Node	*local_Rb_tree_increment(Node *_x) throw ()
 		{
 			if (_x->_right != 0) 

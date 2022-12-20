@@ -69,10 +69,10 @@ namespace ft
 			~Node() {}
 
 			Node		&operator= (Node &other) { _left = other._left; _right = other._right; _parent = other._parent; _balance = other._balance; return (*this); }
-			void		change_left(Node *left) { _left = left; }
-			void		change_right(Node *right) { _right = right; }
-			void		change_parent(Node *parent) { _parent = parent; }
-			void		change_data(value_type &data) { _data = data; }
+			void		set_left(Node *left) { _left = left; }
+			void		set_right(Node *right) { _right = right; }
+			void		set_parent(Node *parent) { _parent = parent; }
+			void		set_data(value_type &data) { _data = data; }
 			Node		*left() { return _left; }
 			Node		*right() { return _right; }
 			Node		*parent() { return _parent; }
@@ -160,79 +160,34 @@ namespace ft
 			return (it);
 		}
 
-		void	insert (const value_type& val) {	// I invented it
-
-			if (root())
-			{
-				iterator	it(root());
-
-				if (_key_comp(val.first, it->data().first))
-				{
-					if (it.left())
-					{
-						while (_key_comp(val.first, it->data().first))
-						{
-							it = it.left();
-						}
-					}
-					else
-					{
-						it._left = _alloc_node.allocate(1);
-//						_alloc_node.construct(newNode);
-						_alloc_pair.construct(&it._left->_data, val);
-					}
-
-				}
-
-			}
-			else
-			{
-				_root = _alloc_node.allocate(1);
-//				_alloc_node.construct(newNode);
-				_alloc_pair.construct(&_root->_data, val);
-			}
-		}
-
-		void	insert(Node *current, value_type &pair) {
-			Node *newNode = _alloc_node.allocate(1);
-//			_alloc_node.construct(newNode);
-			_alloc_pair.construct(&newNode->_data, pair);
-
-			if (current)
-			{
-				if (_key_comp(pair.first, current->data().first))
-				{
-					if (current->left())
-					{
-						std::cout << "left " << current->data().first << std::endl;
-						insert(current->left(), pair);
-					}
-					else
-						current->change_left(newNode);
-				}
+		Node	*insert(const value_type& val)
+		{
+			Node		*newNode = new_node(val);
+			iterator	_x(root());
+		
+			while (_x != NULL) {
+				_x.set_last(_x.base());
+				if (_key_comp(val.first, _x->data().first))
+					_x.set_ptr(_x->left());
 				else
-				{
-					if (current->right())
-					{
-						std::cout << "right " << current->data().first << std::endl;
-						insert(current->right(), pair);
-					}
-					else
-						current->change_right(newNode);
-				}
+					_x.set_ptr(_x->right());
 			}
+			if (_x.last() == NULL)
+				_x.set_last(newNode);
+			else if (_key_comp(val.first, _x.last()->data().first))
+				_x.last()->set_left(newNode);
 			else
-				current = newNode;
-			std::cout << current->data().second << std::endl;
+				_x.last()->set_right(newNode);
+			return (_x.last());
 		}
-/*
-		Node	*new_node(value_type content = value_type())
+
+		Node	*new_node(const value_type& pair = value_type())
 		{
 			Node *ptr = _alloc_node.allocate(1);
-			_alloc_node.construct(ptr);
+//			_alloc_node.construct(ptr);
 			try
 			{
-				_alloc_pair.construct(&ptr->content, content);
+				_alloc_pair.construct(&ptr->_data, pair);
 			}
 			catch (...)
 			{
@@ -241,7 +196,7 @@ namespace ft
 			}
 			return (ptr);
 		}
-
+/*
 		void	delete_node(Node *n)
 		{
 			_alloc_node.destroy(n);
