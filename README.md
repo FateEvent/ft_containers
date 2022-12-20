@@ -31,4 +31,4 @@ Other materials about maps and map iterators:
 * <https://en.wikipedia.org/wiki/Tree_traversal>;
 * <https://www.geeksforgeeks.org/insert-a-node-in-binary-search-tree-iteratively>.
 
-* <https://github.com/lobbyra/ft_containers>
+* <https://github.com/lobbyra/ft_containers>.

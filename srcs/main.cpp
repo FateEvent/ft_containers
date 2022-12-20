@@ -203,7 +203,7 @@ int main(int argc, char** argv) {
 	tree.insert(f);
 	tree.insert(g);
 	tree.insert(l);
-	tree.suffix_traversal(tree.root(), ' ');
+	tree.prefix_traversal(tree.root(), ' ');
 
 	ft::map<const char, int>::iterator it = tree.begin();
 	std::cout << &it << std::endl;

@@ -22,8 +22,8 @@ namespace ft
 	{
 		typedef std::ptrdiff_t					difference_type;
 		typedef Iter							value_type;
-		typedef Iter *							pointer;
-		typedef Iter &							reference;
+		typedef Iter*							pointer;
+		typedef Iter&							reference;
 		typedef std::random_access_iterator_tag	iterator_category;
 	};
 
@@ -135,7 +135,7 @@ namespace ft
 	template<class It1, class It2>
 	bool operator>= (const ft::reverse_iterator<It1> &lhs, const ft::reverse_iterator<It2> &rhs) { return lhs.base() >= rhs.base(); }
 
-	template <class Cat, class T, class Dist = ptrdiff_t, class Ptr = T *, class Ref = T&>
+	template <class Cat, class T, class Dist = ptrdiff_t, class Ptr = T*, class Ref = T&>
 	struct iterator
 	{
 		typedef Cat		iterator_category;
@@ -160,8 +160,8 @@ namespace ft
 
 		pointer	base() const { return _ptr; }
 
-		value_type	&operator* () { return *_ptr; }
-		value_type	*operator-> () { return _ptr; }
+		reference	operator* () { return *_ptr; }
+		pointer		operator-> () { return _ptr; }
 
 		move_iterator	&operator++ () { _ptr++; return *this; }
 		move_iterator	operator++ (int) { move_iterator tmp = *this; ++(*this); return tmp; }
@@ -200,8 +200,8 @@ namespace ft
 
 		pointer			base() const { return _ptr; }
 
-		value_type	&operator* () const { return *_ptr; }
-		value_type	*operator-> () const { return _ptr; }
+		reference	operator* () const { return *_ptr; }
+		pointer		operator-> () const { return _ptr; }
 
 		const const_iter	&operator++ () { _ptr++; return *this; }
 		const const_iter 	operator++ (int) { const_iter tmp = *this; ++(*this); return tmp; }
