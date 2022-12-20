@@ -201,8 +201,8 @@ int main(int argc, char** argv) {
 	tree.insert(c);
 	tree.insert(d);
 	tree.insert(f);
-	tree.insert(g);
-	tree.insert(l);
+	tree.insert(tree.begin(), g);
+	tree.insert(tree.begin(), l);
 	tree.prefix_traversal(tree.root(), ' ');
 
 	ft::map<const char, int>::iterator it = tree.begin();

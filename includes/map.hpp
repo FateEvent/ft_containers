@@ -143,33 +143,6 @@ namespace ft
 			return (it);
 		}
 
-		iterator	insert(const value_type& val)
-		{
-			Node		*newNode = new_node(val);
-			iterator	_x(_root);
-			iterator	_y;
-
-			if (_x == NULL)
-			{
-				_root = newNode;
-				return (_x);
-			}
-			while (_x != NULL) {
-				_y.set_ptr(_x.base());
-				if (_key_comp(val.first, _x.base()->data().first))
-					_x.set_ptr(_x->left());
-				else
-					_x.set_ptr(_x->right());
-			}
-			if (_y == NULL)
-				_y.set_ptr(newNode);
-			else if (_key_comp(val.first, _y.base()->data().first))
-				_y->set_left(newNode);
-			else
-				_y->set_right(newNode);
-			return (_y);
-		}
-
 		Node	*new_node(const value_type& pair = value_type())
 		{
 			Node *ptr = _alloc_node.allocate(1);
@@ -195,9 +168,73 @@ namespace ft
 			_alloc_node.deallocate(node, 1);
 		}
 
-//		pair<iterator,bool> insert (const value_type& val);
-//		iterator insert (iterator position, const value_type& val);
-//		template <class InputIterator>  void insert (InputIterator first, InputIterator last);
+		pair<iterator,bool>	insert (const value_type& val)
+		{
+			Node		*newNode = new_node(val);
+			iterator	_x(_root);
+			iterator	_y;
+
+			if (_x == NULL)
+			{
+				_root = newNode;
+				return (ft::make_pair(_x, true));
+			}
+			while (_x != NULL) {
+				_y.set_ptr(_x.base());
+				if (_key_comp(val.first, _x.base()->data().first))
+					_x.set_ptr(_x->left());
+				else if (val.first == _x.base()->data().first)
+					return (ft::make_pair(_x, false));
+				else
+					_x.set_ptr(_x->right());
+			}
+			if (_y == NULL)
+				_y.set_ptr(newNode);
+			else if (_key_comp(val.first, _y.base()->data().first))
+				_y->set_left(newNode);
+			else if (val.first == _y.base()->data().first)
+					return (ft::make_pair(_y, false));
+			else
+				_y->set_right(newNode);
+			return (ft::make_pair(_y, true));
+		}
+
+		iterator	insert(iterator pos, const value_type& val)
+		{
+			Node		*newNode = new_node(val);
+			iterator	_x(pos);
+			iterator	_y;
+
+			if (_x == NULL)
+			{
+				pos.set_ptr(newNode);
+				return (_x);
+			}
+			while (_x != NULL) {
+				_y.set_ptr(_x.base());
+				if (_key_comp(val.first, _x.base()->data().first))
+					_x.set_ptr(_x->left());
+				else if (val.first == _x.base()->data().first)
+					return (_x);
+				else
+					_x.set_ptr(_x->right());
+			}
+			if (_y == NULL)
+				_y.set_ptr(newNode);
+			else if (_key_comp(val.first, _y.base()->data().first))
+				_y->set_left(newNode);
+			else if (val.first == _y.base()->data().first)
+					return (_y);
+			else
+				_y->set_right(newNode);
+			return (_y);
+		}
+
+		template<class InputIterator> void	insert(InputIterator first, InputIterator last)
+		{
+			for (; first < last; ++first)
+				insert(*first);
+		}
 
 //		mapped_type&	operator[] (const key_type& k) {
 
