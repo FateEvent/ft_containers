@@ -160,6 +160,39 @@ namespace ft
 			return (it);
 		}
 
+		void	insert (const value_type& val) {	// I invented it
+
+			if (root())
+			{
+				iterator	it(root());
+
+				if (_key_comp(val.first, it->data().first))
+				{
+					if (it.left())
+					{
+						while (_key_comp(val.first, it->data().first))
+						{
+							it = it.left();
+						}
+					}
+					else
+					{
+						it._left = _alloc_node.allocate(1);
+//						_alloc_node.construct(newNode);
+						_alloc_pair.construct(&it._left->_data, val);
+					}
+
+				}
+
+			}
+			else
+			{
+				_root = _alloc_node.allocate(1);
+//				_alloc_node.construct(newNode);
+				_alloc_pair.construct(&_root->_data, val);
+			}
+		}
+
 		void	insert(Node *current, value_type &pair) {
 			Node *newNode = _alloc_node.allocate(1);
 //			_alloc_node.construct(newNode);
