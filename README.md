@@ -30,3 +30,4 @@ Other materials about maps and map iterators:
 * <https://stackoverflow.com/questions/17150544/what-is-the-definition-of-rb-tree-increment-in-bits-stl-tree-h/17150988#17150988>;
 * <https://en.wikipedia.org/wiki/Tree_traversal>.
 
+* <https://github.com/lobbyra/ft_containers>

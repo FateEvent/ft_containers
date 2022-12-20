@@ -154,12 +154,9 @@ namespace ft
 		}
 
 		iterator	begin()	{
-			Node	*temp(_root);
-			
-			while (temp != NULL)
-				temp = temp->left();
-			iterator	it(temp);
+			iterator	it(_root);
 
+			it.leftmost();
 			return (it);
 		}
 

@@ -54,6 +54,18 @@ namespace ft
 			return _x;
 		}
 
+		void	leftmost()
+		{
+			while (_ptr->left())
+				_ptr = _ptr->left();
+		}
+
+		void	rightmost()
+		{
+			while (_ptr->right())
+				_ptr = _ptr->right();
+		}
+
 		Node *_Rb_tree_increment(Node *_x) throw ()
 		{
 			return local_Rb_tree_increment(_x);
