@@ -188,27 +188,27 @@ namespace ft
 			while (_x != NULL) {
 				_y.set_ptr(_x.base());
 				if (_key_comp(val.first, _x.base()->data().first))
-					_x.set_ptr(_x->left());
+					_x.set_ptr(_x.base()->left());
 				else if (val.first == _x.base()->data().first)
 					return (ft::make_pair(_x, false));
 				else
-					_x.set_ptr(_x->right());
+					_x.set_ptr(_x.base()->right());
 			}
 			if (_y == NULL)
 			{
 				_y.set_ptr(newNode);
-				newNode->set_parent(_y->parent());
+				newNode->set_parent(_y.base()->parent());
 			}
 			else if (_key_comp(val.first, _y.base()->data().first))
 			{
-				_y->set_left(newNode);
+				_y.base()->set_left(newNode);
 				newNode->set_parent(_y.base());
 			}
 			else if (val.first == _y.base()->data().first)
 					return (ft::make_pair(_y, false));
 			else
 			{
-				_y->set_right(newNode);
+				_y.base()->set_right(newNode);
 				newNode->set_parent(_y.base());
 			}
 			++_size;
@@ -232,27 +232,27 @@ namespace ft
 				while (_x != NULL) {
 					_y.set_ptr(_x.base());
 					if (_key_comp(val.first, _x.base()->data().first))
-						_x.set_ptr(_x->left());
+						_x.set_ptr(_x.base()->left());
 					else if (val.first == _x.base()->data().first)
 						return (_x);
 					else
-						_x.set_ptr(_x->right());
+						_x.set_ptr(_x.base()->right());
 				}
 				if (_y == NULL)
 				{
 					_y.set_ptr(newNode);
-					newNode->set_parent(_y->parent());
+					newNode->set_parent(_y.base()->parent());
 				}
 				else if (_key_comp(val.first, _y.base()->data().first))
 				{
-					_y->set_left(newNode);
+					_y.base()->set_left(newNode);
 					newNode->set_parent(_y.base());
 				}
 				else if (val.first == _y.base()->data().first)
 						return (_y);
 				else
 				{
-					_y->set_right(newNode);
+					_y.base()->set_right(newNode);
 					newNode->set_parent(_y.base());
 				}
 				++_size;

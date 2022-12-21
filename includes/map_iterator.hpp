@@ -31,8 +31,8 @@ namespace ft
 
 		node_pointer	base() const { return _ptr; }
 
-		node_reference	operator* () const { return *_ptr; }
-		node_pointer	operator-> () const { return _ptr; }
+		reference	operator* () const { return *_ptr; }
+		pointer		operator-> () const { return _ptr; }
 
 //		node_pointer	last() const { return _last; }
 //		void			set_last(node_pointer last) { _last = last; }
