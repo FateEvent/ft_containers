@@ -179,12 +179,6 @@ namespace ft
 			iterator	_x(_root);
 			iterator	_y;
 
-			if (_x == NULL)
-			{
-				_root = newNode;
-				++_size;
-				return (ft::make_pair(_x, true));
-			}
 			while (_x != NULL) {
 				_y.set_ptr(_x.base());
 				if (_key_comp(val.first, _x.base()->data().first))
@@ -223,12 +217,6 @@ namespace ft
 				iterator	_x(pos);
 				iterator	_y;
 
-				if (_x == NULL)
-				{
-					pos.set_ptr(newNode);
-					++_size;
-					return (_x);
-				}
 				while (_x != NULL) {
 					_y.set_ptr(_x.base());
 					if (_key_comp(val.first, _x.base()->data().first))

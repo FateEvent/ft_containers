@@ -3,6 +3,7 @@
 
 # include <iostream>
 # include "vector.hpp"
+#include <stack>
 
 namespace ft
 {
@@ -10,7 +11,7 @@ namespace ft
 	class stack
 	{
 	protected:
-		Container	c;
+		Container											c;
 
 	public:
 		typedef Container									container_type;
@@ -19,13 +20,13 @@ namespace ft
 		typedef typename container_type::const_reference	const_reference;
 		typedef typename container_type::size_type			size_type;
 
-		stack(): c() {}
+		explicit stack(const container_type& q = container_type()) : c(q) {}
 
 		stack(const stack& q) : c(q.c) {}
 
 		~stack(void) {};
 
-		stack&	operator = (const stack& q) { c = q.c; return *this; }
+		stack&	operator= (const stack& q) { c = q.c; return *this; }
 
 		bool	empty()	const { return c.empty(); }
 
@@ -33,13 +34,12 @@ namespace ft
 
 		reference	top(void) { return c.back(); }
 
-		void	push(const value_type& v)	{ c.push_back(v); }
+		void	push(const value_type& v) { c.push_back(v); }
 
-		void	pop()	{ c.pop_back(); }
+		void	pop() { c.pop_back(); }
 
-		void	swap(stack & ms)
-		{
-			swap(c, ms.c);
+		void	swap(stack& ms) {
+			c.swap(ms.c);
 		};
 	};
 
