@@ -202,14 +202,14 @@ namespace ft
 			else if (_key_comp(val.first, _y.base()->data().first))
 			{
 				_y->set_left(newNode);
-				newNode->set_parent(_y);
+				newNode->set_parent(_y.base());
 			}
 			else if (val.first == _y.base()->data().first)
 					return (ft::make_pair(_y, false));
 			else
 			{
 				_y->set_right(newNode);
-				newNode->set_parent(_y);
+				newNode->set_parent(_y.base());
 			}
 			++_size;
 			return (ft::make_pair(_y, true));
@@ -246,14 +246,14 @@ namespace ft
 				else if (_key_comp(val.first, _y.base()->data().first))
 				{
 					_y->set_left(newNode);
-					newNode->set_parent(_y);
+					newNode->set_parent(_y.base());
 				}
 				else if (val.first == _y.base()->data().first)
 						return (_y);
 				else
 				{
 					_y->set_right(newNode);
-					newNode->set_parent(_y);
+					newNode->set_parent(_y.base());
 				}
 				++_size;
 				return (_y);
