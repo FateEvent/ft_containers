@@ -145,7 +145,7 @@ namespace ft
 			return (it);
 		}
 
-		iterator	end() { return iterator(&_root); }
+		iterator	end() { return iterator(_root); }
 
 		Node	*new_node(const value_type& pair = value_type())
 		{
@@ -207,8 +207,8 @@ namespace ft
 
 		iterator	insert(iterator pos, const value_type& val)
 		{
-//			if (pos >= begin() && pos <= end())
-//			{
+			if (pos >= begin() && pos <= end())
+			{
 				Node		*newNode = new_node(val);
 				iterator	_x(pos);
 				iterator	_y;
@@ -238,8 +238,9 @@ namespace ft
 					_y->set_right(newNode);
 				++_size;
 				return (_y);
-//			else
-//				throw(ContainerException("out_of_range"));
+			}
+			else
+				throw(ContainerException("out_of_range"));
 		}
 
 		template<class InputIterator> void	insert(InputIterator first, InputIterator last)

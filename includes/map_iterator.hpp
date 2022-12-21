@@ -18,14 +18,15 @@ namespace ft
 		typedef	std::bidirectional_iterator_tag		iterator_category;
 		typedef Key									key_type;
 		typedef T									mapped_type;
-		typedef pair<const key_type, mapped_type>	value_type;
+		typedef pair<const key_type, mapped_type>	Content;
 		typedef std::size_t							size_type;
 		typedef std::ptrdiff_t						difference_type;
 		typedef Node*								pointer;
 		typedef Node&								reference;
 
 		map_iterator() : _ptr(&_dummy), _last(NULL), _dummy() {}
-		map_iterator(Node *ptr) : _ptr(ptr), _last(NULL), _dummy(*_ptr) {}
+		map_iterator(Node *ptr) : _ptr(ptr), _last(NULL), _dummy() {
+		}
 
 		pointer		base() const { return _ptr; }
 
