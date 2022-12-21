@@ -10,7 +10,7 @@
 # include "pair.hpp"
 # include "vector.hpp"
 # include "map_iterator.hpp"
-//#include <map>
+#include <map>
 
 class map_iterator;
 
@@ -82,7 +82,9 @@ namespace ft
 
 	public:
 		explicit map(const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type())
-			: _root(NULL), _alloc_node(node_allocator()), _alloc_pair(alloc), _key_comp(comp), _size() {}
+			: _root(NULL), _alloc_node(node_allocator()), _alloc_pair(alloc), _key_comp(comp), _size() {
+				_root = new_node();
+			}
 
 		template <class InputIterator>
 		map (InputIterator first, InputIterator last, const key_compare& comp = key_compare(),       const allocator_type& alloc = allocator_type());
@@ -142,6 +144,8 @@ namespace ft
 			it.leftmost();
 			return (it);
 		}
+
+		iterator	end() { return iterator(&_root); }
 
 		Node	*new_node(const value_type& pair = value_type())
 		{

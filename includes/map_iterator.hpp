@@ -24,8 +24,8 @@ namespace ft
 		typedef Node*								pointer;
 		typedef Node&								reference;
 
-		map_iterator() : _ptr(NULL), _last(NULL), _present(), _stop() {}
-		map_iterator(Node *ptr) : _ptr(ptr), _last(NULL), _present(), _stop() {}
+		map_iterator() : _ptr(&_dummy), _last(NULL), _dummy() {}
+		map_iterator(Node *ptr) : _ptr(ptr), _last(NULL), _dummy(*_ptr) {}
 
 		pointer		base() const { return _ptr; }
 
@@ -108,8 +108,7 @@ namespace ft
 	private:
 		Node	*_ptr;
 		Node	*_last;
-		Node	_present;
-		int		_stop;
+		Node	_dummy;
 	};
 }
 

@@ -29,6 +29,7 @@ Other materials about maps and map iterators:
 * <https://stackoverflow.com/questions/12259571/how-does-the-stdmap-iterator-work>;
 * <https://stackoverflow.com/questions/17150544/what-is-the-definition-of-rb-tree-increment-in-bits-stl-tree-h/17150988#17150988>;
 * <https://en.wikipedia.org/wiki/Tree_traversal>;
-* <https://www.geeksforgeeks.org/insert-a-node-in-binary-search-tree-iteratively>.
+* <https://www.geeksforgeeks.org/insert-a-node-in-binary-search-tree-iteratively>;
+* <https://stackoverflow.com/questions/3487087/how-to-implement-an-end-in-a-map>.
 
 * <https://github.com/lobbyra/ft_containers>.
