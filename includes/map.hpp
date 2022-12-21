@@ -87,8 +87,8 @@ namespace ft
 			}
 
 		template <class InputIterator>
-		map (InputIterator first, InputIterator last, const key_compare& comp = key_compare(),       const allocator_type& alloc = allocator_type());
-		map (const map& x);
+		map(InputIterator first, InputIterator last, const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type());
+		map(const map& x);
 
 		~map() { delete_node(_root); }
 		map&	operator= (map const& base);
@@ -162,6 +162,7 @@ namespace ft
 			}
 			ptr->_left = NULL;
 			ptr->_right = NULL;
+			ptr->_parent = NULL;
 			ptr->_balance = 0;
 			return (ptr);
 		}

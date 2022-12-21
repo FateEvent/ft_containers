@@ -21,34 +21,67 @@ namespace ft
 		typedef pair<const key_type, mapped_type>	Content;
 		typedef std::size_t							size_type;
 		typedef std::ptrdiff_t						difference_type;
-		typedef Node*								pointer;
-		typedef Node&								reference;
+		typedef Node*								node_pointer;
+		typedef Node&								node_reference;
+		typedef Content*							pointer;
+		typedef Content&							reference;
 
 		map_iterator() : _ptr(&_dummy), _last(NULL), _dummy() {}
-		map_iterator(Node *ptr) : _ptr(ptr), _last(NULL), _dummy() {
+		map_iterator(Node *ptr) : _ptr(ptr), _last(NULL) {}
+
+		node_pointer	base() const { return _ptr; }
+
+		node_reference	operator* () const { return *_ptr; }
+		node_pointer	operator-> () const { return _ptr; }
+
+//		node_pointer		last() const { return _last; }
+//		void		set_last(node_pointer last) { _last = last; }
+		void		set_ptr(node_pointer ptr) { _ptr = ptr; }
+/*
+		static Node	*local_Rb_tree_decrement(Node *_x) throw ()
+		{
+			if (_x->_left != 0)
+			{
+				_x = _x->_left;
+				while (_x->_right != 0)
+				_x = _x->_right;
+			}
+			else
+			{
+				Node *_y = _x->_parent;
+				while (_x == _y->_left)
+				{
+					_x = _y;
+					_y = _y->_parent;
+				}
+				if (_x->_left != _y)
+				_x = _y;
+			}
+			return _x;
 		}
 
-		pointer		base() const { return _ptr; }
+		Node *_Rb_tree_decrement(Node *_x) throw ()
+		{
+			return local_Rb_tree_decrement(_x);
+		}
 
-		reference	operator* () const { return *_ptr; }
-		pointer		operator-> () const { return _ptr; }
-
-//		pointer		last() const { return _last; }
-//		void		set_last(pointer last) { _last = last; }
-		void		set_ptr(pointer ptr) { _ptr = ptr; }
-
+		const Node *_Rb_tree_decrement(const Node *_x) throw ()
+		{
+			return local_Rb_tree_decrement(const_cast<Node *>(_x));
+		}
+*/
 		static Node	*local_Rb_tree_increment(Node *_x) throw ()
 		{
-			if (_x->_right != 0) 
+			if (_x->_right != 0)
 			{
 				_x = _x->_right;
 				while (_x->_left != 0)
 				_x = _x->_left;
 			}
-			else 
+			else
 			{
 				Node *_y = _x->_parent;
-				while (_x == _y->_right) 
+				while (_x == _y->_right)
 				{
 					_x = _y;
 					_y = _y->_parent;
@@ -57,6 +90,16 @@ namespace ft
 				_x = _y;
 			}
 			return _x;
+		}
+
+		Node *_Rb_tree_increment(Node *_x) throw ()
+		{
+			return local_Rb_tree_increment(_x);
+		}
+
+		const Node *_Rb_tree_increment(const Node *_x) throw ()
+		{
+			return local_Rb_tree_increment(const_cast<Node *>(_x));
 		}
 
 		void	leftmost()
@@ -71,27 +114,17 @@ namespace ft
 				_ptr = _ptr->right();
 		}
 
-		Node *_Rb_tree_increment(Node *_x) throw ()
-		{
-			return local_Rb_tree_increment(_x);
-		}
-
-		const Node *_Rb_tree_increment(const Node *_x) throw ()
-		{
-			return local_Rb_tree_increment(const_cast<Node *>(_x));
-		}
-
 		const map_iterator	&operator++ () {
 			_ptr = _Rb_tree_increment(_ptr);
 			return *this;
 		}
 		const map_iterator 	operator++ (int) { map_iterator tmp = *this; ++(*this); return tmp; }
 /*		const map_iterator	&operator-- () {
-
+			_ptr = _Rb_tree_decrement(_ptr);
+			return *this;
 		}
 		const map_iterator 	operator-- (int) { map_iterator tmp = *this; --(*this); return tmp; }
 */
-
 		const map_iterator	&operator+= (std::size_t dist) { _ptr += dist; return *this; }
 		const map_iterator	&operator-= (std::size_t dist) { _ptr -= dist; return *this; }
 		const map_iterator	operator+ (std::size_t dist) { return (_ptr + dist); }
