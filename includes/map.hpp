@@ -195,13 +195,22 @@ namespace ft
 					_x.set_ptr(_x->right());
 			}
 			if (_y == NULL)
+			{
 				_y.set_ptr(newNode);
+				newNode->set_parent(_y->parent());
+			}
 			else if (_key_comp(val.first, _y.base()->data().first))
+			{
 				_y->set_left(newNode);
+				newNode->set_parent(_y);
+			}
 			else if (val.first == _y.base()->data().first)
 					return (ft::make_pair(_y, false));
 			else
+			{
 				_y->set_right(newNode);
+				newNode->set_parent(_y);
+			}
 			++_size;
 			return (ft::make_pair(_y, true));
 		}
@@ -230,13 +239,22 @@ namespace ft
 						_x.set_ptr(_x->right());
 				}
 				if (_y == NULL)
+				{
 					_y.set_ptr(newNode);
+					newNode->set_parent(_y->parent());
+				}
 				else if (_key_comp(val.first, _y.base()->data().first))
+				{
 					_y->set_left(newNode);
+					newNode->set_parent(_y);
+				}
 				else if (val.first == _y.base()->data().first)
 						return (_y);
 				else
+				{
 					_y->set_right(newNode);
+					newNode->set_parent(_y);
+				}
 				++_size;
 				return (_y);
 			}
