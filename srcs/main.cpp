@@ -210,11 +210,11 @@ int main(int argc, char** argv) {
 	std::cout << it.base()->data().first << std::endl;
 	it++;
 	std::cout << it.base()->data().first << std::endl;
-/*	it--;
+	it--;
 	std::cout << it.base()->data().first << std::endl;
 	it--;
 	std::cout << it.base()->data().first << std::endl;
-*/
+
 	tree.level_order_traversal(tree.root(), ',');
 
 }
