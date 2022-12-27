@@ -62,6 +62,7 @@ namespace ft
 			Node		*_right;
 			Node		*_parent;
 			int			_balance;
+			int			_height;
 
 		public:
 			Node() : _data(value_type()), _left(NULL), _right(NULL), _parent(NULL), _balance() {}
@@ -69,14 +70,16 @@ namespace ft
 			~Node() {}
 
 			Node		&operator= (Node &other) { _left = other._left; _right = other._right; _parent = other._parent; _balance = other._balance; return (*this); }
+			void		set_data(value_type &data) { _data = data; }
 			void		set_left(Node *left) { _left = left; }
 			void		set_right(Node *right) { _right = right; }
 			void		set_parent(Node *parent) { _parent = parent; }
-			void		set_data(value_type &data) { _data = data; }
+			value_type	&data() { return _data; }
 			Node		*left() { return _left; }
 			Node		*right() { return _right; }
 			Node		*parent() { return _parent; }
-			value_type	&data() { return _data; }
+			int			&balance() { return _balance; }
+			int			&height() { return _height; }
 			void		treat(char sep) { std::cout << data().first << sep << data().second << sep << std::endl; }
 		};
 
@@ -164,6 +167,7 @@ namespace ft
 			ptr->_right = NULL;
 			ptr->_parent = NULL;
 			ptr->_balance = 0;
+			ptr->_height = 1;
 			return (ptr);
 		}
 
@@ -173,7 +177,67 @@ namespace ft
 			_alloc_node.deallocate(node, 1);
 		}
 
-		pair<iterator,bool>	insert(const value_type& val)
+		int	get_height(Node *node)
+		{
+			if (node)
+				return (node->height());
+			return (0);
+		}
+
+		int	max(int a, int b) { return (a > b) ? a : b; }
+
+		Node *right_rotation(Node *_y)
+		{
+			Node *_x = _y->left();
+			Node *_t2 = _x->right();
+		
+			// Perform rotation
+			_x->right() = _y;
+			_y->left() = _t2;
+		
+			// Update heights
+			_y->height = max(height(_y->left()),
+							height(_y->right())) + 1;
+			_x->height = max(height(_x->left()),
+							height(_x->right())) + 1;
+		
+			// Return new root
+			return _x;
+		}
+		
+		// A utility function to left
+		// rotate subtree rooted with x
+		// See the diagram given above.
+		Node *left_rotation(Node *_x)
+		{
+			Node *_y = _x->right();
+			Node *_t2 = _y->left();
+		
+			// Perform rotation
+			_y->left() = _x;
+			_x->right() = _t2;
+		
+			// Update heights
+			_x->_height = max(get_height(_x->left()),   
+							get_height(_x->right())) + 1;
+			_y->_height = max(get_height(_y->left()),
+							get_height(_y->right())) + 1;
+		
+			// Return new root
+			return _y;
+		}
+		
+		// Get Balance factor of node N
+		int get_balance(Node *node)
+		{
+			if (node == NULL)
+				return 0;
+			return get_height(node->left) - get_height(node->right);
+		}
+
+
+
+		pair<iterator, bool>	insert(const value_type& val)
 		{
 			Node		*newNode = new_node(val);
 			iterator	_x(_root);
