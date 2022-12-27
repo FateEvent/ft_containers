@@ -184,8 +184,6 @@ namespace ft
 			return (0);
 		}
 
-		int	max(int a, int b) { return (a > b) ? a : b; }
-
 		Node *right_rotation(Node *_y)
 		{
 			Node *_x = _y->left();
@@ -235,6 +233,57 @@ namespace ft
 			return get_height(node->left) - get_height(node->right);
 		}
 
+		Node*	insert(Node* node, int key)
+		{
+			/* 1. Perform the normal BST insertion */
+			if (node == NULL)
+				return(new_node(key));
+		
+			if (key < node->key)
+				node->left = insert(node->left, key);
+			else if (key > node->key)
+				node->right = insert(node->right, key);
+			else // Equal keys are not allowed in BST
+				return node;
+		
+			/* 2. Update height of this ancestor node */
+			node->height = 1 + max(height(node->left),
+								height(node->right));
+		
+			/* 3. Get the balance factor of this ancestor
+				node to check whether this node became
+				unbalanced */
+			int balance = get_balance(node);
+		
+			// If this node becomes unbalanced, then
+			// there are 4 cases
+		
+			// Left Left Case
+			if (balance > 1 && key < node->left->key)
+				return right_rotation(node);
+		
+			// Right Right Case
+			if (balance < -1 && key > node->right->key)
+				return left_rotation(node);
+		
+			// Left Right Case
+			if (balance > 1 && key > node->left->key)
+			{
+				node->left = left_rotation(node->left);
+				return right_rotation(node);
+			}
+		
+			// Right Left Case
+			if (balance < -1 && key < node->right->key)
+			{
+				node->right = right_rotation(node->right);
+				return left_rotation(node);
+			}
+		
+			/* return the (unchanged) node pointer */
+			return node;
+		}
+
 
 
 		pair<iterator, bool>	insert(const value_type& val)
@@ -275,7 +324,7 @@ namespace ft
 
 		iterator	insert(iterator pos, const value_type& val)
 		{
-			if (pos >= begin() && pos <= end())
+			if (pos >= begin() && pos < end())
 			{
 				Node		*newNode = new_node(val);
 				iterator	_x(pos);
