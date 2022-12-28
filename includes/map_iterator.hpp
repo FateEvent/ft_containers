@@ -102,16 +102,18 @@ namespace ft
 			return local_Rb_tree_increment(const_cast<Node *>(_x));
 		}
 
-		void	leftmost()
+		Node	*leftmost()
 		{
 			while (_ptr->left())
 				_ptr = _ptr->left();
+			return (_ptr);
 		}
 
-		void	rightmost()
+		Node	*rightmost()
 		{
 			while (_ptr->right())
 				_ptr = _ptr->right();
+			return (_ptr);
 		}
 
 		const map_iterator	&operator++ () {

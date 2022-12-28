@@ -201,7 +201,8 @@ int main(int argc, char** argv) {
 	tree.insert(d);
 	tree.insert(f);
 	tree.insert(tree.begin(), l);
-	tree.prefix_traversal(tree.root(), ' ');
+
+	tree.level_order_traversal(tree.root(), ' ');
 
 	ft::map<const char, int>::iterator it = tree.begin();
 	std::cout << &it << std::endl;
@@ -216,5 +217,4 @@ int main(int argc, char** argv) {
 	std::cout << it.base()->data().first << std::endl;
 
 	tree.level_order_traversal(tree.root(), ',');
-
 }

@@ -244,7 +244,10 @@ namespace ft
 				if (_key_comp(val.first, _x.base()->data().first))
 					_x.set_ptr(_x.base()->left());
 				else if (val.first == _x.base()->data().first)
+				{
+					delete_node(newNode);
 					return (ft::make_pair(_x, false));
+				}
 				else
 					_x.set_ptr(_x.base()->right());
 			}
@@ -258,13 +261,12 @@ namespace ft
 				_y.base()->set_left(newNode);
 				newNode->set_parent(_y.base());
 			}
-			else if (val.first == _y.base()->data().first)
-					return (ft::make_pair(_y, false));
 			else
 			{
 				_y.base()->set_right(newNode);
 				newNode->set_parent(_y.base());
 			}
+			std::cout << "1 " << _y.base()->height() << std::endl;
 			_y.base()->_height = 1 + std::max(get_height(_y.base()->left()), get_height(_y.base()->right()));
 			int	balance = get_balance(_y.base());
 			if (balance > 1 && _key_comp(val.first, _y.base()->left()->data().first))
@@ -281,13 +283,14 @@ namespace ft
 				_y.base()->set_right(right_rotation(_y.base()->right()));
 				return (ft::make_pair(iterator(left_rotation(_y.base())), true));
 			}
+			std::cout << "2 " << _y.base()->height() << std::endl;
 			++_size;
 			return (ft::make_pair(_y, true));
 		}
 
 		iterator	insert(iterator pos, const value_type& val)
 		{
-			if (pos >= begin() && pos < end())
+			if (pos >= begin() && pos <= end())
 			{
 				Node		*newNode = new_node(val);
 				iterator	_x(pos);
@@ -298,7 +301,10 @@ namespace ft
 					if (_key_comp(val.first, _x.base()->data().first))
 						_x.set_ptr(_x.base()->left());
 					else if (val.first == _x.base()->data().first)
+					{
+						delete_node(newNode);
 						return (_x);
+					}
 					else
 						_x.set_ptr(_x.base()->right());
 				}
@@ -312,8 +318,6 @@ namespace ft
 					_y.base()->set_left(newNode);
 					newNode->set_parent(_y.base());
 				}
-				else if (val.first == _y.base()->data().first)
-						return (_y);
 				else
 				{
 					_y.base()->set_right(newNode);
@@ -328,14 +332,12 @@ namespace ft
 				if (balance > 1 && !_key_comp(val.first, _y.base()->left()->data().first))
 				{
 					_y.base()->set_left(left_rotation(_y.base()->left()));
-					iterator	it(right_rotation(_y.base()));
-					return (it);
+					return (iterator(right_rotation(_y.base())));
 				}
 				if (balance < -1 && _key_comp(val.first, _y.base()->right()->data().first))
 				{
 					_y.base()->set_right(right_rotation(_y.base()->right()));
-					iterator	it(left_rotation(_y.base()));
-					return (it);
+					return (iterator(left_rotation(_y.base())));
 				}
 				++_size;
 				return (_y);
@@ -405,7 +407,6 @@ namespace ft
 		allocator_type	_alloc_pair;
 		key_compare		_key_comp;
 		size_type		_size;
-//		node_pointer	_ptr;
 	};
 }
 
