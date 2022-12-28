@@ -61,15 +61,14 @@ namespace ft
 			Node		*_left;
 			Node		*_right;
 			Node		*_parent;
-			int			_balance;
 			int			_height;
 
 		public:
-			Node() : _data(value_type()), _left(NULL), _right(NULL), _parent(NULL), _balance() {}
-			Node(value_type pair) : _data(pair), _left(NULL), _right(NULL), _parent(NULL), _balance() {}
+			Node() : _data(value_type()), _left(NULL), _right(NULL), _parent(NULL), _height(1) {}
+			Node(value_type pair) : _data(pair), _left(NULL), _right(NULL), _parent(NULL), _height(1) {}
 			~Node() {}
 
-			Node		&operator= (Node &other) { _left = other._left; _right = other._right; _parent = other._parent; _balance = other._balance; return (*this); }
+			Node		&operator= (Node &other) { _left = other._left; _right = other._right; _parent = other._parent; _height = other._height; return (*this); }
 			void		set_data(value_type &data) { _data = data; }
 			void		set_left(Node *left) { _left = left; }
 			void		set_right(Node *right) { _right = right; }
@@ -78,7 +77,6 @@ namespace ft
 			Node		*left() { return _left; }
 			Node		*right() { return _right; }
 			Node		*parent() { return _parent; }
-			int			&balance() { return _balance; }
 			int			&height() { return _height; }
 			void		treat(char sep) { std::cout << data().first << sep << data().second << sep << std::endl; }
 		};
@@ -166,7 +164,6 @@ namespace ft
 			ptr->_left = NULL;
 			ptr->_right = NULL;
 			ptr->_parent = NULL;
-			ptr->_balance = 0;
 			ptr->_height = 1;
 			return (ptr);
 		}
@@ -186,211 +183,93 @@ namespace ft
 
 		Node *right_rotation(Node *_y)
 		{
+			std::cout << "dest" << std::endl;
 			Node *_x = _y->left();
 			Node *_t2 = _x->right();
-		
-			// Perform rotation
-			_x->_right = _y;
-			_y->_left = _t2;
-		
-			// Update heights
-			_y->_height = std::max(get_height(_y->left()),
-							get_height(_y->right())) + 1;
-			_x->_height = std::max(get_height(_x->left()),
-							get_height(_x->right())) + 1;
-		
-			// Return new root
-			return _x;
+			_x->set_right(_y);
+			_y->set_left(_t2);
+			_y->_height = std::max(get_height(_y->left()), get_height(_y->right())) + 1;
+			_x->_height = std::max(get_height(_x->left()), get_height(_x->right())) + 1;
+			return (_x);
 		}
-		
-		// A utility function to left
-		// rotate subtree rooted with x
-		// See the diagram given above.
+
 		Node *left_rotation(Node *_x)
 		{
+			std::cout << "sinist" << std::endl;
 			Node *_y = _x->right();
 			Node *_t2 = _y->left();
-		
-			// Perform rotation
-			_y->_left = _x;
-			_x->_right = _t2;
-		
-			// Update heights
-			_x->_height = std::max(get_height(_x->left()),   
-							get_height(_x->right())) + 1;
-			_y->_height = std::max(get_height(_y->left()),
-							get_height(_y->right())) + 1;
-		
-			// Return new root
-			return _y;
+			_y->set_left(_x);
+			_x->set_right(_t2);
+			_x->_height = std::max(get_height(_x->left()), get_height(_x->right())) + 1;
+			_y->_height = std::max(get_height(_y->left()), get_height(_y->right())) + 1;
+			return (_y);
 		}
-		
-		// Get Balance factor of node N
+
 		int get_balance(Node *node)
 		{
 			if (node == NULL)
 				return 0;
-			return get_height(node->left()) - get_height(node->right());
+			return (get_height(node->left()) - get_height(node->right()));
 		}
 
 		pair<iterator, bool>	insert(const value_type& val)
 		{
-			Node		*newNode = new_node(val);
-			iterator	_x(_root);
-			iterator	_y;
+			iterator _x(_root);
+			
+			iterator _y = insert(_x, val);
 
-			while (_x != NULL) {
-				_y.set_ptr(_x.base());
-				if (_key_comp(val.first, _x.base()->data().first))
-					_x.set_ptr(_x.base()->left());
-				else if (val.first == _x.base()->data().first)
-				{
-					delete_node(newNode);
-					return (ft::make_pair(_x, false));
-				}
-				else
-					_x.set_ptr(_x.base()->right());
-			}
-			if (_y == NULL)
+			if (_y.base())
 			{
-				_y.set_ptr(newNode);
-				newNode->set_parent(_y.base()->parent());
+//				++_size;
+				return (ft::make_pair(_y, true));
 			}
-			else if (_key_comp(val.first, _y.base()->data().first))
-			{
-				_y.base()->set_left(newNode);
-				newNode->set_parent(_y.base());
-			}
-			else
-			{
-				_y.base()->set_right(newNode);
-				newNode->set_parent(_y.base());
-			}
-			std::cout << "1 " << _y.base()->height() << std::endl;
-			_y.base()->_height = 1 + std::max(get_height(_y.base()->left()), get_height(_y.base()->right()));
-			int	balance = get_balance(_y.base());
-			if (balance > 1 && _key_comp(val.first, _y.base()->left()->data().first))
-				return (ft::make_pair(iterator(right_rotation(_y.base())), true));
-			if (balance < -1 && !_key_comp(val.first, _y.base()->right()->data().first))
-				return (ft::make_pair(iterator(left_rotation(_y.base())), true));
-			if (balance > 1 && !_key_comp(val.first, _y.base()->left()->data().first))
-			{
-				_y.base()->set_left(left_rotation(_y.base()->left()));
-				return (ft::make_pair(iterator(right_rotation(_y.base())), true));
-			}
-			if (balance < -1 && _key_comp(val.first, _y.base()->right()->data().first))
-			{
-				_y.base()->set_right(right_rotation(_y.base()->right()));
-				return (ft::make_pair(iterator(left_rotation(_y.base())), true));
-			}
-			std::cout << "2 " << _y.base()->height() << std::endl;
-			++_size;
-			return (ft::make_pair(_y, true));
+			return (ft::make_pair(_y, false));
 		}
 
 		iterator	insert(iterator pos, const value_type& val)
 		{
 			if (pos >= begin() && pos <= end())
 			{
-				Node		*newNode = new_node(val);
-				iterator	_x(pos);
-				iterator	_y;
-
-				while (_x != NULL) {
-					_y.set_ptr(_x.base());
-					if (_key_comp(val.first, _x.base()->data().first))
-						_x.set_ptr(_x.base()->left());
-					else if (val.first == _x.base()->data().first)
-					{
-						delete_node(newNode);
-						return (_x);
-					}
-					else
-						_x.set_ptr(_x.base()->right());
-				}
-				if (_y == NULL)
-				{
-					_y.set_ptr(newNode);
-					newNode->set_parent(_y.base()->parent());
-				}
-				else if (_key_comp(val.first, _y.base()->data().first))
-				{
-					_y.base()->set_left(newNode);
-					newNode->set_parent(_y.base());
-				}
-				else
-				{
-					_y.base()->set_right(newNode);
-					newNode->set_parent(_y.base());
-				}
-				_y.base()->_height = 1 + std::max(get_height(_y.base()->left()), get_height(_y.base()->right()));
-				int	balance = get_balance(_y.base());
-				if (balance > 1 && _key_comp(val.first, _y.base()->left()->data().first))
-					return right_rotation(_y.base());
-				if (balance < -1 && !_key_comp(val.first, _y.base()->right()->data().first))
-					return left_rotation(_y.base());
-				if (balance > 1 && !_key_comp(val.first, _y.base()->left()->data().first))
-				{
-					_y.base()->set_left(left_rotation(_y.base()->left()));
-					return (iterator(right_rotation(_y.base())));
-				}
-				if (balance < -1 && _key_comp(val.first, _y.base()->right()->data().first))
-				{
-					_y.base()->set_right(right_rotation(_y.base()->right()));
-					return (iterator(left_rotation(_y.base())));
-				}
-				++_size;
-				return (_y);
+				Node *newNode = new_node(val);
+				
+//				++_size;
+				return (iterator(_avl_tree_insert(pos->base())));
 			}
 			else
 				throw(ContainerException("out_of_range"));
 		}
-/*
-		Node*	insert(Node* node, int key)
+
+
+		Node	*_avl_tree_insert(Node* node, const value_type& val)
 		{
 			if (node == NULL)
-				return(new_node(key));
-		
-			if (key < node->key)
-				node->left = insert(node->left, key);
-			else if (key > node->key)
-				node->right = insert(node->right, key);
-			else // Equal keys are not allowed in BST
-				return node;
-		
-			node->_height = 1 + std::max(get_height(node->left),
-								get_height(node->right));
-		
+				return(new_node(val));
+			if (_key_comp(val.first, node->data().first))
+				node->left() = _avl_tree_insert(node->left(), val);
+			else if (val.first == node->data().first)
+				return (node);
+			else
+				node->set_right(_avl_tree_insert(node->right(), val));
+			node->_height = 1 + std::max(get_height(node->left()), get_height(node->right()));
 			int balance = get_balance(node);
-		
-			// If this node becomes unbalanced, then
-			// there are 4 cases
-		
-			// Left Left Case
-			if (balance > 1 && key < node->left->key)
+			if (balance > 1 && _key_comp(val.first, node->left()->data().first))
 				return right_rotation(node);
-		
-			// Right Right Case
-			if (balance < -1 && key > node->right->key)
+			if (balance < -1 && !_key_comp(val.first, node->right()->data().first))
 				return left_rotation(node);
-		
-			// Left Right Case
-			if (balance > 1 && key > node->left->key)
+			if (balance > 1 && !_key_comp(val.first, node->left()->data().first))
 			{
-				node->left = left_rotation(node->left);
-				return right_rotation(node);
+				node->set_left(left_rotation(node->left()));
+				return (right_rotation(node));
 			}
-		
-			// Right Left Case
-			if (balance < -1 && key < node->right->key)
+			if (balance < -1 && _key_comp(val.first, node->right()->data().first))
 			{
-				node->right = right_rotation(node->right);
-				return left_rotation(node);
+				node->set_right(right_rotation(node->right()));
+				return (left_rotation(node));
 			}
-		
-			return node;
+			return (node);
 		}
-*/
+
+
 		template<class InputIterator> void	insert(InputIterator first, InputIterator last)
 		{
 			for (; first < last; ++first)
