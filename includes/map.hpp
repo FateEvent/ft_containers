@@ -211,7 +211,7 @@ namespace ft
 				return 0;
 			return (get_height(node->left()) - get_height(node->right()));
 		}
-
+/*
 		pair<iterator, bool>	insert(const value_type& val)
 		{
 			iterator _y(insert(begin().base(), val));
@@ -263,39 +263,85 @@ namespace ft
 			}
 			return (node);
 		}
+*/
 
 
-/*
-		Node	*_avl_tree_insert(Node* node, const value_type& val)
+		pair<iterator,bool>	insert(const value_type& val)
 		{
-			if (node == NULL)
-				return(new_node(val));
-			if (_key_comp(val.first, node->data().first))
-				node->set_left(_avl_tree_insert(node->left(), val));
-			else if (val.first == node->data().first)
-				return (node);
+			Node		*newNode = new_node(val);
+			iterator	_x(_root);
+			iterator	_y;
+
+			while (_x != NULL) {
+				_y.set_ptr(_x.base());
+				if (_key_comp(val.first, _x.base()->data().first))
+					_x.set_ptr(_x.base()->left());
+				else if (val.first == _x.base()->data().first)
+					return (ft::make_pair(_x, false));
+				else
+					_x.set_ptr(_x.base()->right());
+			}
+			if (_y == NULL)
+			{
+				_y.set_ptr(newNode);
+				newNode->set_parent(_y.base()->parent());
+			}
+			else if (_key_comp(val.first, _y.base()->data().first))
+			{
+				_y.base()->set_left(newNode);
+				newNode->set_parent(_y.base());
+			}
+			else if (val.first == _y.base()->data().first)
+					return (ft::make_pair(_y, false));
 			else
-				node->set_right(_avl_tree_insert(node->right(), val));
-			node->_height = 1 + std::max(get_height(node->left()), get_height(node->right()));
-			int balance = get_balance(node);
-			if (balance > 1 && _key_comp(val.first, node->left()->data().first))
-				return right_rotation(node);
-			if (balance < -1 && !_key_comp(val.first, node->right()->data().first))
-				return left_rotation(node);
-			if (balance > 1 && !_key_comp(val.first, node->left()->data().first))
 			{
-				node->set_left(left_rotation(node->left()));
-				return (right_rotation(node));
+				_y.base()->set_right(newNode);
+				newNode->set_parent(_y.base());
 			}
-			if (balance < -1 && _key_comp(val.first, node->right()->data().first))
-			{
-				node->set_right(right_rotation(node->right()));
-				return (left_rotation(node));
-			}
-			return (node);
+			++_size;
+			return (ft::make_pair(_y, true));
 		}
 
-*/
+		iterator	insert(iterator pos, const value_type& val)
+		{
+			if (pos >= begin() && pos <= end())
+			{
+				Node		*newNode = new_node(val);
+				iterator	_x(pos);
+				iterator	_y;
+
+				while (_x != NULL) {
+					_y.set_ptr(_x.base());
+					if (_key_comp(val.first, _x.base()->data().first))
+						_x.set_ptr(_x.base()->left());
+					else if (val.first == _x.base()->data().first)
+						return (_x);
+					else
+						_x.set_ptr(_x.base()->right());
+				}
+				if (_y == NULL)
+				{
+					_y.set_ptr(newNode);
+					newNode->set_parent(_y.base()->parent());
+				}
+				else if (_key_comp(val.first, _y.base()->data().first))
+				{
+					_y.base()->set_left(newNode);
+					newNode->set_parent(_y.base());
+				}
+				else if (val.first == _y.base()->data().first)
+						return (_y);
+				else
+				{
+					_y.base()->set_right(newNode);
+					newNode->set_parent(_y.base());
+				}
+				++_size;
+				return (_y);
+			}
+			else
+				throw(ContainerException("out_of_range"));
+		}
 
 		template<class InputIterator> void	insert(InputIterator first, InputIterator last)
 		{
