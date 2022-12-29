@@ -27,7 +27,8 @@ namespace ft
 		typedef Content&							reference;
 
 		map_iterator() : _ptr(&_dummy), _last(NULL), _dummy() {}
-		map_iterator(Node *ptr) : _ptr(ptr), _last(NULL) {}
+		map_iterator(Node *ptr) : _ptr(ptr), _last(NULL), _dummy() {}
+		map_iterator(const map_iterator &other) : _ptr(other._ptr), _last(other._last), _dummy(other._dummy) {}
 
 		node_pointer	base() const { return _ptr; }
 

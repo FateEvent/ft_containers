@@ -214,15 +214,11 @@ namespace ft
 
 		pair<iterator, bool>	insert(const value_type& val)
 		{
-			iterator _x(_root);
-			
-			iterator _y = insert(_x, val);
+			iterator _y(_avl_tree_insert(root(), val));
 
-			if (_y.base())
-			{
-//				++_size;
+			_size = get_height(root());
+			if (val.first == _y.base()->data().first && val.second == _y.base()->data().second)
 				return (ft::make_pair(_y, true));
-			}
 			return (ft::make_pair(_y, false));
 		}
 
@@ -230,14 +226,15 @@ namespace ft
 		{
 			if (pos >= begin() && pos <= end())
 			{
-				Node *newNode = new_node(val);
-				
-//				++_size;
-				return (iterator(_avl_tree_insert(pos->base())));
+				iterator	it(_avl_tree_insert(pos.base()));
+
+				_size = get_height(root());
+				return (it);
 			}
 			else
 				throw(ContainerException("out_of_range"));
 		}
+
 
 
 		Node	*_avl_tree_insert(Node* node, const value_type& val)
@@ -245,7 +242,7 @@ namespace ft
 			if (node == NULL)
 				return(new_node(val));
 			if (_key_comp(val.first, node->data().first))
-				node->left() = _avl_tree_insert(node->left(), val);
+				node->set_left(_avl_tree_insert(node->left(), val));
 			else if (val.first == node->data().first)
 				return (node);
 			else
@@ -270,6 +267,7 @@ namespace ft
 		}
 
 
+
 		template<class InputIterator> void	insert(InputIterator first, InputIterator last)
 		{
 			for (; first < last; ++first)
@@ -285,6 +283,7 @@ namespace ft
 		node_allocator	_alloc_node;
 		allocator_type	_alloc_pair;
 		key_compare		_key_comp;
+		value_compare	_val_comp;
 		size_type		_size;
 	};
 }
