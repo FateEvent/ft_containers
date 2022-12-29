@@ -25,6 +25,7 @@ I found helpful tips about binary search trees and red-black trees in the follow
 * <https://www.geeksforgeeks.org/insert-a-node-in-binary-search-tree-iteratively>;
 * <https://en.wikipedia.org/wiki/AVL_tree>;
 * <https://www.geeksforgeeks.org/insertion-in-an-avl-tree>;
+* <https://www.geeksforgeeks.org/avl-trees-containing-a-parent-node-pointer>;
 * <https://en.wikipedia.org/wiki/Red%E2%80%93black_tree>.
 
 Other materials about maps and map iterators:
