@@ -214,7 +214,7 @@ namespace ft
 
 		pair<iterator, bool>	insert(const value_type& val)
 		{
-			iterator _y(_avl_tree_insert(root(), val));
+			iterator _y(insert(begin().base(), val));
 
 			_size = get_height(root());
 			if (val.first == _y.base()->data().first && val.second == _y.base()->data().second)
@@ -226,7 +226,7 @@ namespace ft
 		{
 			if (pos >= begin() && pos <= end())
 			{
-				iterator	it(_avl_tree_insert(pos.base()));
+				iterator	it(_avl_tree_insert(pos.base(), val));
 
 				_size = get_height(root());
 				return (it);
@@ -235,9 +235,7 @@ namespace ft
 				throw(ContainerException("out_of_range"));
 		}
 
-
-
-		Node	*_avl_tree_insert(Node* node, const value_type& val)
+		Node	*_avl_tree_insert(Node *node, const value_type &val)
 		{
 			if (node == NULL)
 				return(new_node(val));
@@ -267,6 +265,37 @@ namespace ft
 		}
 
 
+/*
+		Node	*_avl_tree_insert(Node* node, const value_type& val)
+		{
+			if (node == NULL)
+				return(new_node(val));
+			if (_key_comp(val.first, node->data().first))
+				node->set_left(_avl_tree_insert(node->left(), val));
+			else if (val.first == node->data().first)
+				return (node);
+			else
+				node->set_right(_avl_tree_insert(node->right(), val));
+			node->_height = 1 + std::max(get_height(node->left()), get_height(node->right()));
+			int balance = get_balance(node);
+			if (balance > 1 && _key_comp(val.first, node->left()->data().first))
+				return right_rotation(node);
+			if (balance < -1 && !_key_comp(val.first, node->right()->data().first))
+				return left_rotation(node);
+			if (balance > 1 && !_key_comp(val.first, node->left()->data().first))
+			{
+				node->set_left(left_rotation(node->left()));
+				return (right_rotation(node));
+			}
+			if (balance < -1 && _key_comp(val.first, node->right()->data().first))
+			{
+				node->set_right(right_rotation(node->right()));
+				return (left_rotation(node));
+			}
+			return (node);
+		}
+
+*/
 
 		template<class InputIterator> void	insert(InputIterator first, InputIterator last)
 		{
@@ -283,7 +312,6 @@ namespace ft
 		node_allocator	_alloc_node;
 		allocator_type	_alloc_pair;
 		key_compare		_key_comp;
-		value_compare	_val_comp;
 		size_type		_size;
 	};
 }
