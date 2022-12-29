@@ -277,7 +277,10 @@ namespace ft
 				if (_key_comp(val.first, _x.base()->data().first))
 					_x.set_ptr(_x.base()->left());
 				else if (val.first == _x.base()->data().first)
+				{
+					delete_node(newNode);
 					return (ft::make_pair(_x, false));
+				}
 				else
 					_x.set_ptr(_x.base()->right());
 			}
@@ -291,8 +294,6 @@ namespace ft
 				_y.base()->set_left(newNode);
 				newNode->set_parent(_y.base());
 			}
-			else if (val.first == _y.base()->data().first)
-					return (ft::make_pair(_y, false));
 			else
 			{
 				_y.base()->set_right(newNode);
@@ -315,7 +316,10 @@ namespace ft
 					if (_key_comp(val.first, _x.base()->data().first))
 						_x.set_ptr(_x.base()->left());
 					else if (val.first == _x.base()->data().first)
+					{
+						delete_node(newNode);
 						return (_x);
+					}
 					else
 						_x.set_ptr(_x.base()->right());
 				}
@@ -329,8 +333,6 @@ namespace ft
 					_y.base()->set_left(newNode);
 					newNode->set_parent(_y.base());
 				}
-				else if (val.first == _y.base()->data().first)
-						return (_y);
 				else
 				{
 					_y.base()->set_right(newNode);

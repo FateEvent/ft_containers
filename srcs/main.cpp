@@ -190,7 +190,7 @@ int main(int argc, char** argv) {
 	ft::pair<const char, int> c = ft::make_pair('c', 3);
 	ft::pair<const char, int> d = ft::make_pair('d', 15);
 	ft::pair<const char, int> f = ft::make_pair('f', 6);
-//	ft::pair<const char, int> l = ft::make_pair('l', -1);
+	ft::pair<const char, int> l = ft::make_pair('l', -1);
 
 	ft::map<const char, int> tree;
 
@@ -200,19 +200,19 @@ int main(int argc, char** argv) {
 	tree.insert(c);
 	tree.insert(d);
 	tree.insert(f);
-//	tree.insert(tree.begin(), l);
+	tree.insert(tree.begin(), l);
 
 	tree.level_order_traversal(tree.root(), ' ');
 
 	ft::map<const char, int>::iterator it = tree.begin();
 	std::cout << &it << std::endl;
-//	std::cout << it.base()->data().first << std::endl;
-//	it++;
-//	std::cout << it.base()->data().first << std::endl;
-//	it++;
-//	std::cout << it.base()->data().first << std::endl;
-//	it--;
-//	std::cout << it.base()->data().first << std::endl;
-//	it--;
-//	std::cout << it.base()->data().first << std::endl;
+	std::cout << it.base()->data().first << std::endl;
+	it++;
+	std::cout << it.base()->data().first << std::endl;
+	it++;
+	std::cout << it.base()->data().first << std::endl;
+	it--;
+	std::cout << it.base()->data().first << std::endl;
+	it--;
+	std::cout << it.base()->data().first << std::endl;
 }
