@@ -79,6 +79,8 @@ namespace ft
 			Node		*parent() { return _parent; }
 			int			&height() { return _height; }
 			void		treat(char sep) { std::cout << data().first << sep << data().second << sep << std::endl; }
+
+			reference	operator* () const { return _data(); }
 		};
 
 	public:
@@ -148,7 +150,7 @@ namespace ft
 
 		iterator	end() { return iterator(_root); }
 
-		Node	*new_node(const value_type& pair = value_type())
+		Node	*new_node(const value_type& pair = value_type(), Node *parent = NULL)
 		{
 			Node *ptr = _alloc_node.allocate(1);
 //			_alloc_node.construct(ptr);
@@ -163,7 +165,7 @@ namespace ft
 			}
 			ptr->_left = NULL;
 			ptr->_right = NULL;
-			ptr->_parent = NULL;
+			ptr->_parent = parent;
 			ptr->_height = 1;
 			return (ptr);
 		}
@@ -180,7 +182,7 @@ namespace ft
 				return (node->height());
 			return (0);
 		}
-/*
+
 		Node *right_rotation(Node *_y)
 		{
 			std::cout << "dest" << std::endl;
@@ -211,7 +213,7 @@ namespace ft
 				return 0;
 			return (get_height(node->left()) - get_height(node->right()));
 		}
-*/
+/*
 		pair<iterator, bool>	insert(const value_type& val)
 		{
 			iterator	_y(insert(begin(), val));
@@ -226,7 +228,7 @@ namespace ft
 		{
 			if (pos >= begin() && pos <= end())
 			{
-				Node		*node = _avl_tree_insertion(pos.base(), pos.base()->parent(), val);
+				Node		*node = _avl_tree_insert(pos.base(), pos.base()->parent(), val);
 				iterator	_y(node);
 
 				_size = get_height(root());
@@ -235,36 +237,7 @@ namespace ft
 			else
 				throw(ContainerException("out_of_range"));
 		}
-/*
-		Node	*_avl_tree_insert(Node *node, const value_type &val)
-		{
-			if (node == NULL)
-				return(new_node(val));
-			if (_key_comp(val.first, node->data().first))
-				node->set_left(_avl_tree_insert(node->left(), val));
-			else if (val.first == node->data().first)
-				return (node);
-			else
-				node->set_right(_avl_tree_insert(node->right(), val));
-			node->_height = 1 + std::max(get_height(node->left()), get_height(node->right()));
-			int balance = get_balance(node);
-			if (balance > 1 && _key_comp(val.first, node->left()->data().first))
-				return (right_rotation(node));
-			if (balance < -1 && !_key_comp(val.first, node->right()->data().first))
-				return (left_rotation(node));
-			if (balance > 1 && !_key_comp(val.first, node->left()->data().first))
-			{
-				node->set_left(left_rotation(node->left()));
-				return (right_rotation(node));
-			}
-			if (balance < -1 && _key_comp(val.first, node->right()->data().first))
-			{
-				node->set_right(right_rotation(node->right()));
-				return (left_rotation(node));
-			}
-			return (node);
-		}
-*/
+
 		void	update_height(Node *node)
 		{
 			if (node != NULL) {
@@ -287,36 +260,15 @@ namespace ft
 			}
 		}
 
-		// Function to handle Left Left Case
 		Node	*LLR(Node *node)
 		{
-			// Create a reference to the
-			// left child
 			Node	*tmp = node->left();
-
-			// Update the left child of the
-			// node to the right child of the
-			// current left child of the node
 			node->set_left(tmp->right());
-
-			// Update parent pointer of the left
-			// child of the node node
 			if (tmp->right() != NULL)
 				tmp->right()->set_parent(node);
-
-			// Update the right() child of
-			// tmp to node
 			tmp->set_right(node);
-
-			// Update parent pointer of tmp
 			tmp->set_parent(node->parent());
-
-			// Update the parent pointer of node
 			node->set_parent(tmp);
-
-			// Update tmp as the left or
-			// the right() child of its parent
-			// pointer according to its key value
 			if (tmp->parent() != NULL
 				&& _key_comp(node->data().first, tmp->parent()->data().first)) {
 				tmp->parent()->set_left(tmp);
@@ -325,50 +277,24 @@ namespace ft
 				if (tmp->parent() != NULL)
 					tmp->parent()->set_right(tmp);
 			}
-
-			// Make tmp as the new node
 			node = tmp;
-
-			// Update the heights
 			update_height(node->left());
 			update_height(node->right());
 			update_height(node);
 			update_height(node->parent());
 
-			// Return the node node
 			return node;
 		}
 
-		// Function to handle Right Right Case
 		Node	*RRR(Node *node)
 		{
-			// Create a reference to the
-			// right child
 			Node	*tmp = node->right();
-
-			// Update the right child of the
-			// node as the left child of the
-			// current right child of the node
 			node->set_right(tmp->left());
-
-			// Update parent pointer of the right
-			// child of the node node
 			if (tmp->left() != NULL)
 				tmp->left()->set_parent(node);
-
-			// Update the left child of the
-			// tmp to node
 			tmp->set_left(node);
-
-			// Update parent pointer of tmp
 			tmp->set_parent(node->parent());
-
-			// Update the parent pointer of node
 			node->set_parent(tmp);
-
-			// Update tmp as the left or
-			// the right child of its parent
-			// pointer according to its key value
 			if (tmp->parent() != NULL
 				&& _key_comp(node->data().first, tmp->parent()->data().first)) {
 				tmp->parent()->set_left(tmp);
@@ -377,129 +303,91 @@ namespace ft
 				if (tmp->parent() != NULL)
 					tmp->parent()->set_right(tmp);
 			}
-
-			// Make tmp as the new node
 			node = tmp;
-
-			// Update the heights
 			update_height(node->left());
 			update_height(node->right());
 			update_height(node);
 			update_height(node->parent());
-
-			// Return the node node
 			return node;
 		}
 
-		// Function to handle Left Right Case
 		Node	*LRR(Node *node)
 		{
 			node->set_left(RRR(node->left()));
 			return LLR(node);
 		}
 
-		// Function to handle right left case
 		Node	*RLR(Node *node)
 		{
 			node->set_right(LLR(node->right()));
 			return RRR(node);
 		}
 
-		Node *_avl_tree_insertion(Node *node, Node *parent, const value_type &val)
+		Node *_avl_tree_insert(Node *node, Node *parent, const value_type &val)
 		{
-			if (node == NULL) {
-				// Create and assign values
-				// to a new node
-				node = new_node(val);
-				node->set_parent(parent);
-			}
+			if (node == NULL)
+				node = new_node(val, parent);
 			else if (node->data().first > val.first) {
-				// Recur to the left subtree
-				// to _avl_tree_insertion the node
-				node->set_left(_avl_tree_insertion(node->left(), node, val));
-				// Stores the heights of the
-				// left and right subtree
+				node->set_left(_avl_tree_insert(node->left(), node, val));
 				int firstheight = 0;
 				int secondheight = 0;
 				if (node->left() != NULL)
 					firstheight = node->left()->height();
 				if (node->right() != NULL)
 					secondheight = node->right()->height();
-				// Balance the tree if the
-				// current node is not balanced
-				if (abs(firstheight
-						- secondheight)
-					== 2) {
+				if (abs(firstheight - secondheight) == 2) {
 					if (node->left() != NULL
 						&& val.first < node->left()->data().first) {
-						// Left Left Case
 						node = LLR(node);
 					}
 					else {
-						// Left Right Case
 						node = LRR(node);
 					}
 				}
 			}
 			else if (node->data().first < val.first) {
-				node->set_right(_avl_tree_insertion(node->right(), node, val));
-				// Store the heights of the left
-				// and right subtree
+				node->set_right(_avl_tree_insert(node->right(), node, val));
 				int firstheight = 0;
 				int secondheight = 0;
 				if (node->left() != NULL)
 					firstheight = node->left()->height();
 				if (node->right() != NULL)
 					secondheight = node->right()->height();
-				// Balance the tree if the
-				// current node is not balanced
 				if (abs(firstheight
 						- secondheight)
 					== 2) {
 					if (node->right() != NULL
 						&& _key_comp(val.first, node->right()->data().first)) {
-						// Right() Left Case
 						node = RLR(node);
 					}
 					else {
-						// Right() Right() Case
 						node = RRR(node);
 					}
 				}
 			}
-			// Case when given key is
-			// already in tree
 			else {
 			}
-			// Update the height of the
-			// node node
 			update_height(node);
-			// Return the node node
 			return node;
 		}
 
-		// Function to find a key in AVL tree
 		bool AVLsearch(Node *node, const value_type& pair)
 		{
-			// If node is NULL
 			if (node == NULL)
 				return false;
-			// If found, return true
 			else if (node->data().first == pair.first)
 				return true;
 			else if (node->data().first > pair.first) {
 				bool val = AVLsearch(node->left(), pair.first);
 				return val;
 			}
-			// Otherwise, recur to the
-			// right() subtree
 			else {
 				bool val = AVLsearch(node->right(), pair.first);
 				return val;
 			}
 		}
+*/
 
-/*
 		pair<iterator,bool>	insert(const value_type& val)
 		{
 			Node		*newNode = new_node(val);
@@ -578,7 +466,7 @@ namespace ft
 			else
 				throw(ContainerException("out_of_range"));
 		}
-*/
+
 		template<class InputIterator> void	insert(InputIterator first, InputIterator last)
 		{
 			for (; first < last; ++first)
