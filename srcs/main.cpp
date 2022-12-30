@@ -204,6 +204,10 @@ int main(int argc, char** argv) {
 
 	tree.level_order_traversal(tree.root(), ' ');
 
+//	tree.balanceTree(tree.root());
+
+//	tree.level_order_traversal(tree.root(), ' ');
+
 	ft::map<const char, int>::iterator it = tree.begin();
 	std::cout << &it << std::endl;
 	std::cout << it.base()->data().first << std::endl;

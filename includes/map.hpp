@@ -78,9 +78,7 @@ namespace ft
 			Node		*right() { return _right; }
 			Node		*parent() { return _parent; }
 			int			&height() { return _height; }
-			void		treat(char sep) { std::cout << data().first << sep << data().second << sep << std::endl; }
-
-			reference	operator* () const { return _data(); }
+			void		treat(char sep) { std::cout << data().first << sep << data().second << sep << height() << std::endl; }
 		};
 
 	public:
@@ -101,7 +99,8 @@ namespace ft
 		void	prefix_traversal(Node *current, char sep) {
 			if (current)
 			{
-				current->treat(sep);
+//				current->treat(sep);
+				update_height(current);
 				prefix_traversal(current->left(), sep);
 				prefix_traversal(current->right(), sep);
 			}
@@ -111,17 +110,17 @@ namespace ft
 			if (current)
 			{
 				infix_traversal(current->left(), sep);
-				current->treat(sep);
+				update_height(current);
 				infix_traversal(current->right(), sep);
 			}
 		}
 
-		void	suffix_traversal(Node *current, char sep) {
+		void	suffix_traversal(Node *current, void (*f)(Node *)) {
 			if (current)
 			{
-				suffix_traversal(current->left(), sep);
-				suffix_traversal(current->right(), sep);
-				current->treat(sep);
+				suffix_traversal(current->left(), f);
+				suffix_traversal(current->right(), f);
+				f(current);
 			}
 		}
 
@@ -182,7 +181,7 @@ namespace ft
 				return (node->height());
 			return (0);
 		}
-
+/*
 		Node *right_rotation(Node *_y)
 		{
 			std::cout << "dest" << std::endl;
@@ -213,6 +212,7 @@ namespace ft
 				return 0;
 			return (get_height(node->left()) - get_height(node->right()));
 		}
+*/
 /*
 		pair<iterator, bool>	insert(const value_type& val)
 		{
@@ -238,28 +238,6 @@ namespace ft
 				throw(ContainerException("out_of_range"));
 		}
 
-		void	update_height(Node *node)
-		{
-			if (node != NULL) {
-
-				// Store the height of the
-				// current node
-				int val = 1;
-
-				// Store the height of the left
-				// and the right subtree
-				if (node->left() != NULL)
-					val = node->left()->height() + 1;
-
-				if (node->right() != NULL)
-					val = std::max(val, node->right()->height() + 1);
-
-				// Update the height of the
-				// current node
-				node->_height = val;
-			}
-		}
-
 		Node	*LLR(Node *node)
 		{
 			Node	*tmp = node->left();
@@ -282,7 +260,6 @@ namespace ft
 			update_height(node->right());
 			update_height(node);
 			update_height(node->parent());
-
 			return node;
 		}
 
@@ -366,6 +343,8 @@ namespace ft
 				}
 			}
 			else {
+				delete_node(new_node);
+				return (NULL);
 			}
 			update_height(node);
 			return node;
@@ -387,6 +366,98 @@ namespace ft
 			}
 		}
 */
+
+		static void	update_height(Node *node)
+		{
+			if (node != NULL) {
+				int val = 1;
+				if (node->left() != NULL)
+					val = node->left()->height() + 1;
+				if (node->right() != NULL)
+					val = std::max(val, node->right()->height() + 1);
+				node->_height = val;
+			}
+		}
+
+		static int	calculate_height(Node *temp)
+		{
+			int h = 0;
+			if (temp != NULL) {
+				int l_height = calculate_height(temp->left());
+				int r_height = calculate_height(temp->right());
+				int max_height = std::max(l_height, r_height);
+				h = max_height + 1;
+			}
+			return h;
+		}
+
+		int	diff(Node *temp)
+		{
+			int l_height = calculate_height(temp->left());
+			int r_height = calculate_height(temp->right());
+			int b_factor = l_height - r_height;
+			return (b_factor);
+		}
+
+		Node	*rr_rotation(Node *parent)
+		{
+			Node *temp(parent->right());
+			parent->set_right(temp->left());
+			temp->set_left(parent);
+			return (temp);
+		}
+
+		Node	*ll_rotation(Node *parent)
+		{
+			Node *temp(parent->left());
+			parent->set_left(temp->right());
+			temp->set_right(parent);
+			return (temp);
+		}
+
+		Node	*lr_rotation(Node *parent)
+		{
+			Node *temp(parent->left());
+			parent->set_left(rr_rotation(temp));
+			return (ll_rotation(parent));
+		}
+
+		Node	*rl_rotation(Node *parent)
+		{
+			Node *temp(parent->right());
+			parent->set_right(ll_rotation(temp));
+			return (rr_rotation(parent));
+		}
+
+		Node 	*balance(Node *temp)
+		{
+			int bal_factor = diff(temp);
+			if (bal_factor > 1) {
+				if (diff(temp->left()) > 0)
+					temp = ll_rotation(temp);
+				else
+					temp = lr_rotation(temp);
+			}
+			else if (bal_factor < -1) {
+				if (diff(temp->right()) > 0)
+					temp = rl_rotation(temp);
+				else
+					temp = rr_rotation(temp);
+			}
+			return (temp);
+		}
+
+		Node 	*balanceTree(Node *root)
+		{
+			if (root == NULL)
+				return (NULL);
+			root->set_left(balanceTree(root->left()));
+			root->set_right(balanceTree(root->right()));
+			std::cout << "prima: " << root->data().first << std::endl;
+			root = balance(root);
+			std::cout << "dopo: " << root->data().first << std::endl;
+			return (root);
+		}
 
 		pair<iterator,bool>	insert(const value_type& val)
 		{
@@ -422,6 +493,8 @@ namespace ft
 				newNode->set_parent(_y.base());
 			}
 			++_size;
+//			suffix_traversal(root(), update_height);
+			balanceTree(begin().base());
 			return (ft::make_pair(_y, true));
 		}
 
@@ -461,6 +534,8 @@ namespace ft
 					newNode->set_parent(_y.base());
 				}
 				++_size;
+//				suffix_traversal(root(), update_height);
+				balanceTree(begin().base());
 				return (_y);
 			}
 			else
