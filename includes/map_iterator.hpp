@@ -119,17 +119,17 @@ namespace ft
 
 		const map_iterator	&operator++ () {
 			_ptr = _Rb_tree_increment(_ptr);
-			return *this;
+			return (*this);
 		}
 		const map_iterator 	operator++ (int) { map_iterator tmp = *this; ++(*this); return tmp; }
 		const map_iterator	&operator-- () {
 			_ptr = _Rb_tree_decrement(_ptr);
-			return *this;
+			return (*this);
 		}
 		const map_iterator 	operator-- (int) { map_iterator tmp = *this; --(*this); return tmp; }
 
-		const map_iterator	&operator+= (std::size_t dist) { _ptr += dist; return *this; }
-		const map_iterator	&operator-= (std::size_t dist) { _ptr -= dist; return *this; }
+		const map_iterator	&operator+= (std::size_t dist) { _ptr += dist; return (*this); }
+		const map_iterator	&operator-= (std::size_t dist) { _ptr -= dist; return (*this); }
 		const map_iterator	operator+ (std::size_t dist) { return (_ptr + dist); }
 		const map_iterator	operator- (std::size_t dist) { return (_ptr - dist); }
 		const map_iterator	&operator[] (std::size_t index) { return *(*this + index); }

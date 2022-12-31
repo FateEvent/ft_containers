@@ -94,7 +94,7 @@ namespace ft
 		~map() { delete_node(_root); }
 		map&	operator= (map const& base);
 		Node	*root() { return _root; }
-		void	change_root(Node *current) { _root = current; }
+		void	set_root(Node *current) { _root = current; }
 
 		void	prefix_traversal(Node *current, char sep) {
 			if (current)
@@ -494,7 +494,7 @@ namespace ft
 			}
 			++_size;
 //			suffix_traversal(root(), update_height);
-			balanceTree(begin().base());
+			set_root(balanceTree(root()));
 			return (ft::make_pair(_y, true));
 		}
 
@@ -535,7 +535,7 @@ namespace ft
 				}
 				++_size;
 //				suffix_traversal(root(), update_height);
-				balanceTree(begin().base());
+				set_root(balanceTree(root()));
 				return (_y);
 			}
 			else
