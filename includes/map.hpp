@@ -91,7 +91,7 @@ namespace ft
 		map(InputIterator first, InputIterator last, const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type());
 		map(const map& x);
 
-		~map() { delete_node(_root); }
+		~map() { delete_node(root()); }
 		map&	operator= (map const& base);
 		Node	*root() { return _root; }
 		void	set_root(Node *current) { _root = current; }
@@ -168,7 +168,101 @@ namespace ft
 			ptr->_height = 1;
 			return (ptr);
 		}
-
+/*
+		Node*	deleteNode(Node* root, const value_type& val)
+		{
+			
+			// STEP 1: PERFORM STANDARD BST DELETE
+			if (root == NULL)
+				return root;
+			// If the key to be deleted is smaller
+			// than the root's key, then it lies
+			// in left subtree
+			if (_key_comp(val.first, root()->data().first))
+				root->left = deleteNode(root->left, key);
+			// If the key to be deleted is greater
+			// than the root's key, then it lies
+			// in right subtree
+			else if(!_key_comp(val.first, root()->data().first))
+				root->right() = deleteNode(root->right(), key);
+			// if key is same as root's key, then
+			// This is the node to be deleted
+			else
+			{
+				// node with only one child or no child
+				if( (root->left() == NULL) ||
+				(root->right() == NULL) )
+				{
+				Node *temp = root->left() ? root->left() : root->right();
+				// No child case
+				if (temp == NULL)
+				{
+					temp = root;
+					root = NULL;
+				}
+				else // One child case
+				*root = *temp; // Copy the contents of
+							// the non-empty child
+				delete_node(temp);
+				}
+				else
+				{
+				// node with two children: Get the inorder
+				// successor (smallest in the right subtree)
+				Node* temp = minValueNode(root->right);
+			
+				// Copy the inorder successor's
+				// data to this node
+				root->key = temp->key;
+			
+				// Delete the inorder successor
+				root->right() = deleteNode(root->right(), temp->key);
+				}
+			}
+			// If the tree had only one node
+			// then return
+			if (root == NULL)
+			return root;
+			
+			// STEP 2: UPDATE HEIGHT OF THE CURRENT NODE
+			root->height = 1 + max(height(root->left), height(root->right));
+			
+			// STEP 3: GET THE BALANCE FACTOR OF
+			// THIS NODE (to check whether this
+			// node became unbalanced)
+			int balance = getBalance(root);
+			
+			// If this node becomes unbalanced,
+			// then there are 4 cases
+			
+			// Left Left Case
+			if (balance > 1 &&
+				getBalance(root->left) >= 0)
+				return rightRotate(root);
+			
+			// Left Right Case
+			if (balance > 1 &&
+				getBalance(root->left) < 0)
+			{
+				root->left = leftRotate(root->left);
+				return rightRotate(root);
+			}
+			
+			// Right Right Case
+			if (balance < -1 &&
+				getBalance(root->right) <= 0)
+				return leftRotate(root);
+			// Right Left Case
+			if (balance < -1 &&
+				getBalance(root->right) > 0)
+			{
+				root->right = rightRotate(root->right);
+				return leftRotate(root);
+			}
+			
+			return root;
+		}
+*/
 		void	delete_node(Node *node)
 		{
 			_alloc_node.destroy(node);
@@ -182,30 +276,6 @@ namespace ft
 			return (0);
 		}
 /*
-		Node *right_rotation(Node *_y)
-		{
-			std::cout << "dest" << std::endl;
-			Node *_x = _y->left();
-			Node *_t2 = _x->right();
-			_x->set_right(_y);
-			_y->set_left(_t2);
-			_y->_height = std::max(get_height(_y->left()), get_height(_y->right())) + 1;
-			_x->_height = std::max(get_height(_x->left()), get_height(_x->right())) + 1;
-			return (_x);
-		}
-
-		Node *left_rotation(Node *_x)
-		{
-			std::cout << "sinist" << std::endl;
-			Node *_y = _x->right();
-			Node *_t2 = _y->left();
-			_y->set_left(_x);
-			_x->set_right(_t2);
-			_x->_height = std::max(get_height(_x->left()), get_height(_x->right())) + 1;
-			_y->_height = std::max(get_height(_y->left()), get_height(_y->right())) + 1;
-			return (_y);
-		}
-
 		int get_balance(Node *node)
 		{
 			if (node == NULL)
@@ -214,142 +284,6 @@ namespace ft
 		}
 */
 /*
-		pair<iterator, bool>	insert(const value_type& val)
-		{
-			iterator	_y(insert(begin(), val));
-
-			_size = get_height(root());
-			if (val.first == _y.base()->data().first && val.second == _y.base()->data().second)
-				return (ft::make_pair(_y, true));
-			return (ft::make_pair(_y, false));
-		}
-
-		iterator	insert(iterator pos, const value_type& val)
-		{
-			if (pos >= begin() && pos <= end())
-			{
-				Node		*node = _avl_tree_insert(pos.base(), pos.base()->parent(), val);
-				iterator	_y(node);
-
-				_size = get_height(root());
-				return (_y);
-			}
-			else
-				throw(ContainerException("out_of_range"));
-		}
-
-		Node	*LLR(Node *node)
-		{
-			Node	*tmp = node->left();
-			node->set_left(tmp->right());
-			if (tmp->right() != NULL)
-				tmp->right()->set_parent(node);
-			tmp->set_right(node);
-			tmp->set_parent(node->parent());
-			node->set_parent(tmp);
-			if (tmp->parent() != NULL
-				&& _key_comp(node->data().first, tmp->parent()->data().first)) {
-				tmp->parent()->set_left(tmp);
-			}
-			else {
-				if (tmp->parent() != NULL)
-					tmp->parent()->set_right(tmp);
-			}
-			node = tmp;
-			update_height(node->left());
-			update_height(node->right());
-			update_height(node);
-			update_height(node->parent());
-			return node;
-		}
-
-		Node	*RRR(Node *node)
-		{
-			Node	*tmp = node->right();
-			node->set_right(tmp->left());
-			if (tmp->left() != NULL)
-				tmp->left()->set_parent(node);
-			tmp->set_left(node);
-			tmp->set_parent(node->parent());
-			node->set_parent(tmp);
-			if (tmp->parent() != NULL
-				&& _key_comp(node->data().first, tmp->parent()->data().first)) {
-				tmp->parent()->set_left(tmp);
-			}
-			else {
-				if (tmp->parent() != NULL)
-					tmp->parent()->set_right(tmp);
-			}
-			node = tmp;
-			update_height(node->left());
-			update_height(node->right());
-			update_height(node);
-			update_height(node->parent());
-			return node;
-		}
-
-		Node	*LRR(Node *node)
-		{
-			node->set_left(RRR(node->left()));
-			return LLR(node);
-		}
-
-		Node	*RLR(Node *node)
-		{
-			node->set_right(LLR(node->right()));
-			return RRR(node);
-		}
-
-		Node *_avl_tree_insert(Node *node, Node *parent, const value_type &val)
-		{
-			if (node == NULL)
-				node = new_node(val, parent);
-			else if (node->data().first > val.first) {
-				node->set_left(_avl_tree_insert(node->left(), node, val));
-				int firstheight = 0;
-				int secondheight = 0;
-				if (node->left() != NULL)
-					firstheight = node->left()->height();
-				if (node->right() != NULL)
-					secondheight = node->right()->height();
-				if (abs(firstheight - secondheight) == 2) {
-					if (node->left() != NULL
-						&& val.first < node->left()->data().first) {
-						node = LLR(node);
-					}
-					else {
-						node = LRR(node);
-					}
-				}
-			}
-			else if (node->data().first < val.first) {
-				node->set_right(_avl_tree_insert(node->right(), node, val));
-				int firstheight = 0;
-				int secondheight = 0;
-				if (node->left() != NULL)
-					firstheight = node->left()->height();
-				if (node->right() != NULL)
-					secondheight = node->right()->height();
-				if (abs(firstheight
-						- secondheight)
-					== 2) {
-					if (node->right() != NULL
-						&& _key_comp(val.first, node->right()->data().first)) {
-						node = RLR(node);
-					}
-					else {
-						node = RRR(node);
-					}
-				}
-			}
-			else {
-				delete_node(new_node);
-				return (NULL);
-			}
-			update_height(node);
-			return node;
-		}
-
 		bool AVLsearch(Node *node, const value_type& pair)
 		{
 			if (node == NULL)
@@ -453,9 +387,7 @@ namespace ft
 				return (NULL);
 			root->set_left(balanceTree(root->left()));
 			root->set_right(balanceTree(root->right()));
-			std::cout << "prima: " << root->data().first << std::endl;
 			root = balance(root);
-			std::cout << "dopo: " << root->data().first << std::endl;
 			return (root);
 		}
 
@@ -495,6 +427,7 @@ namespace ft
 			++_size;
 //			suffix_traversal(root(), update_height);
 			set_root(balanceTree(root()));
+			//	find the added value and connect _y to it
 			return (ft::make_pair(_y, true));
 		}
 
@@ -536,6 +469,7 @@ namespace ft
 				++_size;
 //				suffix_traversal(root(), update_height);
 				set_root(balanceTree(root()));
+				//	find the added value and connect _y to it
 				return (_y);
 			}
 			else
