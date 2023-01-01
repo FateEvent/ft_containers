@@ -206,7 +206,7 @@ int main(int argc, char** argv) {
 
 	ft::map<const char, int>::iterator it = tree.begin();
 	std::cout << &it << std::endl;
-	std::cout << tree.root()->data().first << std::endl;
+	std::cout << it->first << std::endl;
 //	it++;
 //	std::cout << it.base()->data().first << std::endl;
 //	it++;

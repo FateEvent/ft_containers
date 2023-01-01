@@ -32,8 +32,8 @@ namespace ft
 
 		node_pointer	base() const { return _ptr; }
 
-		reference	operator* () const { return _ptr->data(); }
-		pointer		operator-> () const { return &(_ptr->data()); }
+		reference	operator* () const { return _ptr->data(); }	// regarder la doc su les itérateurs
+		pointer		operator-> () const { return &(_ptr->data()); }	// OK!
 
 //		node_pointer	last() const { return _last; }
 //		void			set_last(node_pointer last) { _last = last; }

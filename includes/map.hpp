@@ -363,7 +363,7 @@ namespace ft
 			return (rr_rotation(parent));
 		}
 
-		Node 	*balance(Node *temp)
+		Node	*balance(Node *temp)
 		{
 			int bal_factor = diff(temp);
 			if (bal_factor > 1) {
@@ -381,14 +381,52 @@ namespace ft
 			return (temp);
 		}
 
-		Node 	*balanceTree(Node *root)
+		Node	*balance_tree(Node *root)
 		{
 			if (root == NULL)
 				return (NULL);
-			root->set_left(balanceTree(root->left()));
-			root->set_right(balanceTree(root->right()));
+			root->set_left(balance_tree(root->left()));
+			root->set_right(balance_tree(root->right()));
 			root = balance(root);
 			return (root);
+		}
+
+		Node	*_avl_tree_insert(Node *_x, const value_type& val)
+		{
+			Node	*newNode = new_node(val);
+			Node	*_y;
+
+			while (_x != NULL) {
+				_y = _x;
+				if (_key_comp(val.first, _x->data().first))
+					_x = _x->left();
+				else if (val.first == _x->data().first)
+				{
+					delete_node(newNode);
+					return (_x);
+				}
+				else
+					_x = _x->right();
+			}
+			if (_y == NULL)
+			{
+				_y(newNode);
+				newNode->set_parent(_y->parent());
+			}
+			else if (_key_comp(val.first, _y->data().first))
+			{
+				_y->set_left(newNode);
+				newNode->set_parent(_y);
+			}
+			else
+			{
+				_y->set_right(newNode);
+				newNode->set_parent(_y);
+			}
+//			suffix_traversal(root(), update_height);
+			set_root(balance_tree(root()));
+			//	find the added value and connect _y to it
+			return (_y);
 		}
 
 		pair<iterator,bool>	insert(const value_type& val)
@@ -426,7 +464,7 @@ namespace ft
 			}
 			++_size;
 //			suffix_traversal(root(), update_height);
-			set_root(balanceTree(root()));
+			set_root(balance_tree(root()));
 			//	find the added value and connect _y to it
 			return (ft::make_pair(_y, true));
 		}
@@ -434,44 +472,7 @@ namespace ft
 		iterator	insert(iterator pos, const value_type& val)
 		{
 			if (pos >= begin() && pos <= end())
-			{
-				Node		*newNode = new_node(val);
-				iterator	_x(pos);
-				iterator	_y;
-
-				while (_x != NULL) {
-					_y.set_ptr(_x.base());
-					if (_key_comp(val.first, _x.base()->data().first))
-						_x.set_ptr(_x.base()->left());
-					else if (val.first == _x.base()->data().first)
-					{
-						delete_node(newNode);
-						return (_x);
-					}
-					else
-						_x.set_ptr(_x.base()->right());
-				}
-				if (_y == NULL)
-				{
-					_y.set_ptr(newNode);
-					newNode->set_parent(_y.base()->parent());
-				}
-				else if (_key_comp(val.first, _y.base()->data().first))
-				{
-					_y.base()->set_left(newNode);
-					newNode->set_parent(_y.base());
-				}
-				else
-				{
-					_y.base()->set_right(newNode);
-					newNode->set_parent(_y.base());
-				}
-				++_size;
-//				suffix_traversal(root(), update_height);
-				set_root(balanceTree(root()));
-				//	find the added value and connect _y to it
-				return (_y);
-			}
+				return (iterator(_avl_tree_insert(pos.base(), val)));
 			else
 				throw(ContainerException("out_of_range"));
 		}
