@@ -186,13 +186,13 @@ int main(int argc, char** argv) {
 		std::cout << *it << std::endl;
 */
 
-	ft::pair<const char, int> b = ft::make_pair('b', 5);
-	ft::pair<const char, int> c = ft::make_pair('c', 3);
-	ft::pair<const char, int> d = ft::make_pair('d', 15);
-	ft::pair<const char, int> f = ft::make_pair('f', 6);
-	ft::pair<const char, int> l = ft::make_pair('l', -1);
+	ft::pair<char, int> b = ft::make_pair('b', 5);
+	ft::pair<char, int> c = ft::make_pair('c', 3);
+	ft::pair<char, int> d = ft::make_pair('d', 15);
+	ft::pair<char, int> f = ft::make_pair('f', 6);
+	ft::pair<char, int> l = ft::make_pair('l', -1);
 
-	ft::map<const char, int> tree;
+	ft::map<char, int> tree;
 
 	tree.insert(ft::make_pair('a', 1));
 	tree.insert(ft::make_pair('c', 4));
@@ -208,6 +208,7 @@ int main(int argc, char** argv) {
 
 	tree.delete_tree_node('c');
 	tree.level_order_traversal(tree.root(), ' ');
+	//dal figlio destro di root si dirama l'albero
 
 //	ft::map<const char, int>::iterator it = tree.begin();
 //	std::cout << it->first << std::endl;

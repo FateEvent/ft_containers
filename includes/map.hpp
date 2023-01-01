@@ -185,26 +185,6 @@ namespace ft
 		}
 
 		/* ================================================================
-		maxHeight(t1,t2): compute max height of 2 (sub)trees
-		================================================================ */
-		static int maxHeight( Node *t1, Node *t2 )
-		{
-			int h1, h2;
-
-			if ( t1 == NULL )
-				h1 = 0;
-			else
-				h1 = t1->height();
-
-			if ( t2 == NULL )
-				h2 = 0;
-			else
-				h2 = t2->height();
-
-			return (h1 >= h2) ? h1 : h2 ;
-		}
-
-		/* ================================================================
 			diffHeight(t1,t2): compute difference in height of 2 (sub)trees
 			================================================================ */
 		static int diffHeight( Node *t1, Node *t2 )
@@ -231,7 +211,7 @@ namespace ft
 		{
 			while ( _x != NULL )
 			{
-				_x->_height = maxHeight( _x->left(), _x->right() ) + 1;
+				_x->_height = calculate_height(_x);
 				_x = _x->parent();
 			}
 		}
@@ -241,9 +221,9 @@ namespace ft
 			======================================================= */
 		void	_avl_tree_node_deletion(const key_type& k)
 		{
-			Node	*p, *q;     // Help variables
-			Node	*parent;   // parent node
-			Node	*succ;     // successor node
+			Node	*p;		// Help variables
+			Node	*parent;	// parent node
+			Node	*succ;		// successor node
 
 			/* --------------------------------------------
 				Find the node with key == "key" in the BST
@@ -336,11 +316,16 @@ namespace ft
 
 				Note: succ(p) has NOT left child !
 				================================================================ */
+
 			succ = p->right();	// p has 2 children....
 
 			while ( succ->left() != NULL )
 				succ = succ->left();
-			p->set_data(succ->data());	// Replace p with successor
+			Node *temp = new_node(succ->data());
+			p = temp;
+			p->set_left(temp->left());
+			p->set_right(temp->right());
+			p->set_parent(temp->parent());
 
 			/* --------------------------------
 				Delete succ from succ's parent
