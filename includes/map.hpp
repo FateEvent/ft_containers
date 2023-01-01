@@ -78,7 +78,7 @@ namespace ft
 			Node		*right() { return _right; }
 			Node		*parent() { return _parent; }
 			int			&height() { return _height; }
-			void		treat(char sep) { std::cout << data().first << sep << data().second << sep << height() << std::endl; }
+			void		treat(char sep) { std::cout << data().first << sep << data().second << " height: " << height() << std::endl; }
 		};
 
 	public:
@@ -110,6 +110,7 @@ namespace ft
 			if (current)
 			{
 				infix_traversal(current->left(), sep);
+//				current->treat(sep);
 				update_height(current);
 				infix_traversal(current->right(), sep);
 			}
@@ -141,13 +142,13 @@ namespace ft
 		}
 
 		iterator	begin()	{
-			iterator	it(_root);
+			iterator	it(root());
 
 			it.leftmost();
 			return (it);
 		}
 
-		iterator	end() { return iterator(_root); }
+		iterator	end() { return iterator(root()); }
 
 		Node	*new_node(const value_type& pair = value_type(), Node *parent = NULL)
 		{
@@ -269,37 +270,23 @@ namespace ft
 			_alloc_node.deallocate(node, 1);
 		}
 
-		int	get_height(Node *node)
-		{
-			if (node)
-				return (node->height());
-			return (0);
-		}
-/*
-		int get_balance(Node *node)
+
+		Node	*_avl_tree_search(Node *node, const value_type& pair)
 		{
 			if (node == NULL)
-				return 0;
-			return (get_height(node->left()) - get_height(node->right()));
-		}
-*/
-/*
-		bool AVLsearch(Node *node, const value_type& pair)
-		{
-			if (node == NULL)
-				return false;
+				return (NULL);
 			else if (node->data().first == pair.first)
-				return true;
-			else if (node->data().first > pair.first) {
-				bool val = AVLsearch(node->left(), pair.first);
-				return val;
+				return (node);
+			else if (_key_comp(node->data().first, pair.first))
+			{
+				Node *temp = _avl_tree_search(node->left(), pair);
+				return (temp);
 			}
 			else {
-				bool val = AVLsearch(node->right(), pair.first);
-				return val;
+				Node *temp = _avl_tree_search(node->right(), pair);
+				return (temp);
 			}
 		}
-*/
 
 		static void	update_height(Node *node)
 		{
@@ -332,6 +319,7 @@ namespace ft
 			int b_factor = l_height - r_height;
 			return (b_factor);
 		}
+
 
 		Node	*rr_rotation(Node *parent)
 		{
@@ -410,7 +398,7 @@ namespace ft
 			}
 			if (_y == NULL)
 			{
-				_y(newNode);
+				_y = newNode;
 				newNode->set_parent(_y->parent());
 			}
 			else if (_key_comp(val.first, _y->data().first))
@@ -423,50 +411,20 @@ namespace ft
 				_y->set_right(newNode);
 				newNode->set_parent(_y);
 			}
-//			suffix_traversal(root(), update_height);
 			set_root(balance_tree(root()));
-			//	find the added value and connect _y to it
+			suffix_traversal(root(), update_height);
+			// find the node (the iterator?) _y by finding the key
+			_y = _avl_tree_search(root(), val);
 			return (_y);
 		}
 
-		pair<iterator,bool>	insert(const value_type& val)
+		pair<iterator, bool>	insert(const value_type& val)
 		{
-			Node		*newNode = new_node(val);
-			iterator	_x(_root);
-			iterator	_y;
+			iterator	it(insert(root(), val));
 
-			while (_x != NULL) {
-				_y.set_ptr(_x.base());
-				if (_key_comp(val.first, _x.base()->data().first))
-					_x.set_ptr(_x.base()->left());
-				else if (val.first == _x.base()->data().first)
-				{
-					delete_node(newNode);
-					return (ft::make_pair(_x, false));
-				}
-				else
-					_x.set_ptr(_x.base()->right());
-			}
-			if (_y == NULL)
-			{
-				_y.set_ptr(newNode);
-				newNode->set_parent(_y.base()->parent());
-			}
-			else if (_key_comp(val.first, _y.base()->data().first))
-			{
-				_y.base()->set_left(newNode);
-				newNode->set_parent(_y.base());
-			}
-			else
-			{
-				_y.base()->set_right(newNode);
-				newNode->set_parent(_y.base());
-			}
-			++_size;
-//			suffix_traversal(root(), update_height);
-			set_root(balance_tree(root()));
-			//	find the added value and connect _y to it
-			return (ft::make_pair(_y, true));
+			if (it->second == val.second)
+				return (make_pair(it, true));
+			return (make_pair(it, false));
 		}
 
 		iterator	insert(iterator pos, const value_type& val)
