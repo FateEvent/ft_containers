@@ -34,6 +34,7 @@ More specifically about AVL trees:
 * <https://www.geeksforgeeks.org/implementation-of-avl-tree-using-graphics-in-cpp/>;
 * <https://ebrary.net/25925/computer_science/tree_iterative_insert/>;
 * <https://www.geeksforgeeks.org/deletion-in-an-avl-tree/>;
+* <http://www.cs.emory.edu/~cheung/Courses/253/Syllabus/Trees/AVL-delete.html/>.
 
 * <https://en.wikipedia.org/wiki/Red%E2%80%93black_tree/>.
 
