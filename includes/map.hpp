@@ -321,7 +321,7 @@ namespace ft
 		}
 
 
-		Node	*rr_rotation(Node *parent)
+		Node	*_avl_tree_rr_rotation(Node *parent)
 		{
 			Node *temp(parent->right());
 			parent->set_right(temp->left());
@@ -329,7 +329,7 @@ namespace ft
 			return (temp);
 		}
 
-		Node	*ll_rotation(Node *parent)
+		Node	*_avl_tree_ll_rotation(Node *parent)
 		{
 			Node *temp(parent->left());
 			parent->set_left(temp->right());
@@ -337,18 +337,18 @@ namespace ft
 			return (temp);
 		}
 
-		Node	*lr_rotation(Node *parent)
+		Node	*_avl_tree_lr_rotation(Node *parent)
 		{
 			Node *temp(parent->left());
-			parent->set_left(rr_rotation(temp));
-			return (ll_rotation(parent));
+			parent->set_left(_avl_tree_rr_rotation(temp));
+			return (_avl_tree_ll_rotation(parent));
 		}
 
-		Node	*rl_rotation(Node *parent)
+		Node	*_avl_tree_rl_rotation(Node *parent)
 		{
 			Node *temp(parent->right());
-			parent->set_right(ll_rotation(temp));
-			return (rr_rotation(parent));
+			parent->set_right(_avl_tree_ll_rotation(temp));
+			return (_avl_tree_rr_rotation(parent));
 		}
 
 		Node	*balance(Node *temp)
@@ -356,15 +356,15 @@ namespace ft
 			int bal_factor = diff(temp);
 			if (bal_factor > 1) {
 				if (diff(temp->left()) > 0)
-					temp = ll_rotation(temp);
+					temp = _avl_tree_ll_rotation(temp);
 				else
-					temp = lr_rotation(temp);
+					temp = _avl_tree_lr_rotation(temp);
 			}
 			else if (bal_factor < -1) {
 				if (diff(temp->right()) > 0)
-					temp = rl_rotation(temp);
+					temp = _avl_tree_rl_rotation(temp);
 				else
-					temp = rr_rotation(temp);
+					temp = _avl_tree_rr_rotation(temp);
 			}
 			return (temp);
 		}
@@ -414,7 +414,7 @@ namespace ft
 			set_root(balance_tree(root()));
 			suffix_traversal(root(), update_height);
 			// find the node (the iterator?) _y by finding the key
-			_y = _avl_tree_search(root(), val);
+//			_y = _avl_tree_search(root(), val);
 			return (_y);
 		}
 
