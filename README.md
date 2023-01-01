@@ -27,6 +27,7 @@ More specifically about AVL trees:
 
 * <https://en.wikipedia.org/wiki/Tree_traversal/>;
 * <https://www.geeksforgeeks.org/insert-a-node-in-binary-search-tree-iteratively/>;
+* <https://stackoverflow.com/questions/66536347/delete-function-binary-search-tree-bst-with-parent-passing-the-tree-pointer-as-a/>;
 * <https://en.wikipedia.org/wiki/AVL_tree/>;
 * <https://www.geeksforgeeks.org/insertion-in-an-avl-tree/>;
 * <https://www.geeksforgeeks.org/avl-trees-containing-a-parent-node-pointer/>;

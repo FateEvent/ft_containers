@@ -69,7 +69,7 @@ namespace ft
 			~Node() {}
 
 			Node		&operator= (Node &other) { _left = other._left; _right = other._right; _parent = other._parent; _height = other._height; return (*this); }
-			void		set_data(const value_type &data) { _data = data; }
+			void		set_data(value_type &data) { _data = data; }
 			void		set_left(Node *left) { _left = left; }
 			void		set_right(Node *right) { _right = right; }
 			void		set_parent(Node *parent) { _parent = parent; }
@@ -169,107 +169,20 @@ namespace ft
 			ptr->_height = 1;
 			return (ptr);
 		}
-/*
-		Node*	deleteNode(Node* root, const value_type& val)
+
+		Node *min_value_node(Node *node)
 		{
-			
-			// STEP 1: PERFORM STANDARD BST DELETE
-			if (root == NULL)
-				return root;
-			// If the key to be deleted is smaller
-			// than the root's key, then it lies
-			// in left subtree
-			if (_key_comp(val.first, root()->data().first))
-				root->left = deleteNode(root->left, key);
-			// If the key to be deleted is greater
-			// than the root's key, then it lies
-			// in right subtree
-			else if(!_key_comp(val.first, root()->data().first))
-				root->right() = deleteNode(root->right(), key);
-			// if key is same as root's key, then
-			// This is the node to be deleted
-			else
-			{
-				// node with only one child or no child
-				if( (root->left() == NULL) ||
-				(root->right() == NULL) )
-				{
-				Node *temp = root->left() ? root->left() : root->right();
-				// No child case
-				if (temp == NULL)
-				{
-					temp = root;
-					root = NULL;
-				}
-				else // One child case
-				*root = *temp; // Copy the contents of
-							// the non-empty child
-				delete_node(temp);
-				}
-				else
-				{
-				// node with two children: Get the inorder
-				// successor (smallest in the right subtree)
-				Node* temp = minValueNode(root->right);
-			
-				// Copy the inorder successor's
-				// data to this node
-				root->key = temp->key;
-			
-				// Delete the inorder successor
-				root->right() = deleteNode(root->right(), temp->key);
-				}
-			}
-			// If the tree had only one node
-			// then return
-			if (root == NULL)
-			return root;
-			
-			// STEP 2: UPDATE HEIGHT OF THE CURRENT NODE
-			root->height = 1 + max(height(root->left), height(root->right));
-			
-			// STEP 3: GET THE BALANCE FACTOR OF
-			// THIS NODE (to check whether this
-			// node became unbalanced)
-			int balance = getBalance(root);
-			
-			// If this node becomes unbalanced,
-			// then there are 4 cases
-			
-			// Left Left Case
-			if (balance > 1 &&
-				getBalance(root->left) >= 0)
-				return rightRotate(root);
-			
-			// Left Right Case
-			if (balance > 1 &&
-				getBalance(root->left) < 0)
-			{
-				root->left = leftRotate(root->left);
-				return rightRotate(root);
-			}
-			
-			// Right Right Case
-			if (balance < -1 &&
-				getBalance(root->right) <= 0)
-				return leftRotate(root);
-			// Right Left Case
-			if (balance < -1 &&
-				getBalance(root->right) > 0)
-			{
-				root->right = rightRotate(root->right);
-				return leftRotate(root);
-			}
-			
-			return root;
+			Node *current = node;
+			while (current && current->left())
+				current = current->left();
+			return current;
 		}
-*/
+
 		void	delete_node(Node *node)
 		{
 			_alloc_node.destroy(node);
 			_alloc_node.deallocate(node, 1);
 		}
-
 
 		Node	*_avl_tree_search(Node *node, const value_type& pair)
 		{
@@ -416,6 +329,41 @@ namespace ft
 			// find the node (the iterator?) _y by finding the key
 //			_y = _avl_tree_search(root(), val);
 			return (_y);
+		}
+
+		Node	*_avl_tree_node_deletion(Node *current, const value_type& pair)
+		{
+			if (current == NULL)
+				return (current);
+			if (_key_comp(pair.first, current->data().first))
+				current->set_left(_avl_tree_node_deletion(current->left(), pair));
+			else if (!_key_comp(pair.first, current->data().first))
+				current->set_right(_avl_tree_node_deletion(current->right(), pair));
+			else
+			{
+				if (!current->left() && !current->right())
+					return (NULL);
+				else if (!current->left()) {
+					Node *temp = current->right();
+					delete_node(current);
+					return (temp);
+				}
+				else if (!current->right()) {
+					Node *temp = current->left();
+					delete_node(current);
+					return (temp);
+				}
+				Node *temp = min_value_node(current->right());
+				current->set_data(temp->data());
+				current->set_right(_avl_tree_node_deletion(current->right(), pair));
+			}
+			set_root(balance_tree(root()));
+			return (current);
+		}
+
+		iterator delete_node(const value_type& pair)
+		{
+			return (iterator(_avl_tree_node_deletion(root(), pair)));
 		}
 
 		pair<iterator, bool>	insert(const value_type& val)
