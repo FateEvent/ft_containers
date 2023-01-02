@@ -202,20 +202,19 @@ int main(int argc, char** argv) {
 	tree.insert(f);
 	tree.insert(l);
 
-	tree.level_order_traversal(tree.root()->right(), ' ');
+	tree.level_order_traversal(tree.root(), ' ');
 
 	std::cout << std::endl;
 
 	tree.delete_tree_node('c');
 	tree.level_order_traversal(tree.root(), ' ');
-	//dal figlio destro di root si dirama l'albero
 
-	ft::map<char, int>::iterator it = tree.begin();
-	std::cout << it->first << std::endl;
-	std::cout << &it << std::endl;
-	it++;
-	std::cout << it.base()->data().first << std::endl;
-	it++;
+//	ft::map<char, int>::iterator it = tree.begin();
+//	std::cout << it->first << std::endl;
+//	std::cout << &it << std::endl;
+//	it++;
+//	std::cout << it.base()->data().first << std::endl;
+//	it++;
 //	std::cout << it.base()->data().first << std::endl;
 //	it--;
 //	std::cout << it.base()->data().first << std::endl;

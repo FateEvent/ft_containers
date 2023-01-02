@@ -94,7 +94,7 @@ namespace ft
 		~map() { delete_node(protoroot()); }
 		map&	operator= (map const& base);
 		Node	*protoroot() { return (_root); }
-		Node	*root() { return (protoroot()->right()); }
+		Node	*root() { return (_root->right()); }
 		void	set_root(Node *current) { _root->set_right(current); }
 
 		void	prefix_traversal(Node *current, char sep) {
@@ -240,7 +240,6 @@ namespace ft
 				std::cout << "ciao" << std::endl;
 				return ;
 			}
-				
 			if (!(k == p->data().first))
 				return ;	// Not found ==> nothing to delete....
 
@@ -263,14 +262,13 @@ namespace ft
 				/* --------------------------------------------
 					Recompute the height of all parent nodes...
 					-------------------------------------------- */
+				suffix_traversal(root(), update_height);
 				recompHeight( parent );
 
 				/* --------------------------------------------
 					Re-balance AVL tree starting at ActionPos
 					-------------------------------------------- */
-				suffix_traversal(root(), update_height);
-				set_root(balance_tree(parent));	// Rebalance AVL tree after delete at parent
-
+				parent = balance_tree(parent);	// Rebalance AVL tree after delete at parent
 				return ;
 			}
 
@@ -289,13 +287,13 @@ namespace ft
 				/* --------------------------------------------
 					Recompute the height of all parent nodes...
 					-------------------------------------------- */
-				recompHeight( parent );
+				suffix_traversal(root(), update_height);
+//				recompHeight( parent );
 
 				/* --------------------------------------------
 					Re-balance AVL tree starting at ActionPos
 					-------------------------------------------- */
-				suffix_traversal(root(), update_height);
-				set_root(balance_tree(parent));	// Rebalance AVL tree after delete at parent
+				parent = balance_tree(parent);	// Rebalance AVL tree after delete at parent
 				return ;
 			}
 
@@ -314,13 +312,13 @@ namespace ft
 				/* --------------------------------------------
 					Recompute the height of all parent nodes...
 					-------------------------------------------- */
-				recompHeight( parent );
+				suffix_traversal(root(), update_height);
+//				recompHeight( parent );
 
 				/* --------------------------------------------
 					Re-balance AVL tree starting at ActionPos
 					-------------------------------------------- */
-				suffix_traversal(root(), update_height);
-				set_root(balance_tree(parent));	// Rebalance AVL tree after delete at parent
+				parent = balance_tree(parent);	// Rebalance AVL tree after delete at parent
 				return ;
 			}
 
@@ -352,13 +350,13 @@ namespace ft
 			/* --------------------------------------------
 				Recompute the height of all parent nodes...
 			-------------------------------------------- */
-			recompHeight( parent );
+			suffix_traversal(root(), update_height);
+//			recompHeight( parent );
 
 			/* --------------------------------------------
 				Re-balance AVL tree starting at ActionPos
 				-------------------------------------------- */
-			suffix_traversal(root(), update_height);
-			set_root(balance_tree(parent));	// Rebalance AVL tree after delete at parent
+			parent = balance_tree(parent);	// Rebalance AVL tree after delete at parent
 			return ;
 
 		}
