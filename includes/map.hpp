@@ -190,6 +190,186 @@ namespace ft
 			_alloc_node.deallocate(node, 1);
 		}
 
+		void rebalance(Node *p)
+		{
+			Node *x, *y, *z, *q;
+
+			while ( p != null )
+			{ 
+				if ( diffHeight(p.left, p.right) > 1 )
+				{
+
+					x = p;
+					y = tallerChild( x );
+					z = tallerChild( y );
+
+					System.out.println("After tri_node_restructure: " + x + y + z);
+					System.out.println();
+					p = tri_node_restructure( x, y, z );
+
+				printBST();
+					System.out.println("==========================================");
+
+				}
+
+				p = p.parent;
+			}
+		}
+
+		public Node *tallerChild(Node *p)
+		{
+			if ( p.left == null )
+			return p.right;
+
+			if ( p.right == null )
+			return p.left;
+
+			if ( p.left.height > p.right.height )
+			return p.left;
+			else
+			return p.right;
+		}
+
+		/* =======================================================
+			tri_node_restructure(x, y, z):
+
+					x = parent(y)
+					y = parent(z)
+			======================================================= */
+		Node *tri_node_restructure( Node *x, Node *y, Node *z)
+		{
+			/* *******************************************************************
+				Determine the parent child relationships between (y,z) and (x,y))
+				******************************************************************* */
+			boolean zIsLeftChild = (z == y.left);
+			boolean yIsLeftChild = (y == x.left);
+
+			/* =======================================================
+			Determine the configuration:
+
+			find out which nodes are in positions a, b and c
+			given in the following legend:
+
+										b
+									/   \
+									a     c
+			======================================================= */
+			Node *a, *b, *c;
+			Node *T0, *T1, *T2, *T3;
+
+			if (zIsLeftChild && yIsLeftChild) 
+			{
+
+			a = z;                     //          x=c
+			b = y;                     //         /  \
+			c = x;                     //       y=b  T3 
+			T0 = z.left;               //      /  \ 
+			T1 = z.right;              //    z=a  T2
+			T2 = y.right;              //   /  \
+			T3 = x.right;              //  T0  T1
+			}
+			else if (!zIsLeftChild && yIsLeftChild) 
+			{
+
+			a = y;                     //       x=c
+			b = z;                     //      /  \
+			c = x;                     //    y=a  T3
+			T0 = y.left;               //   /  \
+			T1 = z.left;               //  T0 z=b
+			T2 = z.right;              //     /  \ 
+			T3 = x.right;              //    T1  T2
+			}
+			else if (zIsLeftChild && !yIsLeftChild) 
+			{
+
+			a = x;                     //      x=a
+			b = z;                     //     /  \
+			c = y;                     //    T0  y=c
+			T0 = x.left;               //       /  \ 
+			T1 = z.left;               //      z=b  T3
+			T2 = z.right;              //     /  \  
+			T3 = y.right;              //    T1  T2 
+			}
+			else 
+			{
+
+			a = x;                     //       x=a
+			b = y;                     //      /  \
+			c = z;                     //     T0  y=b
+			T0 = x.left;               //        /  \
+			T1 = y.left;               //        T1 z=c
+			T2 = z.left;               //          /  \
+			T3 = z.right;              //         T2  T3
+			}
+			
+			/* ------------------------------------------------------------------
+				Put b at x's place (make b the root of the new subtree !)
+				------------------------------------------------------------------ */
+			if ( x == root )
+			{  /* If x is the root node, handle the replacement  differently.... */
+
+				root = b;                   // b is now root
+				b.parent = null;
+			}
+			else 
+			{
+				Node *xParent;
+
+				xParent = x.parent;   // Find x's parent
+
+				if ( x == xParent.left ) 
+				{ /* Link b to the left branch of x's parent */
+				b.parent = xParent;
+				xParent.left = b;
+				}
+				else 
+				{ /* Link b to the right branch of x's parent */
+				b.parent = xParent;
+				xParent.right = b;
+				}
+			}
+		
+			/* ------------------
+				Make:   b
+					/ \
+					a   c
+				------------------ */
+			b.left = a;
+			a.parent = b;
+			b.right = c;
+			c.parent = b;
+		
+		
+			/* ------------------
+				Make:   b
+					/ \
+					a   c
+					/ \
+					T0 T1
+				------------------ */
+			a.left = T0;
+			if ( T0 != null ) T0.parent = a;
+			a.right = T1;
+			if ( T1 != null ) T1.parent = a;
+		
+			/* ------------------
+				Make:   b
+					/ \
+					a   c
+						/ \
+						T2 T3
+				------------------ */
+			c.left = T2;
+			if ( T2 != null ) T2.parent= c;
+			c.right= T3;
+			if ( T3 != null ) T3.parent= c;
+		
+			recompHeight(a);
+			recompHeight(c);
+
+			return b;
+		}
+
 		/* ================================================================
 			diffHeight(t1,t2): compute difference in height of 2 (sub)trees
 			================================================================ */
