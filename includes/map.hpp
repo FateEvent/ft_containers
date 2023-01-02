@@ -91,10 +91,11 @@ namespace ft
 		map(InputIterator first, InputIterator last, const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type());
 		map(const map& x);
 
-		~map() { delete_node(root()); }
+		~map() { delete_node(protoroot()); }
 		map&	operator= (map const& base);
-		Node	*root() { return _root; }
-		void	set_root(Node *current) { _root = current; }
+		Node	*protoroot() { return (_root); }
+		Node	*root() { return (protoroot()->right()); }
+		void	set_root(Node *current) { _root->set_right(current); }
 
 		void	prefix_traversal(Node *current, char sep) {
 			if (current)
@@ -142,13 +143,18 @@ namespace ft
 		}
 
 		iterator	begin()	{
-			iterator	it(root());
+			if (root())
+			{
+				iterator it(root());
 
-			it.leftmost();
+				it.leftmost();
+				return (it);
+			}
+			iterator it(protoroot());
 			return (it);
 		}
 
-		iterator	end() { return iterator(root()); }
+		iterator	end() { return iterator(root() ? root() : protoroot()); }
 
 		Node	*new_node(const value_type& pair = value_type(), Node *parent = NULL)
 		{
@@ -229,6 +235,12 @@ namespace ft
 				Find the node with key == "key" in the BST
 				-------------------------------------------- */
 			p = _avl_tree_search(root(), k);
+			if (!p)
+			{
+				std::cout << "ciao" << std::endl;
+				return ;
+			}
+				
 			if (!(k == p->data().first))
 				return ;	// Not found ==> nothing to delete....
 
@@ -256,6 +268,7 @@ namespace ft
 				/* --------------------------------------------
 					Re-balance AVL tree starting at ActionPos
 					-------------------------------------------- */
+				suffix_traversal(root(), update_height);
 				set_root(balance_tree(parent));	// Rebalance AVL tree after delete at parent
 
 				return ;
@@ -281,6 +294,7 @@ namespace ft
 				/* --------------------------------------------
 					Re-balance AVL tree starting at ActionPos
 					-------------------------------------------- */
+				suffix_traversal(root(), update_height);
 				set_root(balance_tree(parent));	// Rebalance AVL tree after delete at parent
 				return ;
 			}
@@ -305,6 +319,7 @@ namespace ft
 				/* --------------------------------------------
 					Re-balance AVL tree starting at ActionPos
 					-------------------------------------------- */
+				suffix_traversal(root(), update_height);
 				set_root(balance_tree(parent));	// Rebalance AVL tree after delete at parent
 				return ;
 			}
@@ -342,6 +357,7 @@ namespace ft
 			/* --------------------------------------------
 				Re-balance AVL tree starting at ActionPos
 				-------------------------------------------- */
+			suffix_traversal(root(), update_height);
 			set_root(balance_tree(parent));	// Rebalance AVL tree after delete at parent
 			return ;
 
@@ -391,12 +407,13 @@ namespace ft
 				return (NULL);
 			else if (node->data().first == k)
 				return (node);
-			else if (_key_comp(node->data().first, k))
+			else if (_key_comp(k, node->data().first))
 			{
 				Node *temp = _avl_tree_search(node->left(), k);
 				return (temp);
 			}
-			else {
+			else
+			{
 				Node *temp = _avl_tree_search(node->right(), k);
 				return (temp);
 			}
@@ -497,6 +514,12 @@ namespace ft
 			Node	*newNode = new_node(val);
 			Node	*_y;
 
+			if (!_x)
+			{
+				_x = newNode;
+				++_size;
+				return (_x);
+			}
 			while (_x != NULL) {
 				_y = _x;
 				if (_key_comp(val.first, _x->data().first))
@@ -524,6 +547,7 @@ namespace ft
 				_y->set_right(newNode);
 				newNode->set_parent(_y);
 			}
+			++_size;
 			set_root(balance_tree(root()));
 			suffix_traversal(root(), update_height);
 			// find the node (the iterator?) _y by finding the key
@@ -534,7 +558,10 @@ namespace ft
 
 		pair<iterator, bool>	insert(const value_type& val)
 		{
-			iterator	it(insert(root(), val));
+			Node *temp = _avl_tree_insert(root(), val);
+			if (!root())
+				set_root(temp);
+			iterator	it(temp);
 
 			if (it->second == val.second)
 				return (make_pair(it, true));
