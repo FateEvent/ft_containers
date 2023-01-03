@@ -147,7 +147,7 @@ namespace ft
 			{
 				iterator it(root());
 
-				it.leftmost();
+				it->leftmost();
 				return (it);
 			}
 			iterator it(protoroot());
@@ -192,42 +192,34 @@ namespace ft
 
 		void rebalance(Node *p)
 		{
-			Node *x, *y, *z, *q;
+			Node *x, *y, *z;
 
-			while ( p != null )
+			while ( p != NULL )
 			{ 
-				if ( diffHeight(p.left, p.right) > 1 )
+				if ( diffHeight(p->left(), p->right()) > 1 )
 				{
-
 					x = p;
 					y = tallerChild( x );
 					z = tallerChild( y );
-
-					System.out.println("After tri_node_restructure: " + x + y + z);
-					System.out.println();
 					p = tri_node_restructure( x, y, z );
-
-				printBST();
-					System.out.println("==========================================");
-
 				}
 
-				p = p.parent;
+				p = p->parent();
 			}
 		}
 
-		public Node *tallerChild(Node *p)
+		Node *tallerChild(Node *p)
 		{
-			if ( p.left == null )
-			return p.right;
+			if ( p->left() == NULL )
+				return p->right();
 
-			if ( p.right == null )
-			return p.left;
+			if ( p->right() == NULL )
+				return p->left();
 
-			if ( p.left.height > p.right.height )
-			return p.left;
+			if ( p->left()->height() > p->right()->height())
+				return p->left();
 			else
-			return p.right;
+				return p->right();
 		}
 
 		/* =======================================================
@@ -238,94 +230,76 @@ namespace ft
 			======================================================= */
 		Node *tri_node_restructure( Node *x, Node *y, Node *z)
 		{
-			/* *******************************************************************
-				Determine the parent child relationships between (y,z) and (x,y))
-				******************************************************************* */
-			boolean zIsLeftChild = (z == y.left);
-			boolean yIsLeftChild = (y == x.left);
-
-			/* =======================================================
-			Determine the configuration:
-
-			find out which nodes are in positions a, b and c
-			given in the following legend:
-
-										b
-									/   \
-									a     c
-			======================================================= */
+			bool zIsLeftChild = (z == y->left());
+			bool yIsLeftChild = (y == x->left());
 			Node *a, *b, *c;
 			Node *T0, *T1, *T2, *T3;
 
 			if (zIsLeftChild && yIsLeftChild) 
 			{
-
-			a = z;                     //          x=c
-			b = y;                     //         /  \
-			c = x;                     //       y=b  T3 
-			T0 = z.left;               //      /  \ 
-			T1 = z.right;              //    z=a  T2
-			T2 = y.right;              //   /  \
-			T3 = x.right;              //  T0  T1
+				a = z;
+				b = y;
+				c = x;
+				T0 = z->left();
+				T1 = z->right();
+				T2 = y->right();
+				T3 = x->right();
 			}
 			else if (!zIsLeftChild && yIsLeftChild) 
 			{
-
-			a = y;                     //       x=c
-			b = z;                     //      /  \
-			c = x;                     //    y=a  T3
-			T0 = y.left;               //   /  \
-			T1 = z.left;               //  T0 z=b
-			T2 = z.right;              //     /  \ 
-			T3 = x.right;              //    T1  T2
+				a = y;
+				b = z;
+				c = x;
+				T0 = y->left();
+				T1 = z->left();
+				T2 = z->right();
+				T3 = x->right();
 			}
 			else if (zIsLeftChild && !yIsLeftChild) 
 			{
-
-			a = x;                     //      x=a
-			b = z;                     //     /  \
-			c = y;                     //    T0  y=c
-			T0 = x.left;               //       /  \ 
-			T1 = z.left;               //      z=b  T3
-			T2 = z.right;              //     /  \  
-			T3 = y.right;              //    T1  T2 
+				a = x;
+				b = z;
+				c = y;
+				T0 = x->left();
+				T1 = z->left();
+				T2 = z->right();
+				T3 = y->right();
 			}
 			else 
 			{
-
-			a = x;                     //       x=a
-			b = y;                     //      /  \
-			c = z;                     //     T0  y=b
-			T0 = x.left;               //        /  \
-			T1 = y.left;               //        T1 z=c
-			T2 = z.left;               //          /  \
-			T3 = z.right;              //         T2  T3
+				a = x;
+				b = y;
+				c = z;
+				T0 = x->left();
+				T1 = y->left();
+				T2 = z->left();
+				T3 = z->right();
 			}
 			
 			/* ------------------------------------------------------------------
 				Put b at x's place (make b the root of the new subtree !)
 				------------------------------------------------------------------ */
-			if ( x == root )
+			if ( x == root() )
 			{  /* If x is the root node, handle the replacement  differently.... */
 
-				root = b;                   // b is now root
-				b.parent = null;
+				set_root(b);                   // b is now root
+				b->set_parent(NULL);
 			}
 			else 
 			{
 				Node *xParent;
 
-				xParent = x.parent;   // Find x's parent
+				xParent = x->parent();   // Find x's parent
 
-				if ( x == xParent.left ) 
+				if ( x == xParent->left() ) 
 				{ /* Link b to the left branch of x's parent */
-				b.parent = xParent;
-				xParent.left = b;
+				b->set_parent(xParent);
+				xParent->set_left(b);
 				}
 				else 
 				{ /* Link b to the right branch of x's parent */
-				b.parent = xParent;
-				xParent.right = b;
+				b->set_parent(xParent);
+				xParent->set_right(b);
 				}
 			}
 		
@@ -334,10 +308,10 @@ namespace ft
 					/ \
 					a   c
 				------------------ */
-			b.left = a;
-			a.parent = b;
-			b.right = c;
-			c.parent = b;
+			b->set_left(a);
+			a->set_parent(b);
+			b->set_right(c);
+			c->set_parent(b);
 		
 		
 			/* ------------------
@@ -347,10 +321,10 @@ namespace ft
 					/ \
 					T0 T1
 				------------------ */
-			a.left = T0;
-			if ( T0 != null ) T0.parent = a;
-			a.right = T1;
-			if ( T1 != null ) T1.parent = a;
+			a->set_left(T0);
+			if ( T0 != NULL ) T0->set_parent(a);
+			a->set_right(T1);
+			if ( T1 != NULL ) T1->set_parent(a);
 		
 			/* ------------------
 				Make:   b
@@ -359,10 +333,10 @@ namespace ft
 						/ \
 						T2 T3
 				------------------ */
-			c.left = T2;
-			if ( T2 != null ) T2.parent= c;
-			c.right= T3;
-			if ( T3 != null ) T3.parent= c;
+			c->set_left(T2);
+			if ( T2 != NULL ) T2->set_parent(c);
+			c->set_right(T3);
+			if ( T3 != NULL ) T3->set_parent(c);
 		
 			recompHeight(a);
 			recompHeight(c);
@@ -442,16 +416,14 @@ namespace ft
 				/* --------------------------------------------
 					Recompute the height of all parent nodes...
 					-------------------------------------------- */
-				suffix_traversal(root(), update_height);
 				recompHeight( parent );
 
 				/* --------------------------------------------
 					Re-balance AVL tree starting at ActionPos
 					-------------------------------------------- */
-				parent = balance_tree(parent);	// Rebalance AVL tree after delete at parent
+				rebalance(parent);	// Rebalance AVL tree after delete at parent
 				return ;
 			}
-
 			if ( p->left() == NULL )                 // Case 1a: p has 1 (right) child
 			{
 				parent = p->parent();
@@ -467,13 +439,12 @@ namespace ft
 				/* --------------------------------------------
 					Recompute the height of all parent nodes...
 					-------------------------------------------- */
-				suffix_traversal(root(), update_height);
-//				recompHeight( parent );
+				recompHeight( parent );
 
 				/* --------------------------------------------
 					Re-balance AVL tree starting at ActionPos
 					-------------------------------------------- */
-				parent = balance_tree(parent);	// Rebalance AVL tree after delete at parent
+				rebalance(parent);	// Rebalance AVL tree after delete at parent
 				return ;
 			}
 
@@ -492,13 +463,12 @@ namespace ft
 				/* --------------------------------------------
 					Recompute the height of all parent nodes...
 					-------------------------------------------- */
-				suffix_traversal(root(), update_height);
-//				recompHeight( parent );
+				recompHeight( parent );
 
 				/* --------------------------------------------
 					Re-balance AVL tree starting at ActionPos
 					-------------------------------------------- */
-				parent = balance_tree(parent);	// Rebalance AVL tree after delete at parent
+				rebalance(parent);	// Rebalance AVL tree after delete at parent
 				return ;
 			}
 
@@ -531,12 +501,12 @@ namespace ft
 				Recompute the height of all parent nodes...
 			-------------------------------------------- */
 			suffix_traversal(root(), update_height);
-//			recompHeight( parent );
+			recompHeight( parent );
 
 			/* --------------------------------------------
 				Re-balance AVL tree starting at ActionPos
 				-------------------------------------------- */
-			parent = balance_tree(parent);	// Rebalance AVL tree after delete at parent
+			rebalance(parent);	// Rebalance AVL tree after delete at parent
 			return ;
 
 		}
@@ -621,72 +591,6 @@ namespace ft
 			return h;
 		}
 
-		int	diff(Node *temp)
-		{
-			int l_height = calculate_height(temp->left());
-			int r_height = calculate_height(temp->right());
-			int b_factor = l_height - r_height;
-			return (b_factor);
-		}
-
-		Node	*_avl_tree_rr_rotation(Node *parent)
-		{
-			Node *temp(parent->right());
-			parent->set_right(temp->left());
-			temp->set_left(parent);
-			return (temp);
-		}
-
-		Node	*_avl_tree_ll_rotation(Node *parent)
-		{
-			Node *temp(parent->left());
-			parent->set_left(temp->right());
-			temp->set_right(parent);
-			return (temp);
-		}
-
-		Node	*_avl_tree_lr_rotation(Node *parent)
-		{
-			Node *temp(parent->left());
-			parent->set_left(_avl_tree_rr_rotation(temp));
-			return (_avl_tree_ll_rotation(parent));
-		}
-
-		Node	*_avl_tree_rl_rotation(Node *parent)
-		{
-			Node *temp(parent->right());
-			parent->set_right(_avl_tree_ll_rotation(temp));
-			return (_avl_tree_rr_rotation(parent));
-		}
-
-		Node	*balance(Node *temp)
-		{
-			int bal_factor = diff(temp);
-			if (bal_factor > 1) {
-				if (diff(temp->left()) > 0)
-					temp = _avl_tree_ll_rotation(temp);
-				else
-					temp = _avl_tree_lr_rotation(temp);
-			}
-			else if (bal_factor < -1) {
-				if (diff(temp->right()) > 0)
-					temp = _avl_tree_rl_rotation(temp);
-				else
-					temp = _avl_tree_rr_rotation(temp);
-			}
-			return (temp);
-		}
-
-		Node	*balance_tree(Node *root)
-		{
-			if (root == NULL)
-				return (NULL);
-			root->set_left(balance_tree(root->left()));
-			root->set_right(balance_tree(root->right()));
-			root = balance(root);
-			return (root);
-		}
-
 		Node	*_avl_tree_insert(Node *_x, const value_type& val)
 		{
 			Node	*newNode = new_node(val);
@@ -726,7 +630,8 @@ namespace ft
 				newNode->set_parent(_y);
 			}
 			++_size;
-			set_root(balance_tree(root()));
+//			set_root(balance_tree(root()));
+			rebalance(root());
 			suffix_traversal(root(), update_height);
 			// find the node (the iterator?) _y by finding the key
 //			_y = _avl_tree_search(root(), val);
