@@ -147,7 +147,7 @@ namespace ft
 			{
 				iterator it(root());
 
-				it->leftmost();
+				it.leftmost();
 				return (it);
 			}
 			iterator it(protoroot());
@@ -222,12 +222,6 @@ namespace ft
 				return p->right();
 		}
 
-		/* =======================================================
-			tri_node_restructure(x, y, z):
-
-					x = parent(y)
-					y = parent(z)
-			======================================================= */
 		Node *tri_node_restructure( Node *x, Node *y, Node *z)
 		{
 			bool zIsLeftChild = (z == y->left());
@@ -275,78 +269,47 @@ namespace ft
 				T2 = z->left();
 				T3 = z->right();
 			}
-			
-			/* ------------------------------------------------------------------
-				Put b at x's place (make b the root of the new subtree !)
-				------------------------------------------------------------------ */
 			if ( x == root() )
-			{  /* If x is the root node, handle the replacement  differently.... */
-
-				set_root(b);                   // b is now root
+			{
+				set_root(b);
 				b->set_parent(NULL);
 			}
 			else 
 			{
 				Node *xParent;
 
-				xParent = x->parent();   // Find x's parent
-
+				xParent = x->parent();
 				if ( x == xParent->left() ) 
-				{ /* Link b to the left branch of x's parent */
-				b->set_parent(xParent);
-				xParent->set_left(b);
+				{
+					b->set_parent(xParent);
+					xParent->set_left(b);
 				}
 				else 
-				{ /* Link b to the right branch of x's parent */
-				b->set_parent(xParent);
-				xParent->set_right(b);
+				{
+					b->set_parent(xParent);
+					xParent->set_right(b);
 				}
 			}
-		
-			/* ------------------
-				Make:   b
-					/ \
-					a   c
-				------------------ */
 			b->set_left(a);
 			a->set_parent(b);
 			b->set_right(c);
 			c->set_parent(b);
-		
-		
-			/* ------------------
-				Make:   b
-					/ \
-					a   c
-					/ \
-					T0 T1
-				------------------ */
+
 			a->set_left(T0);
 			if ( T0 != NULL ) T0->set_parent(a);
 			a->set_right(T1);
 			if ( T1 != NULL ) T1->set_parent(a);
-		
-			/* ------------------
-				Make:   b
-					/ \
-					a   c
-						/ \
-						T2 T3
-				------------------ */
 			c->set_left(T2);
 			if ( T2 != NULL ) T2->set_parent(c);
 			c->set_right(T3);
 			if ( T3 != NULL ) T3->set_parent(c);
-		
+
 			recompHeight(a);
 			recompHeight(c);
 
 			return b;
 		}
 
-		/* ================================================================
-			diffHeight(t1,t2): compute difference in height of 2 (sub)trees
-			================================================================ */
 		static int diffHeight( Node *t1, Node *t2 )
 		{
 			int h1, h2;
@@ -364,9 +327,6 @@ namespace ft
 			return ((h1 >= h2) ? (h1-h2) : (h2-h1)) ;
 		}
 
-		/* ================================================================
-			recompHeight(x): recompute height starting at x (and up)
-			================================================================ */
 		static void recompHeight( Node *_x )
 		{
 			while ( _x != NULL )
@@ -376,18 +336,23 @@ namespace ft
 			}
 		}
 
-		/* =======================================================
-			remove(k): delete entry containg key k
-			======================================================= */
+		void	replace_node(Node *a, Node *b, Node *parent)
+		{
+			Node *temp = new_node(b->data());
+			a = temp;
+			a->set_left(temp->left());
+			a->set_right(temp->right());
+			a->set_parent(temp->parent());
+			parent = b->parent();
+			parent->set_left(b->right());
+		}
+
 		void	_avl_tree_node_deletion(const key_type& k)
 		{
-			Node	*p;		// Help variables
-			Node	*parent;	// parent node
-			Node	*succ;		// successor node
+			Node	*p(NULL);
+			Node	*parent(NULL);
+			Node	*succ(NULL);
 
-			/* --------------------------------------------
-				Find the node with key == "key" in the BST
-				-------------------------------------------- */
 			p = _avl_tree_search(root(), k);
 			if (!p)
 			{
@@ -395,154 +360,73 @@ namespace ft
 				return ;
 			}
 			if (!(k == p->data().first))
-				return ;	// Not found ==> nothing to delete....
-
-			/* ========================================================
-				Hibbard's Algorithm
-				======================================================== */
+				return ;
 
 			if (p->left() == NULL && p->right() == NULL) // Case 0: p has no children
 			{
 				parent = p->parent();
 
-				/* --------------------------------
-					Delete p from p's parent
-					-------------------------------- */
 				if ( parent->left() == p )
 					parent->set_left(NULL);
 				else
 					parent->set_right(NULL);
 
-				/* --------------------------------------------
-					Recompute the height of all parent nodes...
-					-------------------------------------------- */
 				recompHeight( parent );
-
-				/* --------------------------------------------
-					Re-balance AVL tree starting at ActionPos
-					-------------------------------------------- */
-				rebalance(parent);	// Rebalance AVL tree after delete at parent
+				rebalance(parent);
 				return ;
 			}
-			if ( p->left() == NULL )                 // Case 1a: p has 1 (right) child
+			if ( p->left() == NULL )
 			{
 				parent = p->parent();
-
-				/* ----------------------------------------------
-					Link p's right child as p's parent child
-					---------------------------------------------- */
 				if ( parent->left() == p )
 					parent->set_left(p->right());
 				else
 					parent->set_right(p->right());
 
-				/* --------------------------------------------
-					Recompute the height of all parent nodes...
-					-------------------------------------------- */
 				recompHeight( parent );
 
-				/* --------------------------------------------
-					Re-balance AVL tree starting at ActionPos
-					-------------------------------------------- */
-				rebalance(parent);	// Rebalance AVL tree after delete at parent
+				rebalance(parent);
 				return ;
 			}
 
-			if ( p->right() == NULL )	// Case 1b: p has 1 (left) child
+			if ( p->right() == NULL )
 			{
 				parent = p->parent();
 
-				/* ----------------------------------------------
-					Link p's left child as p's parent child
-					---------------------------------------------- */
 				if ( parent->left() == p )
 						parent->set_left(p->left());
 				else
 						parent->set_right(p->left());
 
-				/* --------------------------------------------
-					Recompute the height of all parent nodes...
-					-------------------------------------------- */
 				recompHeight( parent );
 
-				/* --------------------------------------------
-					Re-balance AVL tree starting at ActionPos
-					-------------------------------------------- */
-				rebalance(parent);	// Rebalance AVL tree after delete at parent
+				rebalance(parent);
 				return ;
 			}
 
-			/* ================================================================
-				Tough case: node has 2 children - find successor of p
-
-				succ(p) is as as follows:  1 step right, all the way left
-
-				Note: succ(p) has NOT left child !
-				================================================================ */
-
-			succ = p->right();	// p has 2 children....
+			succ = p->right();
 
 			while ( succ->left() != NULL )
 				succ = succ->left();
-			Node *temp = new_node(succ->data());
-			p = temp;
-			p->set_left(temp->left());
-			p->set_right(temp->right());
-			p->set_parent(temp->parent());
 
-			/* --------------------------------
-				Delete succ from succ's parent
-					-------------------------------- */
-			parent = succ->parent();	// Prepare for deletion
+//			Node *temp = new_node(succ->data());
+//			p = temp;
+//			p->set_left(temp->left());
+//			p->set_right(temp->right());
+//			p->set_parent(temp->parent());
 
-			parent->set_left(succ->right());	// Link right tree to parent's left
+			replace_node(p, succ, parent);
+//			parent = succ->parent();
 
-			/* --------------------------------------------
-				Recompute the height of all parent nodes...
-			-------------------------------------------- */
+//			parent->set_left(succ->right());
+
 			suffix_traversal(root(), update_height);
 			recompHeight( parent );
 
-			/* --------------------------------------------
-				Re-balance AVL tree starting at ActionPos
-				-------------------------------------------- */
-			rebalance(parent);	// Rebalance AVL tree after delete at parent
+			rebalance(parent);
 			return ;
+		}
 
-		}
-/*
-		Node	*_avl_tree_node_deletion(Node *current, const value_type& pair)
-		{
-			if (current == NULL)
-				return (current);
-			if (_key_comp(pair.first, current->data().first))
-				current->set_left(_avl_tree_node_deletion(current->left(), pair));
-			else if (!_key_comp(pair.first, current->data().first))
-				current->set_right(_avl_tree_node_deletion(current->right(), pair));
-			else
-			{
-				if (!current->left() && !current->right())
-					return (NULL);
-				else if (!current->left()) {
-					Node *temp = current->right();
-					delete_node(current);
-					return (temp);
-				}
-				else if (!current->right()) {
-					Node *temp = current->left();
-					delete_node(current);
-					return (temp);
-				}
-				Node *temp = min_value_node(current->right());
-//				current->set_data(temp->data());
-				current.data().first = temp->data().first;
-				current.data().second = temp->data().second;
-				current->set_right(_avl_tree_node_deletion(current->right(), pair));
-			}
-			set_root(balance_tree(root()));
-			return (current);
-		}
-*/
 		void	delete_tree_node(const key_type& k)
 		{
 //			return (iterator(_avl_tree_node_deletion(k)));

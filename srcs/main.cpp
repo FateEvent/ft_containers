@@ -209,15 +209,15 @@ int main(int argc, char** argv) {
 	tree.delete_tree_node('a');
 	tree.level_order_traversal(tree.root(), ' ');
 
-//	ft::map<char, int>::iterator it = tree.begin();
-//	std::cout << it->first << std::endl;
-//	std::cout << &it << std::endl;
-//	it++;
-//	std::cout << it.base()->data().first << std::endl;
-//	it++;
-//	std::cout << it.base()->data().first << std::endl;
-//	it--;
-//	std::cout << it.base()->data().first << std::endl;
-//	it--;
-//	std::cout << it.base()->data().first << std::endl;
+	ft::map<char, int>::iterator it = tree.begin();
+	std::cout << it->first << std::endl;
+	std::cout << &it << std::endl;
+	it++;
+	std::cout << it.base()->data().first << std::endl;
+	it++;
+	std::cout << it.base()->data().first << std::endl;
+	it--;
+	std::cout << it.base()->data().first << std::endl;
+	it--;
+	std::cout << it.base()->data().first << std::endl;
 }
