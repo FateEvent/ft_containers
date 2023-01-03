@@ -206,7 +206,7 @@ int main(int argc, char** argv) {
 
 	std::cout << std::endl;
 
-	tree.delete_tree_node('a');
+	tree.delete_tree_node('c');
 	tree.level_order_traversal(tree.root(), ' ');
 
 	ft::map<char, int>::iterator it = tree.begin();

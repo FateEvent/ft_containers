@@ -336,15 +336,14 @@ namespace ft
 			}
 		}
 
-		void	replace_node(Node *a, Node *b, Node *parent)
+		void	replace_node(Node *a, Node *b)
 		{
 			Node *temp = new_node(b->data());
+			temp->set_left(a->left());
+			temp->set_right(a->right());
+			temp->set_parent(a->parent());
+			std::cout << "ciao " << std::endl;
 			a = temp;
-			a->set_left(temp->left());
-			a->set_right(temp->right());
-			a->set_parent(temp->parent());
-			parent = b->parent();
-			parent->set_left(b->right());
 		}
 
 		void	_avl_tree_node_deletion(const key_type& k)
@@ -354,15 +353,9 @@ namespace ft
 			Node	*succ(NULL);
 
 			p = _avl_tree_search(root(), k);
-			if (!p)
-			{
-				std::cout << "ciao" << std::endl;
+			if (!p || !(k == p->data().first))
 				return ;
-			}
-			if (!(k == p->data().first))
-				return ;
-
-			if (p->left() == NULL && p->right() == NULL) // Case 0: p has no children
+			if (p->left() == NULL && p->right() == NULL)
 			{
 				parent = p->parent();
 
@@ -370,7 +363,7 @@ namespace ft
 					parent->set_left(NULL);
 				else
 					parent->set_right(NULL);
-
+				delete_node(p);
 				recompHeight( parent );
 				rebalance(parent);
 				return ;
@@ -382,9 +375,8 @@ namespace ft
 					parent->set_left(p->right());
 				else
 					parent->set_right(p->right());
-
+				delete_node(p);
 				recompHeight( parent );
-
 				rebalance(parent);
 				return ;
 			}
@@ -392,37 +384,24 @@ namespace ft
 			if ( p->right() == NULL )
 			{
 				parent = p->parent();
-
 				if ( parent->left() == p )
 						parent->set_left(p->left());
 				else
 						parent->set_right(p->left());
-
+				delete_node(p);
 				recompHeight( parent );
-
 				rebalance(parent);
 				return ;
 			}
-
 			succ = p->right();
-
 			while ( succ->left() != NULL )
 				succ = succ->left();
+			replace_node(p, succ);
 
-//			Node *temp = new_node(succ->data());
-//			p = temp;
-//			p->set_left(temp->left());
-//			p->set_right(temp->right());
-//			p->set_parent(temp->parent());
+			parent = succ->parent();
+			parent->set_left(succ->right());
 
-			replace_node(p, succ, parent);
-//			parent = succ->parent();
-
-//			parent->set_left(succ->right());
-
-			suffix_traversal(root(), update_height);
 			recompHeight( parent );
-
 			rebalance(parent);
 			return ;
 		}
