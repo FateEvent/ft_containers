@@ -194,8 +194,10 @@ int main(int argc, char** argv) {
 
 	ft::map<char, int> tree;
 
-	tree.insert(tree.begin(), ft::make_pair('a', 1));
-	tree.insert(tree.begin(), ft::make_pair('c', 4));
+	tree.insert(tree.begin(), ft::make_pair('a', 1));	// if I put begin() as a param of insert
+	std::cout << (tree.begin())->first << std::endl;	// something went wrong in the
+	tree.insert(tree.begin(), ft::make_pair('c', 4));					// tree_node_restructure() function
+	std::cout << (tree.begin())->first << std::endl;	// however it seems kinda OK now
 	tree.print_tree();
 	tree.insert(tree.begin(), b);
 	tree.insert(c);

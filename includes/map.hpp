@@ -163,12 +163,14 @@ namespace ft
 		iterator	begin()	{
 			if (root())
 			{
-				iterator it(protoroot());
+				iterator it(root());
 
 				it.leftmost();
+				std::cout << "1 " << it->first << std::endl;
 				return (it);
 			}
 			iterator it(protoroot());
+			std::cout << "2 " << it->first << std::endl;
 			return (it);
 		}
 //		const_iterator	begin() const;
@@ -252,12 +254,14 @@ namespace ft
 			}
 		}
 
-		void rebalance(Node *p)
+		void	rebalance(Node *p)
 		{
 			Node *x, *y, *z;
 
-			while (p != NULL)
-			{ 
+			while (p->parent() != NULL)
+			{
+				std::cout << ": ";
+				print_node(p);
 				if (diffHeight(p->left(), p->right()) > 1)
 				{
 					x = p;
@@ -272,15 +276,13 @@ namespace ft
 		Node *tallerChild(Node *p)
 		{
 			if (p->left() == NULL)
-				return p->right();
-
+				return (p->right());
 			if (p->right() == NULL)
-				return p->left();
-
+				return (p->left());
 			if (p->left()->height() > p->right()->height())
-				return p->left();
+				return (p->left());
 			else
-				return p->right();
+				return (p->right());
 		}
 
 		Node *_avl_tree_node_restructure(Node *x, Node *y, Node *z)
@@ -566,8 +568,8 @@ namespace ft
 				newNode->set_parent(_y);
 			}
 			++_size;
+			recompHeight(root());
 			rebalance(root());
-			suffix_traversal(root(), update_height);
 			_y = _recursive_avl_tree_search(root(), val.first);
 			return (_y);
 		}
