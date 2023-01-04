@@ -43,3 +43,8 @@ Other materials about maps and map iterators:
 * <https://stackoverflow.com/questions/3487087/how-to-implement-an-end-in-a-map>.
 
 * <https://github.com/lobbyra/ft_containers>.
+
+Using const_cast:
+* <https://stackoverflow.com/questions/65408815/opposite-of-const-cast>;
+Checking if the return value of a function is cost:
+* <https://stackoverflow.com/questions/65659802/using-c-20-concept-to-check-if-a-function-returns-a-const-value>.

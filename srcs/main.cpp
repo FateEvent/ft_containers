@@ -194,30 +194,46 @@ int main(int argc, char** argv) {
 
 	ft::map<char, int> tree;
 
-	tree.insert(ft::make_pair('a', 1));
-	tree.insert(ft::make_pair('c', 4));
-	tree.insert(b);
+	tree.insert(tree.begin(), ft::make_pair('a', 1));
+	tree.insert(tree.begin(), ft::make_pair('c', 4));
+	tree.print_tree();
+	tree.insert(tree.begin(), b);
 	tree.insert(c);
 	tree.insert(d);
 	tree.insert(f);
 	tree.insert(l);
 
-	tree.level_order_traversal(tree.root(), ' ');
+	tree.print_tree();
 
 	std::cout << std::endl;
 
 	tree.delete_tree_node('c');
-	tree.level_order_traversal(tree.root(), ' ');
+	tree.print_tree();
+
+	std::cout << (tree.find('c'))->first << std::endl;
+	std::cout << (tree.find('a'))->first << std::endl;
 
 	ft::map<char, int>::iterator it = tree.begin();
 	std::cout << it->first << std::endl;
 	std::cout << &it << std::endl;
 	it++;
-	std::cout << it.base()->data().first << std::endl;
+	std::cout << it->first << std::endl;
 	it++;
-	std::cout << it.base()->data().first << std::endl;
+	std::cout << it->first << std::endl;
 	it--;
-	std::cout << it.base()->data().first << std::endl;
+	std::cout << it->first << std::endl;
 	it--;
-	std::cout << it.base()->data().first << std::endl;
+	std::cout << it->first << std::endl;
+
+	std::cout << tree.at('a') << std::endl;
+	try {
+		std::cout << tree.at('c') << std::endl;
+	}
+	catch (ContainerException& e){
+		std::cout << e.what() << std::endl;
+	}
+	std::cout << tree['a'] << std::endl;
+	std::cout << tree['r'] << std::endl;
+	tree.print_tree();
+	
 }

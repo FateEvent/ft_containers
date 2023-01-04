@@ -78,9 +78,15 @@ namespace ft
 			Node		*right() { return _right; }
 			Node		*parent() { return _parent; }
 			int			&height() { return _height; }
-			void		treat(char sep) { std::cout << data().first << sep << data().second << " height: " << height() << std::endl; }
 		};
-
+/*
+		std::ostream	&operator<< (std::ostream &o, const Node &node) {
+			o << "key: " << node.data().first;
+			o << ", value: " << node.data().second;
+			o << ", height: " << node.height() << std::endl;
+			return (o);
+		}
+*/
 	public:
 		explicit map(const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type())
 			: _root(NULL), _alloc_node(node_allocator()), _alloc_pair(alloc), _key_comp(comp), _size() {
@@ -126,7 +132,7 @@ namespace ft
 			}
 		}
 
-		void	level_order_traversal(Node *current, char sep) {
+		void	level_order_traversal(Node *current, void (*f)(Node *)) {
 			vector<Node *>	deck;
 
 			deck.push_back(current);
@@ -134,7 +140,7 @@ namespace ft
 			{
 				current = deck.front();
 				deck.pop_front();
-				current->treat(sep);
+				f(current);
 				if (current->left())
 					deck.push_back(current->left());
 				if (current->right())
@@ -142,10 +148,22 @@ namespace ft
 			}
 		}
 
+		static void	print_node(Node *node)
+		{
+			std::cout << "key: " << node->data().first;
+			std::cout << ", value: " << node->data().second;
+			std::cout << ", height: " << node->height() << std::endl;
+		}
+
+		void	print_tree()
+		{
+			level_order_traversal(root(), print_node);
+		}
+
 		iterator	begin()	{
 			if (root())
 			{
-				iterator it(root());
+				iterator it(protoroot());
 
 				it.leftmost();
 				return (it);
@@ -153,8 +171,19 @@ namespace ft
 			iterator it(protoroot());
 			return (it);
 		}
+//		const_iterator	begin() const;
 
 		iterator	end() { return iterator(root() ? root() : protoroot()); }
+//		const_iterator	end() const;
+
+		iterator	find(const key_type& k)
+		{
+			Node *found = _recursive_avl_tree_search(root(), k);
+			if (found)
+				return (iterator(found));
+			return (end());
+		}
+//		const_iterator	find (const key_type& k) const;
 
 		Node	*new_node(const value_type& pair = value_type(), Node *parent = NULL)
 		{
@@ -176,53 +205,85 @@ namespace ft
 			return (ptr);
 		}
 
-		Node *min_value_node(Node *node)
-		{
-			Node *current = node;
-			while (current && current->left())
-				current = current->left();
-			return current;
-		}
-
 		void	delete_node(Node *node)
 		{
 			_alloc_node.destroy(node);
 			_alloc_node.deallocate(node, 1);
 		}
 
+		Node	*_iterative_avl_tree_search(const key_type& k)
+		{
+			Node	*current(root());
+			Node	*prev(root());
+
+			while (current)
+			{
+				if (k == current->data().first)
+					return (current);
+				else if (_key_comp(k, current->data().first))
+				{
+					prev = current;
+					current = current->left();
+				}
+				else
+				{
+					prev = current;
+					current = current->right();
+				}
+			}
+			return (prev);
+		}
+
+		Node	*_recursive_avl_tree_search(Node *node, const key_type& k)
+		{
+			if (node == NULL)
+				return (NULL);
+			else if (node->data().first == k)
+				return (node);
+			else if (_key_comp(k, node->data().first))
+			{
+				Node *temp = _recursive_avl_tree_search(node->left(), k);
+				return (temp);
+			}
+			else
+			{
+				Node *temp = _recursive_avl_tree_search(node->right(), k);
+				return (temp);
+			}
+		}
+
 		void rebalance(Node *p)
 		{
 			Node *x, *y, *z;
 
-			while ( p != NULL )
+			while (p != NULL)
 			{ 
-				if ( diffHeight(p->left(), p->right()) > 1 )
+				if (diffHeight(p->left(), p->right()) > 1)
 				{
 					x = p;
-					y = tallerChild( x );
-					z = tallerChild( y );
-					p = tri_node_restructure( x, y, z );
+					y = tallerChild(x);
+					z = tallerChild(y);
+					p = _avl_tree_node_restructure(x, y, z);
 				}
-
 				p = p->parent();
 			}
 		}
 
 		Node *tallerChild(Node *p)
 		{
-			if ( p->left() == NULL )
+			if (p->left() == NULL)
 				return p->right();
 
-			if ( p->right() == NULL )
+			if (p->right() == NULL)
 				return p->left();
 
-			if ( p->left()->height() > p->right()->height())
+			if (p->left()->height() > p->right()->height())
 				return p->left();
 			else
 				return p->right();
 		}
 
-		Node *tri_node_restructure( Node *x, Node *y, Node *z)
+		Node *_avl_tree_node_restructure(Node *x, Node *y, Node *z)
 		{
 			bool zIsLeftChild = (z == y->left());
 			bool yIsLeftChild = (y == x->left());
@@ -269,17 +330,18 @@ namespace ft
 				T2 = z->left();
 				T3 = z->right();
 			}
-			if ( x == root() )
+			if (x == root())
 			{
 				set_root(b);
 				b->set_parent(NULL);
 			}
 			else 
 			{
-				Node *xParent;
+				Node	*xParent;
 
 				xParent = x->parent();
-				if ( x == xParent->left() ) 
+				print_node(x);
+				if (x == xParent->left()) 
 				{
 					b->set_parent(xParent);
 					xParent->set_left(b);
@@ -296,13 +358,13 @@ namespace ft
 			c->set_parent(b);
 
 			a->set_left(T0);
-			if ( T0 != NULL ) T0->set_parent(a);
+			if (T0 != NULL) T0->set_parent(a);
 			a->set_right(T1);
-			if ( T1 != NULL ) T1->set_parent(a);
+			if (T1 != NULL) T1->set_parent(a);
 			c->set_left(T2);
-			if ( T2 != NULL ) T2->set_parent(c);
+			if (T2 != NULL) T2->set_parent(c);
 			c->set_right(T3);
-			if ( T3 != NULL ) T3->set_parent(c);
+			if (T3 != NULL) T3->set_parent(c);
 
 			recompHeight(a);
 			recompHeight(c);
@@ -310,42 +372,47 @@ namespace ft
 			return b;
 		}
 
-		static int diffHeight( Node *t1, Node *t2 )
+		static int diffHeight(Node *t1, Node *t2)
 		{
 			int h1, h2;
 
-			if ( t1 == NULL )
+			if (t1 == NULL)
 				h1 = 0;
 			else
 				h1 = t1->height();
 
-			if ( t2 == NULL )
+			if (t2 == NULL)
 				h2 = 0;
 			else
 				h2 = t2->height();
 
-			return ((h1 >= h2) ? (h1-h2) : (h2-h1)) ;
+			return ((h1 >= h2) ? (h1 - h2) : (h2 - h1)) ;
 		}
 
-		static void recompHeight( Node *_x )
+		static void recompHeight(Node *_x)
 		{
-			while ( _x != NULL )
+			while (_x != NULL)
 			{
 				_x->_height = calculate_height(_x);
 				_x = _x->parent();
 			}
 		}
 
-		void	replace_node(Node *a, Node *b)
+		Node*	successor(Node* node)
 		{
-			Node *temp = new_node(b->data());
-			temp->set_left(a->left());
-			temp->set_right(a->right());
-			temp->set_parent(a->parent());
-			temp->_height = a->height();
-			delete_node(a);
-			std::cout << "ciao " << std::endl;
-			a = temp;
+			if (node->right() != NULL)
+			{
+				node = node->right();
+				while(node->left() != NULL)
+					node = node->left();
+				return (node);
+			}
+			else
+			{
+				while(node->parent() != NULL && node->parent()->right() == node)
+					node = node->parent();
+				return (node->parent());
+			}
 		}
 
 		void transplant(Node *u, Node *v)
@@ -368,7 +435,7 @@ namespace ft
 			Node	*parent(NULL);
 			Node	*succ(NULL);
 
-			p = _avl_tree_search(root(), k);
+			p = _recursive_avl_tree_search(root(), k);
 			if (!p)
 				return ;
 			--_size;
@@ -376,42 +443,44 @@ namespace ft
 			{
 				parent = p->parent();
 
-				if ( parent->left() == p )
+				if (parent->left() == p)
 					parent->set_left(NULL);
 				else
 					parent->set_right(NULL);
 				delete_node(p);
-				recompHeight( parent );
+
+				recompHeight(parent);
 				rebalance(parent);
 				return ;
 			}
 			if (p->left() == NULL)
 			{
 				parent = p->parent();
-				if ( parent->left() == p )
+				if (parent->left() == p)
 					parent->set_left(p->right());
 				else
 					parent->set_right(p->right());
+				
 				delete_node(p);
-				recompHeight( parent );
+
+				recompHeight(parent);
 				rebalance(parent);
 				return ;
 			}
 			if (p->right() == NULL)
 			{
 				parent = p->parent();
-				if ( parent->left() == p )
+				if (parent->left() == p)
 					parent->set_left(p->left());
 				else
 					parent->set_right(p->left());
 				delete_node(p);
-				recompHeight( parent );
+
+				recompHeight(parent);
 				rebalance(parent);
 				return ;
 			}
-			succ = p->right();
-			while ( succ->left() != NULL )
-				succ = succ->left();
+			succ = successor(p);
 			if (p->right() != succ)
 			{
 				transplant(succ, succ->right());
@@ -422,7 +491,8 @@ namespace ft
 			succ->set_left(p->left());
 			succ->left()->set_parent(succ);
 			delete_node(p);
-			recompHeight( parent );
+			
+			recompHeight(parent);
 			rebalance(root());
 			return ;
 		}
@@ -431,24 +501,6 @@ namespace ft
 		{
 //			return (iterator(_avl_tree_node_deletion(k)));
 			_avl_tree_node_deletion(k);
-		}
-
-		Node	*_avl_tree_search(Node *node, const key_type& k)
-		{
-			if (node == NULL)
-				return (NULL);
-			else if (node->data().first == k)
-				return (node);
-			else if (_key_comp(k, node->data().first))
-			{
-				Node *temp = _avl_tree_search(node->left(), k);
-				return (temp);
-			}
-			else
-			{
-				Node *temp = _avl_tree_search(node->right(), k);
-				return (temp);
-			}
 		}
 
 		static void	update_height(Node *node)
@@ -516,18 +568,16 @@ namespace ft
 			++_size;
 			rebalance(root());
 			suffix_traversal(root(), update_height);
-			// find the node (the iterator?) _y by finding the key
-//			_y = _avl_tree_search(root(), val);
+			_y = _recursive_avl_tree_search(root(), val.first);
 			return (_y);
 		}
-
 
 		pair<iterator, bool>	insert(const value_type& val)
 		{
 			Node *temp = _avl_tree_insert(root(), val);
 			if (!root())
 				set_root(temp);
-			iterator	it(temp);
+			iterator it(temp);
 
 			if (it->second == val.second)
 				return (make_pair(it, true));
@@ -537,7 +587,12 @@ namespace ft
 		iterator	insert(iterator pos, const value_type& val)
 		{
 			if (pos >= begin() && pos <= end())
-				return (iterator(_avl_tree_insert(pos.base(), val)));
+			{
+				Node *temp = _avl_tree_insert(pos.base(), val);
+				if (!root())
+					set_root(temp);
+				return (iterator(temp));
+			}
 			else
 				throw(ContainerException("out_of_range"));
 		}
@@ -548,9 +603,27 @@ namespace ft
 				insert(*first);
 		}
 
-//		mapped_type&	operator[] (const key_type& k) {
+		mapped_type&	operator[] (const key_type& k)
+		{
+			Node *found = _recursive_avl_tree_search(root(), k);
+			if (found)
+				return (found->data().second);
+			iterator it = insert(root(), ft::make_pair(k, mapped_type()));
+			return (it->second);
+		}
 
-//		}
+		mapped_type&	at(const key_type& k)
+		{
+			Node *found = _recursive_avl_tree_search(root(), k);
+			if (found)
+				return (found->data().second);
+			throw(ContainerException("out_of_range"));
+		}
+
+		const mapped_type&	at (const key_type& k) const
+		{
+			return (const_cast<const mapped_type>(at(k)));
+		}
 
 	private :
 		Node			*_root;
