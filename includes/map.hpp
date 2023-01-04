@@ -342,8 +342,24 @@ namespace ft
 			temp->set_left(a->left());
 			temp->set_right(a->right());
 			temp->set_parent(a->parent());
+			temp->_height = a->height();
+			delete_node(a);
 			std::cout << "ciao " << std::endl;
 			a = temp;
+		}
+
+		void transplant(Node *u, Node *v)
+		{
+			if (u == NULL)
+				return;
+			else if (u->parent() == NULL)
+				protoroot()->set_right(v);
+			else if (u->parent()->left() == u)
+				u->parent()->set_left(v);
+			else
+				u->parent()->set_right(v);
+			if (v != NULL)
+				v->set_parent(u->parent());
 		}
 
 		void	_avl_tree_node_deletion(const key_type& k)
@@ -353,8 +369,9 @@ namespace ft
 			Node	*succ(NULL);
 
 			p = _avl_tree_search(root(), k);
-			if (!p || !(k == p->data().first))
+			if (!p)
 				return ;
+			--_size;
 			if (p->left() == NULL && p->right() == NULL)
 			{
 				parent = p->parent();
@@ -368,7 +385,7 @@ namespace ft
 				rebalance(parent);
 				return ;
 			}
-			if ( p->left() == NULL )
+			if (p->left() == NULL)
 			{
 				parent = p->parent();
 				if ( parent->left() == p )
@@ -380,14 +397,13 @@ namespace ft
 				rebalance(parent);
 				return ;
 			}
-
-			if ( p->right() == NULL )
+			if (p->right() == NULL)
 			{
 				parent = p->parent();
 				if ( parent->left() == p )
-						parent->set_left(p->left());
+					parent->set_left(p->left());
 				else
-						parent->set_right(p->left());
+					parent->set_right(p->left());
 				delete_node(p);
 				recompHeight( parent );
 				rebalance(parent);
@@ -396,13 +412,18 @@ namespace ft
 			succ = p->right();
 			while ( succ->left() != NULL )
 				succ = succ->left();
-			replace_node(p, succ);
-
-			parent = succ->parent();
-			parent->set_left(succ->right());
-
+			if (p->right() != succ)
+			{
+				transplant(succ, succ->right());
+				succ->set_right(p->right());
+				succ->right()->set_parent(succ);
+			}
+			transplant(p, succ);
+			succ->set_left(p->left());
+			succ->left()->set_parent(succ);
+			delete_node(p);
 			recompHeight( parent );
-			rebalance(parent);
+			rebalance(root());
 			return ;
 		}
 
@@ -493,7 +514,6 @@ namespace ft
 				newNode->set_parent(_y);
 			}
 			++_size;
-//			set_root(balance_tree(root()));
 			rebalance(root());
 			suffix_traversal(root(), update_height);
 			// find the node (the iterator?) _y by finding the key
