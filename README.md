@@ -4,7 +4,6 @@ In addition to the official C++ documentation:
 * <https://cplusplus.com>;
 * <https://en.cppreference.com>;
 * Stroustrup, Bjarne, __The C++ Programming Language__, 3rd ed., Addison-Wesley, 1997;
-* __L'algorithmique__.
 
 and the two useful and interesting courses offered by OpenClassrooms:
 * <https://openclassrooms.com/fr/courses/1894236-apprenez-a-programmer-en-c>;
@@ -22,14 +21,16 @@ and more generally about iterators:
 I found helpful tips about binary search trees, AVL and red-black trees in the following playlist by Jenny (Jenny's Lectures CS IT) (the videos from 5.1 to 5.17 are about trees):
 * <https://www.youtube.com/playlist?list=PLdo5W4Nhv31bbKJzrsKfMpo_grxuLl8LU>
 
-Generally about trees:
+Generally about binary search trees (BST):
+* __L'algorithmique__, pp. 400... .
 * <https://en.wikipedia.org/wiki/Tree_traversal>;
 * <https://www.geeksforgeeks.org/insert-a-node-in-binary-search-tree-iteratively>;
 
 More specifically about AVL trees:
+* __L'algorithmique__, pp. 700... .
 * <https://en.wikipedia.org/wiki/AVL_tree>;
-* <https://ebrary.net/25925/computer_science/tree_iterative_insert>;
 * <https://www.geeksforgeeks.org/implementation-of-avl-tree-using-graphics-in-cpp>;
+* <https://ebrary.net/25925/computer_science/tree_iterative_insert>;
 * <https://stackoverflow.com/questions/66536347/delete-function-binary-search-tree-bst-with-parent-passing-the-tree-pointer-as-a>;
 * <http://www.cs.emory.edu/~cheung/Courses/253/Syllabus/Trees/AVL-delete.html>.
 

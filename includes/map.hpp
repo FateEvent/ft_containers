@@ -260,8 +260,6 @@ namespace ft
 
 			while (p->parent() != NULL)
 			{
-				std::cout << ": ";
-				print_node(p);
 				if (diff_height(p->left(), p->right()) > 1)
 				{
 					x = p;
@@ -342,7 +340,6 @@ namespace ft
 				Node	*xParent;
 
 				xParent = x->parent();
-				print_node(x);
 				if (x == xParent->left()) 
 				{
 					b->set_parent(xParent);
@@ -622,9 +619,9 @@ namespace ft
 			throw(ContainerException("out_of_range"));
 		}
 
-		const mapped_type&	at (const key_type& k) const
+		const mapped_type&	at(const key_type& k) const
 		{
-			return (at(const_cast<mapped_type>(k)));
+			return (const_cast<mapped_type>(at((k))));
 		}
 
 	private :
