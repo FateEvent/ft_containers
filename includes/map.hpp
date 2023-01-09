@@ -658,14 +658,7 @@ namespace ft
 //			suffix_traversal(root(), recomp_height);
 //			recomp_height(_y);
 //			rebalance(_y);
-			std::cout << "prima" << std::endl;
-			print_node(root());
-			print_node(root()->parent());
 			set_root(balance_tree(root()));
-			std::cout << "dopo" << std::endl;
-			print_node(root());
-			print_node(root()->parent());
-			std::cout << "-- fine --" << std::endl;
 			suffix_traversal(root(), recomp_height);
 			_y = _recursive_avl_tree_search(root(), val.first);
 			return (_y);
