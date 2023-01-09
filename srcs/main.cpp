@@ -97,10 +97,10 @@ int main(int argc, char** argv) {
 	std::cout << "should be constant with the same seed: " << sum << std::endl;
 		ft::map<int, int> copy = map_int;
 */
-/*
+
 	// --> My tests <-- //
 	std::cout << "// --> My tests <-- //" << std::endl << std::endl;
-
+/*
 	MutantStack<char> iterable_stack;
 	for (char letter = 'a'; letter <= 'z'; letter++)
 		iterable_stack.push(letter);
@@ -194,12 +194,13 @@ int main(int argc, char** argv) {
 
 	ft::map<char, int> tree;
 
-	tree.insert(tree.begin(), ft::make_pair('a', 1));	// if I put begin() as a param of insert
-	std::cout << (tree.begin())->first << std::endl;	// something goes wrong in the
-	tree.insert(tree.begin(), ft::make_pair('c', 4));	// tree_node_restructure() function
-	std::cout << (tree.begin())->first << std::endl;	// however it seems kinda OK now
+	tree.insert(ft::make_pair('a', 1));
+//	std::cout << (tree.begin())->first << std::endl;
+	tree.insert(ft::make_pair('c', 4));
+//	std::cout << (tree.begin())->first << std::endl;
 	tree.print_tree();
-	tree.insert(tree.begin(), b);
+	tree.insert(b);
+	tree.print_tree();
 	tree.insert(c);
 	tree.insert(d);
 	tree.insert(f);
@@ -209,23 +210,23 @@ int main(int argc, char** argv) {
 
 	std::cout << std::endl;
 
-	tree.delete_tree_node('c');
-	tree.print_tree();
+//	tree.delete_tree_node('c');
+//	tree.print_tree();
 
-	std::cout << (tree.find('c'))->first << std::endl;
-	std::cout << (tree.find('a'))->first << std::endl;
+//	std::cout << (tree.find('c'))->first << std::endl;
+//	std::cout << (tree.find('a'))->first << std::endl;
 
-	ft::map<char, int>::iterator it = tree.begin();
-	std::cout << it->first << std::endl;
-	std::cout << &it << std::endl;
-	it++;
-	std::cout << it->first << std::endl;
-	it++;
-	std::cout << it->first << std::endl;
-	it--;
-	std::cout << it->first << std::endl;
-	it--;
-	std::cout << it->first << std::endl;
+//	ft::map<char, int>::iterator it = tree.begin();
+//	std::cout << it->first << std::endl;
+//	std::cout << &it << std::endl;
+//	it++;
+//	std::cout << it->first << std::endl;
+//	it++;
+//	std::cout << it->first << std::endl;
+//	it--;
+//	std::cout << it->first << std::endl;
+//	it--;
+//	std::cout << it->first << std::endl;
 
 	std::cout << tree.at('a') << std::endl;
 	try {
@@ -237,5 +238,5 @@ int main(int argc, char** argv) {
 	std::cout << tree['a'] << std::endl;
 	std::cout << tree['r'] << std::endl;
 	tree.print_tree();
-	
+
 }
