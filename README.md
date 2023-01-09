@@ -32,7 +32,9 @@ More specifically about AVL trees:
 * <https://www.geeksforgeeks.org/implementation-of-avl-tree-using-graphics-in-cpp>;
 * <https://ebrary.net/25925/computer_science/tree_iterative_insert>;
 * <https://stackoverflow.com/questions/66536347/delete-function-binary-search-tree-bst-with-parent-passing-the-tree-pointer-as-a>;
-* <http://www.cs.emory.edu/~cheung/Courses/253/Syllabus/Trees/AVL-delete.html>.
+* <http://www.cs.emory.edu/~cheung/Courses/253/Syllabus/Trees/AVL-delete.html>;
+* <https://stackoverflow.com/questions/28708526/maintaining-parent-nodes-during-avl-rotation-in-c>;
+* <https://www.geeksforgeeks.org/avl-trees-containing-a-parent-node-pointer>.
 
 And red-black trees:
 * <https://en.wikipedia.org/wiki/Red%E2%80%93black_tree>.

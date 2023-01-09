@@ -263,85 +263,78 @@ namespace ft
 			return (b_factor);
 		}
 
-		Node	*_avl_tree_rr_rotation(Node *parent)
+		Node	*_avl_tree_ll_rotation(Node *root)
 		{
-			Node *temp(parent->right());
-			parent->set_right(temp->left());
-			parent->right()->set_parent(parent);
-			temp->set_left(parent);
-			temp->left()->set_parent(temp);
-			return (temp);
+			Node *tmpnode = root->left();
+			root->set_left(tmpnode->right());
+			if (tmpnode->right() != NULL)
+				tmpnode->right()->set_parent(root);
+			tmpnode->set_right(root);
+			tmpnode->set_parent(root->parent());
+			root->set_parent(tmpnode);
+			if (tmpnode->parent() != NULL
+				&& _key_comp(root->data().first, tmpnode->parent()->data().first)) {
+				tmpnode->parent()->set_left(tmpnode);
+			}
+			else {
+				if (tmpnode->parent() != NULL)
+					tmpnode->parent()->set_right(tmpnode);
+			}
+			root = tmpnode;
+			recomp_height(root->left());
+			recomp_height(root->right());
+			return (root);
 		}
 
-		Node	*_avl_tree_ll_rotation(Node *parent)
+		Node	*_avl_tree_rr_rotation(Node *root)
 		{
-			Node *temp(parent->left());
-			parent->set_left(temp->right());
-			temp->set_right(parent);
-			return (temp);
+			Node *tmpnode = root->right();
+			root->set_right(tmpnode->left());
+			if (tmpnode->left() != NULL)
+				tmpnode->left()->set_parent(root);
+			tmpnode->set_left(root);
+			tmpnode->set_parent(root->parent());
+			root->set_parent(tmpnode);
+			if (tmpnode->parent() != NULL
+				&& _key_comp(root->data().first, tmpnode->parent()->data().first)) {
+				tmpnode->parent()->set_left(tmpnode);
+			}
+			else {
+				if (tmpnode->parent() != NULL)
+					tmpnode->parent()->set_right(tmpnode);
+			}
+			root = tmpnode;
+			recomp_height(root->left());
+			recomp_height(root->right());
+			return (root);
 		}
 
-		Node	*_avl_tree_lr_rotation(Node *parent)
+		Node	*_avl_tree_lr_rotation(Node *root)
 		{
-			Node *temp(parent->left());
-			parent->set_left(_avl_tree_rr_rotation(temp));
-			return (_avl_tree_ll_rotation(parent));
+			root->set_left(_avl_tree_rr_rotation(root->left()));
+			return (_avl_tree_ll_rotation(root));
 		}
-
-		Node	*_avl_tree_rl_rotation(Node *parent)
+		
+		Node	*_avl_tree_rl_rotation(Node *root)
 		{
-			Node *temp(parent->right());
-			Node *tmp2 = _avl_tree_ll_rotation(temp);
-			parent->set_right(tmp2);
-			std::cout << "prima" << std::endl;
-			print_node(parent->right());
-			print_node(parent->right()->parent());
-			print_node(parent);
-			parent->right()->set_parent(parent);
-			std::cout << "dopo" << std::endl;
-			print_node(parent->right());
-			print_node(parent->right()->parent());
-			print_node(parent);
-			std::cout << "-- fine --" << std::endl;
-			tmp2 = _avl_tree_rr_rotation(parent);
-			return (tmp2);
+			root->set_right(_avl_tree_ll_rotation(root->right()));
+			return (_avl_tree_rr_rotation(root));
 		}
 
 		Node	*balance(Node *temp)
 		{
-			Node *tmp2;
 			int bal_factor = diff(temp);
 			if (bal_factor > 1) {
 				if (diff(temp->left()) > 0)
-				{
-					std::cout << "left" << std::endl;
-					tmp2 = _avl_tree_ll_rotation(temp);
-					tmp2->set_parent(temp->parent());
-					temp = tmp2;
-				}
+					temp = _avl_tree_ll_rotation(temp);
 				else
-				{
-					std::cout << "lr" << std::endl;
-					tmp2 = _avl_tree_lr_rotation(temp);
-					tmp2->set_parent(temp->parent());
-					temp = tmp2;
-				}
+					temp = _avl_tree_lr_rotation(temp);
 			}
 			else if (bal_factor < -1) {
 				if (diff(temp->right()) > 0)
-				{
-					std::cout << "rl" << std::endl;
-					tmp2 = _avl_tree_rl_rotation(temp);
-					tmp2->set_parent(temp->parent());
-					temp = tmp2;
-				}		
+					temp = _avl_tree_rl_rotation(temp);
 				else
-				{
-					std::cout << "right" << std::endl;
-					tmp2 = _avl_tree_rr_rotation(temp);
-					tmp2->set_parent(temp->parent());
-					temp = tmp2;
-				}
+					temp = _avl_tree_rr_rotation(temp);
 			}
 			return (temp);
 		}
@@ -502,7 +495,7 @@ namespace ft
 			}
 		}
 
-		Node*	successor(Node* node)
+		Node*	successor(Node *node)
 		{
 			if (node->right() != NULL)
 			{
