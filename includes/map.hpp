@@ -148,9 +148,14 @@ namespace ft
 
 		static void	print_node(Node *node)
 		{
-			std::cout << "key: " << node->data().first;
-			std::cout << ", value: " << node->data().second;
-			std::cout << ", height: " << node->height() << std::endl;
+			if (node)
+			{
+				std::cout << "key: " << node->data().first;
+				std::cout << ", value: " << node->data().second;
+				std::cout << ", height: " << node->height() << std::endl;
+			}
+			else
+				std::cout << "NULL pointer" << std::endl;
 		}
 
 		void	print_tree()
@@ -262,7 +267,9 @@ namespace ft
 		{
 			Node *temp(parent->right());
 			parent->set_right(temp->left());
+			parent->right()->set_parent(parent);
 			temp->set_left(parent);
+			temp->left()->set_parent(temp);
 			return (temp);
 		}
 
@@ -284,24 +291,57 @@ namespace ft
 		Node	*_avl_tree_rl_rotation(Node *parent)
 		{
 			Node *temp(parent->right());
-			parent->set_right(_avl_tree_ll_rotation(temp));
-			return (_avl_tree_rr_rotation(parent));
+			Node *tmp2 = _avl_tree_ll_rotation(temp);
+			parent->set_right(tmp2);
+			std::cout << "prima" << std::endl;
+			print_node(parent->right());
+			print_node(parent->right()->parent());
+			print_node(parent);
+			parent->right()->set_parent(parent);
+			std::cout << "dopo" << std::endl;
+			print_node(parent->right());
+			print_node(parent->right()->parent());
+			print_node(parent);
+			std::cout << "-- fine --" << std::endl;
+			tmp2 = _avl_tree_rr_rotation(parent);
+			return (tmp2);
 		}
 
 		Node	*balance(Node *temp)
 		{
+			Node *tmp2;
 			int bal_factor = diff(temp);
 			if (bal_factor > 1) {
 				if (diff(temp->left()) > 0)
-					temp = _avl_tree_ll_rotation(temp);
+				{
+					std::cout << "left" << std::endl;
+					tmp2 = _avl_tree_ll_rotation(temp);
+					tmp2->set_parent(temp->parent());
+					temp = tmp2;
+				}
 				else
-					temp = _avl_tree_lr_rotation(temp);
+				{
+					std::cout << "lr" << std::endl;
+					tmp2 = _avl_tree_lr_rotation(temp);
+					tmp2->set_parent(temp->parent());
+					temp = tmp2;
+				}
 			}
 			else if (bal_factor < -1) {
 				if (diff(temp->right()) > 0)
-					temp = _avl_tree_rl_rotation(temp);
+				{
+					std::cout << "rl" << std::endl;
+					tmp2 = _avl_tree_rl_rotation(temp);
+					tmp2->set_parent(temp->parent());
+					temp = tmp2;
+				}		
 				else
-					temp = _avl_tree_rr_rotation(temp);
+				{
+					std::cout << "right" << std::endl;
+					tmp2 = _avl_tree_rr_rotation(temp);
+					tmp2->set_parent(temp->parent());
+					temp = tmp2;
+				}
 			}
 			return (temp);
 		}
@@ -625,7 +665,14 @@ namespace ft
 //			suffix_traversal(root(), recomp_height);
 //			recomp_height(_y);
 //			rebalance(_y);
+			std::cout << "prima" << std::endl;
+			print_node(root());
+			print_node(root()->parent());
 			set_root(balance_tree(root()));
+			std::cout << "dopo" << std::endl;
+			print_node(root());
+			print_node(root()->parent());
+			std::cout << "-- fine --" << std::endl;
 			suffix_traversal(root(), recomp_height);
 			_y = _recursive_avl_tree_search(root(), val.first);
 			return (_y);
