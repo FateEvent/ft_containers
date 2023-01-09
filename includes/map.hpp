@@ -262,18 +262,18 @@ namespace ft
 			{
 				std::cout << ": ";
 				print_node(p);
-				if (diffHeight(p->left(), p->right()) > 1)
+				if (diff_height(p->left(), p->right()) > 1)
 				{
 					x = p;
-					y = tallerChild(x);
-					z = tallerChild(y);
+					y = taller_child(x);
+					z = taller_child(y);
 					p = _avl_tree_node_restructure(x, y, z);
 				}
 				p = p->parent();
 			}
 		}
 
-		Node *tallerChild(Node *p)
+		Node *taller_child(Node *p)
 		{
 			if (p->left() == NULL)
 				return (p->right());
@@ -368,13 +368,13 @@ namespace ft
 			c->set_right(T3);
 			if (T3 != NULL) T3->set_parent(c);
 
-			recompHeight(a);
-			recompHeight(c);
+			recomp_height(a);
+			recomp_height(c);
 
 			return b;
 		}
 
-		static int diffHeight(Node *t1, Node *t2)
+		static int diff_height(Node *t1, Node *t2)
 		{
 			int h1, h2;
 
@@ -391,7 +391,7 @@ namespace ft
 			return ((h1 >= h2) ? (h1 - h2) : (h2 - h1)) ;
 		}
 
-		static void recompHeight(Node *_x)
+		static void recomp_height(Node *_x)
 		{
 			while (_x != NULL)
 			{
@@ -451,7 +451,7 @@ namespace ft
 					parent->set_right(NULL);
 				delete_node(p);
 
-				recompHeight(parent);
+				recomp_height(parent);
 				rebalance(parent);
 				return ;
 			}
@@ -465,7 +465,7 @@ namespace ft
 				
 				delete_node(p);
 
-				recompHeight(parent);
+				recomp_height(parent);
 				rebalance(parent);
 				return ;
 			}
@@ -478,7 +478,7 @@ namespace ft
 					parent->set_right(p->left());
 				delete_node(p);
 
-				recompHeight(parent);
+				recomp_height(parent);
 				rebalance(parent);
 				return ;
 			}
@@ -494,7 +494,7 @@ namespace ft
 			succ->left()->set_parent(succ);
 			delete_node(p);
 			
-			recompHeight(parent);
+			recomp_height(parent);
 			rebalance(root());
 			return ;
 		}
@@ -568,7 +568,7 @@ namespace ft
 				newNode->set_parent(_y);
 			}
 			++_size;
-			recompHeight(root());
+			recomp_height(root());
 			rebalance(root());
 			_y = _recursive_avl_tree_search(root(), val.first);
 			return (_y);
@@ -624,7 +624,7 @@ namespace ft
 
 		const mapped_type&	at (const key_type& k) const
 		{
-			return (const_cast<const mapped_type>(at(k)));
+			return (at(const_cast<mapped_type>(k)));
 		}
 
 	private :
