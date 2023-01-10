@@ -62,13 +62,14 @@ namespace ft
 			Node		*_right;
 			Node		*_parent;
 			int			_height;
+			std::string	_colour;
 
 		public:
-			Node() : _data(value_type()), _left(NULL), _right(NULL), _parent(NULL), _height(1) {}
-			Node(value_type pair) : _data(pair), _left(NULL), _right(NULL), _parent(NULL), _height(1) {}
+			Node() : _data(value_type()), _left(NULL), _right(NULL), _parent(NULL), _height(1), _colour("black") {}
+			Node(value_type pair) : _data(pair), _left(NULL), _right(NULL), _parent(NULL), _height(1), _colour("black") {}
 			~Node() {}
 
-			Node		&operator= (Node &other) { _left = other._left; _right = other._right; _parent = other._parent; _height = other._height; return (*this); }
+			Node		&operator= (Node &other) { _left = other._left; _right = other._right; _parent = other._parent; _colour = other._colour; return (*this); }
 			void		set_data(value_type &data) { _data = data; }
 			void		set_left(Node *left) { _left = left; }
 			void		set_right(Node *right) { _right = right; }

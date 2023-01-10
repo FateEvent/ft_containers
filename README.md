@@ -18,6 +18,19 @@ and more generally about iterators:
 
 * <https://stdcxx.apache.org/doc/stdlibug/16-3.html>
 
+Other materials about maps and map iterators:
+* <https://stackoverflow.com/questions/11373796/custom-memory-allocator-for-stl-map>;
+* <https://stackoverflow.com/questions/12259571/how-does-the-stdmap-iterator-work>;
+* <https://stackoverflow.com/questions/17150544/what-is-the-definition-of-rb-tree-increment-in-bits-stl-tree-h/17150988#17150988>;
+* <https://stackoverflow.com/questions/3487087/how-to-implement-an-end-in-a-map>.
+
+* <https://github.com/lobbyra/ft_containers>.
+
+Using const_cast:
+* <https://stackoverflow.com/questions/65408815/opposite-of-const-cast>;
+Checking if the return value of a function is cost:
+* <https://stackoverflow.com/questions/65659802/using-c-20-concept-to-check-if-a-function-returns-a-const-value>.
+
 I found helpful tips about binary search trees, AVL and red-black trees in the following playlist by Jenny (Jenny's Lectures CS IT) (the videos from 5.1 to 5.17 are about trees):
 * <https://www.youtube.com/playlist?list=PLdo5W4Nhv31bbKJzrsKfMpo_grxuLl8LU>
 
@@ -37,17 +50,6 @@ More specifically about AVL trees:
 * <https://www.geeksforgeeks.org/avl-trees-containing-a-parent-node-pointer>.
 
 And red-black trees:
-* <https://en.wikipedia.org/wiki/Red%E2%80%93black_tree>.
-
-Other materials about maps and map iterators:
-* <https://stackoverflow.com/questions/11373796/custom-memory-allocator-for-stl-map>;
-* <https://stackoverflow.com/questions/12259571/how-does-the-stdmap-iterator-work>;
-* <https://stackoverflow.com/questions/17150544/what-is-the-definition-of-rb-tree-increment-in-bits-stl-tree-h/17150988#17150988>;
-* <https://stackoverflow.com/questions/3487087/how-to-implement-an-end-in-a-map>.
-
-* <https://github.com/lobbyra/ft_containers>.
-
-Using const_cast:
-* <https://stackoverflow.com/questions/65408815/opposite-of-const-cast>;
-Checking if the return value of a function is cost:
-* <https://stackoverflow.com/questions/65659802/using-c-20-concept-to-check-if-a-function-returns-a-const-value>.
+* <https://en.wikipedia.org/wiki/Red%E2%80%93black_tree>;
+* <https://www.geeksforgeeks.org/introduction-to-red-black-tree>;
+* <https://www.geeksforgeeks.org/red-black-trees-top-down-insertion>.

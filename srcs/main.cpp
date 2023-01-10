@@ -227,7 +227,6 @@ int main(int argc, char** argv) {
 	std::cout << it->first << std::endl;
 	std::cout << &it << std::endl;
 	it++;
-	std::cout << "yamme " << it->first << std::endl;
 	it++;
 	std::cout << it->first << std::endl;
 	it--;
@@ -244,6 +243,5 @@ int main(int argc, char** argv) {
 	}
 	std::cout << tree['a'] << std::endl;
 	std::cout << tree['r'] << std::endl;
-//	tree.print_tree();
 
 }
