@@ -212,11 +212,16 @@ int main(int argc, char** argv) {
 
 	std::cout << std::endl;
 
-//	tree.delete_tree_node('c');
-//	tree.print_tree();
+	tree.delete_tree_node('c');
+	tree.print_tree();
+	tree.delete_tree_node('d');
+	std::cout << tree.root()->height() << std::endl;
+	tree.print_tree();
+	tree.delete_tree_node('f');
+	tree.print_tree();
 
-//	std::cout << (tree.find('c'))->first << std::endl;
-//	std::cout << (tree.find('a'))->first << std::endl;
+	std::cout << (tree.find('c'))->first << std::endl;
+	std::cout << (tree.find('a'))->first << std::endl;
 
 	ft::map<char, int>::iterator it = tree.begin();
 	std::cout << it->first << std::endl;
@@ -239,6 +244,6 @@ int main(int argc, char** argv) {
 	}
 	std::cout << tree['a'] << std::endl;
 	std::cout << tree['r'] << std::endl;
-	tree.print_tree();
+//	tree.print_tree();
 
 }
