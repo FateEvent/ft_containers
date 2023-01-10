@@ -79,6 +79,7 @@ namespace ft
 			Node		*right() { return _right; }
 			Node		*parent() { return _parent; }
 			int			&height() { return _height; }
+			std::string	&colour() { return _colour; }
 		};
 /*
 		std::ostream	&operator<< (std::ostream &o, const Node &node) {
@@ -153,6 +154,7 @@ namespace ft
 			{
 				std::cout << "key: " << node->data().first;
 				std::cout << ", value: " << node->data().second;
+				std::cout << ", colour: " << node->colour();
 				std::cout << ", height: " << node->height() << std::endl;
 			}
 			else
@@ -161,7 +163,9 @@ namespace ft
 
 		void	print_tree()
 		{
+			std::cout << "-- Here's my Red-Black tree: --" << std::endl;
 			level_order_traversal(root(), print_node);
+			std::cout << "-- Here my tree ends. Tschüss. --" << std::endl;
 		}
 
 		iterator	begin()	{
@@ -215,6 +219,12 @@ namespace ft
 			_alloc_node.deallocate(node, 1);
 		}
 
+		/****************************************************************************\
+		** 																			**
+		** 					Utility functions for Red-Black trees					**
+		** 																			**
+		\****************************************************************************/
+
 		Node	*_iterative_avl_tree_search(const key_type& k)
 		{
 			Node	*current(root());
@@ -256,107 +266,18 @@ namespace ft
 			}
 		}
 
-		int	diff(Node *temp)
+				void transplant(Node *u, Node *v)
 		{
-			int l_height = calculate_height(temp->left());
-			int r_height = calculate_height(temp->right());
-			int b_factor = l_height - r_height;
-			return (b_factor);
-		}
-
-		Node	*_avl_tree_ll_rotation(Node *root)
-		{
-			Node *temp = root->left();
-			root->set_left(temp->right());
-			if (temp->right() != NULL)
-				temp->right()->set_parent(root);
-			temp->set_right(root);
-			temp->set_parent(root->parent());
-			root->set_parent(temp);
-			if (temp->parent() != NULL
-				&& _key_comp(root->data().first, temp->parent()->data().first)) {
-				temp->parent()->set_left(temp);
-			}
-			else {
-				if (temp->parent() != NULL)
-					temp->parent()->set_right(temp);
-			}
-			root = temp;
-			recomp_height(root->left());
-			recomp_height(root->right());
-			return (root);
-		}
-
-		Node	*_avl_tree_rr_rotation(Node *root)
-		{
-			Node *temp = root->right();
-			root->set_right(temp->left());
-			if (temp->left() != NULL)
-				temp->left()->set_parent(root);
-			temp->set_left(root);
-			temp->set_parent(root->parent());
-			root->set_parent(temp);
-			if (temp->parent() != NULL
-				&& _key_comp(root->data().first, temp->parent()->data().first)) {
-				temp->parent()->set_left(temp);
-			}
-			else {
-				if (temp->parent() != NULL)
-					temp->parent()->set_right(temp);
-			}
-			root = temp;
-			recomp_height(root->left());
-			recomp_height(root->right());
-			return (root);
-		}
-
-		Node	*_avl_tree_lr_rotation(Node *root)
-		{
-			root->set_left(_avl_tree_rr_rotation(root->left()));
-			return (_avl_tree_ll_rotation(root));
-		}
-		
-		Node	*_avl_tree_rl_rotation(Node *root)
-		{
-			root->set_right(_avl_tree_ll_rotation(root->right()));
-			return (_avl_tree_rr_rotation(root));
-		}
-
-		Node	*balance(Node *temp)
-		{
-			int bal_factor = diff(temp);
-			if (bal_factor > 1) {
-				if (diff(temp->left()) > 0)
-					temp = _avl_tree_ll_rotation(temp);
-				else
-					temp = _avl_tree_lr_rotation(temp);
-			}
-			else if (bal_factor < -1) {
-				if (diff(temp->right()) > 0)
-					temp = _avl_tree_rl_rotation(temp);
-				else
-					temp = _avl_tree_rr_rotation(temp);
-			}
-			return (temp);
-		}
-
-		Node	*balance_tree(Node *root)
-		{
-			if (root == NULL)
-				return (NULL);
-			root->set_left(balance_tree(root->left()));
-			root->set_right(balance_tree(root->right()));
-			root = balance(root);
-			return (root);
-		}
-
-		static void	recomp_height(Node *_x)
-		{
-			while (_x != NULL)
-			{
-				_x->_height = calculate_height(_x);
-				_x = _x->parent();
-			}
+			if (u == NULL)
+				return ;
+			else if (u->parent() == NULL)
+				set_root(v);
+			else if (u->parent()->left() == u)
+				u->parent()->set_left(v);
+			else
+				u->parent()->set_right(v);
+			if (v != NULL)
+				v->set_parent(u->parent());
 		}
 
 		Node*	successor(Node *node)
@@ -374,20 +295,6 @@ namespace ft
 					node = node->parent();
 				return (node->parent());
 			}
-		}
-
-		void transplant(Node *u, Node *v)
-		{
-			if (u == NULL)
-				return ;
-			else if (u->parent() == NULL)
-				set_root(v);
-			else if (u->parent()->left() == u)
-				u->parent()->set_left(v);
-			else
-				u->parent()->set_right(v);
-			if (v != NULL)
-				v->set_parent(u->parent());
 		}
 
 		void	_avl_tree_node_deletion(const key_type& k)
@@ -445,14 +352,67 @@ namespace ft
 			succ->set_left(p->left());
 			succ->left()->set_parent(succ);
 			delete_node(p);
+			recomp_height(succ);
 			set_root(balance_tree(root()));
 			return ;
 		}
 
-		void	delete_tree_node(const key_type& k)
+		Node	*_avl_tree_rr_rotation(Node *root)
 		{
-//			return (iterator(_avl_tree_node_deletion(k)));
-			_avl_tree_node_deletion(k);
+			Node *temp = root->right();
+			root->set_right(temp->left());
+			if (temp->left() != NULL)
+				temp->left()->set_parent(root);
+			temp->set_left(root);
+			temp->set_parent(root->parent());
+			root->set_parent(temp);
+			if (temp->parent() != NULL
+				&& _key_comp(root->data().first, temp->parent()->data().first)) {
+				temp->parent()->set_left(temp);
+			}
+			else {
+				if (temp->parent() != NULL)
+					temp->parent()->set_right(temp);
+			}
+			root = temp;
+			recomp_height(root->left());
+			recomp_height(root->right());
+			return (root);
+		}
+		
+		Node	*_avl_tree_rl_rotation(Node *root)
+		{
+			root->set_right(_avl_tree_ll_rotation(root->right()));
+			return (_avl_tree_rr_rotation(root));
+		}
+
+		Node	*_avl_tree_lr_rotation(Node *root)
+		{
+			root->set_left(_avl_tree_rr_rotation(root->left()));
+			return (_avl_tree_ll_rotation(root));
+		}
+
+		Node	*_avl_tree_ll_rotation(Node *root)
+		{
+			Node *temp = root->left();
+			root->set_left(temp->right());
+			if (temp->right() != NULL)
+				temp->right()->set_parent(root);
+			temp->set_right(root);
+			temp->set_parent(root->parent());
+			root->set_parent(temp);
+			if (temp->parent() != NULL
+				&& _key_comp(root->data().first, temp->parent()->data().first)) {
+				temp->parent()->set_left(temp);
+			}
+			else {
+				if (temp->parent() != NULL)
+					temp->parent()->set_right(temp);
+			}
+			root = temp;
+			recomp_height(root->left());
+			recomp_height(root->right());
+			return (root);
 		}
 
 		static int	calculate_height(Node *temp)
@@ -465,6 +425,51 @@ namespace ft
 				h = max_height + 1;
 			}
 			return h;
+		}
+
+		int	diff(Node *temp)
+		{
+			int l_height = calculate_height(temp->left());
+			int r_height = calculate_height(temp->right());
+			int b_factor = l_height - r_height;
+			return (b_factor);
+		}
+
+		Node	*balance(Node *temp)
+		{
+			int bal_factor = diff(temp);
+			if (bal_factor > 1) {
+				if (diff(temp->left()) > 0)
+					temp = _avl_tree_ll_rotation(temp);
+				else
+					temp = _avl_tree_lr_rotation(temp);
+			}
+			else if (bal_factor < -1) {
+				if (diff(temp->right()) > 0)
+					temp = _avl_tree_rl_rotation(temp);
+				else
+					temp = _avl_tree_rr_rotation(temp);
+			}
+			return (temp);
+		}
+
+		Node	*balance_tree(Node *root)
+		{
+			if (root == NULL)
+				return (NULL);
+			root->set_left(balance_tree(root->left()));
+			root->set_right(balance_tree(root->right()));
+			root = balance(root);
+			return (root);
+		}
+
+		static void	recomp_height(Node *_x)
+		{
+			while (_x != NULL)
+			{
+				_x->_height = calculate_height(_x);
+				_x = _x->parent();
+			}
 		}
 
 		Node	*_avl_tree_insert(Node *_x, const value_type& val)
@@ -509,6 +514,12 @@ namespace ft
 			set_root(balance_tree(root()));
 			_y = _recursive_avl_tree_search(root(), val.first);
 			return (_y);
+		}
+
+		void	delete_tree_node(const key_type& k)
+		{
+//			return (iterator(_avl_tree_node_deletion(k)));
+			_avl_tree_node_deletion(k);
 		}
 
 		pair<iterator, bool>	insert(const value_type& val)
