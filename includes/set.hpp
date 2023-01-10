@@ -210,6 +210,7 @@ namespace ft
 			ptr->_right = NULL;
 			ptr->_parent = parent;
 			ptr->_height = 1;
+			ptr->_colour = "red";
 			return (ptr);
 		}
 
@@ -266,7 +267,7 @@ namespace ft
 			}
 		}
 
-				void transplant(Node *u, Node *v)
+		void	transplant(Node *u, Node *v)
 		{
 			if (u == NULL)
 				return ;
@@ -280,7 +281,7 @@ namespace ft
 				v->set_parent(u->parent());
 		}
 
-		Node*	successor(Node *node)
+		Node	*successor(Node *node)
 		{
 			if (node->right() != NULL)
 			{

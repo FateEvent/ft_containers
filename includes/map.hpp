@@ -10,7 +10,6 @@
 # include "pair.hpp"
 # include "vector.hpp"
 # include "map_iterator.hpp"
-#include <map>
 
 class map_iterator;
 
@@ -263,7 +262,7 @@ namespace ft
 			}
 		}
 
-				void transplant(Node *u, Node *v)
+		void	transplant(Node *u, Node *v)
 		{
 			if (u == NULL)
 				return ;
@@ -277,7 +276,7 @@ namespace ft
 				v->set_parent(u->parent());
 		}
 
-		Node*	successor(Node *node)
+		Node	*successor(Node *node)
 		{
 			if (node->right() != NULL)
 			{
