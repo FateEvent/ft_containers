@@ -444,66 +444,118 @@ namespace ft
 			}
 			return (temp);
 		}
-
-		Node	*recolouring(Node *_y)
+/*
+		void	_Rb_right_rotation(Node	*_x)
 		{
-			_y->set_colour("red");
-			while (_y != root() && _y->parent() && _y->parent()->colour() == "red") {
-				if ( _y->parent() == _y->parent()->parent()->left()) {
-					/* If _y's parent() is a left, _y is _y's right 'uncle' */
-					Node *_z = _y->parent()->parent()->right();
-					if ( _z->colour() == "red" ) {
-						/* case 1 - change the colours */
-						_y->parent()->set_colour("black");
-						_z->set_colour("black");
-						_y->parent()->parent()->set_colour("red");
-						/* Move _y up the tree */
-						_y = _y->parent()->parent();
+			Node	*_y(NULL);
+			_y = _x->left();
+			// Turn _y's left sub-tree into _x's left sub-tree
+			_x->set_left(_y->right());
+			if ( _y->right() != NULL )
+				_y->right()->set_parent(_x);
+			// _y's new parent was _x's parent
+			_y->set_parent(_x->parent());
+			// Set the parent to point to _y instead of _x
+			// First see whether we're at the root
+			if ( _x->parent() == NULL )
+				set_root(_y);
+			else
+				if ( _x == _x->parent()->right())
+					// _x was on the right of its parent
+					_x->parent()->set_right(_y);
+				else
+					// _x must have been on the left
+					_x->parent()->set_left(_y);
+			// Finall_y, put _x on _y's right
+			_y->set_right(_x);
+			_x->set_parent(_y);
+		}
+
+		void	_Rb_left_rotation(Node	*_x)
+		{
+			Node	*_y(NULL);
+			_y = _x->right();
+			// Turn _y's left sub-tree into _x's right sub-tree
+			_x->set_right(_y->left());
+			if ( _y->left() != NULL )
+				_y->left()->set_parent(_x);
+			// _y's new parent was _x's parent
+			_y->set_parent(_x->parent());
+			// Set the parent to point to _y instead of _x
+			// First see whether we're at the root
+			if ( _x->parent() == NULL )
+				set_root(_y);
+			else
+				if ( _x == _x->parent()->left())
+					// _x was on the left of its parent
+					_x->parent()->set_left(_y);
+				else
+					// _x must have been on the right
+					_x->parent()->set_right(_y);
+			// Finall_y, put _x on _y's left
+			_y->set_left(_x);
+			_x->set_parent(_y);
+		}
+
+		void	recolouring(Node *_x)
+		{
+			Node	*_y(NULL);
+			_x->set_colour("red");
+			while (_x->parent() && _x->parent() != root() && _x != root() && _x->parent()->colour() == "red") {
+				if ( _x->parent() == _x->parent()->parent()->left()) {
+					// If _x's parent() is a left, _x is _x's right 'uncle'
+					_y = _x->parent()->parent()->right();
+					if ( _y->colour() == "red" ) {
+						// case 1 - change the colours
+						_x->parent()->set_colour("black");
+						_y->set_colour("black");
+						_x->parent()->parent()->set_colour("red");
+						// Move _x up the tree
+						_x = _x->parent()->parent();
 					}
 					else {
-						/* _y is a black node */
-						if ( _y == _y->parent()->right()) {
-							/* and _y is to the right */ 
-							/* case 2 - move _y up and rotate */
-							_y = _y->parent();
-							_y->set_right(_avl_tree_ll_rotation(_y));
-							}
-						/* case 3 */
-						_y->parent()->set_colour("black");
-						_y->parent()->parent()->set_colour("red");
-						_y->parent()->set_parent(_avl_tree_rr_rotation(_y->parent()->parent()));
+						// _y is a black node
+						if ( _x == _x->parent()->right()) {
+							// and _x is to the right 
+							// case 2 - move _x up and rotate
+							_x = _x->parent();
+							_Rb_left_rotation(_x);
+						}
+						// case 3
+						_x->parent()->set_colour("black");
+						_x->parent()->parent()->set_colour("red");
+						_Rb_right_rotation(_x->parent()->parent());
 					}
 				}
 				else {
-					/* repeat the "if" part with right and left
-					exchanged */
-					Node *_z = _y->parent()->parent()->left();
-					if ( _z->colour() == "red" ) {
-						/* case 1 - change the colours */
-						_y->parent()->set_colour("black");
-						_z->set_colour("black");
-						_y->parent()->parent()->set_colour("red");
-						/* Move _y up the tree */
-						_y = _y->parent()->parent();
+					// repeat the "if" part with right and left
+					exchanged
+					_y = _x->parent()->parent()->left();
+					if ( _y->colour() == "red" ) {
+						// case 1 - change the colours
+						_x->parent()->set_colour("black");
+						_y->set_colour("black");
+						_x->parent()->parent()->set_colour("red");
+						// Move _x up the tree
+						_x = _x->parent()->parent();
 					}
 					else {
-						/* _y is a black node */
-						if ( _y == _y->parent()->left() ) {
-							/* and _y is to the right */ 
-							/* case 2 - move _y up and rotate */
-							_y = _y->parent();
-							_y->set_left(_avl_tree_rr_rotation(_y));
+						// _x is a black node
+						if ( _x == _x->parent()->left() ) {
+							// and _x is to the right 
+							// case 2 - move _x up and rotate
+							_x = _x->parent();
+							_Rb_right_rotation(_x);
 							}
-						/* case 3 */
-						_y->parent()->set_colour("black");
-						_y->parent()->parent()->set_colour("red");
-						_y->parent()->set_parent(_avl_tree_ll_rotation(_y->parent()->parent()));
+						// case 3
+						_x->parent()->set_colour("black");
+						_x->parent()->parent()->set_colour("red");
+						_Rb_left_rotation(_x->parent()->parent());
 					}
 				}
 			}
-			/* Colour the root black */
+			// Colour the root black
 			root()->set_colour("black");
-			return (_y);
 		}
 
 		Node	*_Rb_tree_recolouring(Node *_x)
@@ -553,7 +605,7 @@ namespace ft
 			}
 			return (_x);
 		}
-
+*/
 		Node	*balance_tree(Node *root)
 		{
 			if (root == NULL)
@@ -562,6 +614,41 @@ namespace ft
 			root->set_right(balance_tree(root->right()));
 			root = _Rb_tree_recolouring(root);
 			return (root);
+		}
+
+		void	swapColours(Node *_x, Node *_y) {
+			std::string temp = _x->colour();
+			_x->set_colour(_y->colour());
+			_y->set_colour(temp);
+		}
+
+		bool	isOnLeft(Node *node) { return node == node->parent()->left(); }
+
+		// returns pointer to sibling
+		Node	*sibling(Node *node) {
+				// sibling null if no parent
+				if (node->parent() == NULL)
+						return (NULL);
+				if (isOnLeft(node))
+						return node->parent()->right();
+				return (node->parent()->left());
+		}
+
+		void	moveDown(Node *node, Node *parent) {
+			if (node->parent() != NULL) {
+				if (isOnLeft(node)) {
+					node->parent()->set_left(parent);
+				} else {
+					node->parent()->set_right(parent);
+				}
+			}
+			parent->set_parent(node->parent());
+			node->set_parent(parent);
+		}
+
+		bool	hasRedChild(Node *node) {
+			return (node->left() != NULL and node->left()->colour() == "red") or
+			(node->right() != NULL and node->right()->colour() == "red");
 		}
 
 		Node	*get_uncle_node(Node *node)
@@ -574,6 +661,82 @@ namespace ft
 					return (node->parent()->parent()->left());
 			}
 			return (NULL);
+		}
+
+		void	leftRotate(Node *_x) {
+			// new parent will be node's right child
+			Node *nParent = _x->right();
+			// update root if current node is root
+			if (_x == root())
+				set_root(nParent);
+			moveDown(_x, nParent);
+			// connect _x with new parent's left element
+			_x->set_right(nParent->left());
+			// connect new parent's left element with node
+			// if it is not null
+			if (nParent->left() != NULL)
+				nParent->left()->set_parent(_x);
+			// connect new parent with _x
+			nParent->set_left(_x);
+		}
+
+		void	rightRotate(Node *_x) {
+			// new parent will be node's left child
+			Node *nParent = _x->left();
+			// update root if current node is root
+			if (_x == root())
+				set_root(nParent);
+			moveDown(_x, nParent);
+			// connect _x with new parent's right element
+			_x->set_left(nParent->right());
+			// connect new parent's right element with node
+			// if it is not null
+			if (nParent->right() != NULL)
+				nParent->right()->set_parent(_x);
+			// connect new parent with _x
+			nParent->set_right(_x);
+		}
+
+		void	fixRedRed(Node *x) {
+			// if x is root colour() it black and return
+			if (x == root()) {
+				x->set_colour("black");
+				return ;
+			}
+			// initialize parent, grandparent, uncle
+			Node	*parent = x->parent(), *grandparent = parent->parent(), *uncle = get_uncle_node(x);
+			if (parent->colour() != "black") {
+				if (uncle != NULL && uncle->colour() == "red") {
+					// uncle "red", perform recolour()ing and recurse
+					parent->set_colour("black");
+					uncle->set_colour("black");
+					grandparent->set_colour("red");
+					fixRedRed(grandparent);
+				} else {
+					// Else perform LR, LL, RL, RR
+					if (isOnLeft(parent)) {
+						if (isOnLeft(x)) {
+							// for left right
+							swapColours(parent, grandparent);
+						} else {
+							leftRotate(parent);
+							swapColours(x, grandparent);
+						}
+						// for left left and left right
+						rightRotate(grandparent);
+					} else {
+						if (isOnLeft(x)) {
+							// for right left
+							rightRotate(parent);
+							swapColours(x, grandparent);
+						} else {
+							swapColours(parent, grandparent);
+						}
+						// for right right and right left
+						leftRotate(grandparent);
+					}
+				}
+			}
 		}
 
 		static int	calculate_height(Node *temp)
@@ -602,7 +765,7 @@ namespace ft
 		Node	*_Rb_tree_insert(Node *_x, const value_type& val)
 		{
 			Node	*newNode = new_node(val);
-			Node	*_y;
+//			Node	*_y;
 
 			if (!_x)
 			{
@@ -614,6 +777,25 @@ namespace ft
 				++_black_height;
 				return (_x);
 			}
+			else	// ajouté
+			{
+				Node *temp = _iterative_avl_tree_search(val.first);
+				if (temp->data() == val)
+				{
+					delete_node(newNode);
+					return (temp);
+				}
+				newNode->set_parent(temp);
+				if (_key_comp(val.first, temp->data().first))
+					temp->set_left(newNode);
+				else
+					temp->set_right(newNode);
+				// fix red red voilaton if exists
+				fixRedRed(newNode);
+				// j'enlèverai après
+				return (NULL);
+			}
+/*
 			while (_x != NULL) {
 				_y = _x;
 				if (_key_comp(val.first, _x->data().first))
@@ -642,10 +824,11 @@ namespace ft
 				newNode->set_parent(_y);
 			}
 			++_size;
-			set_root(_Rb_tree_recolouring(_y));
+			recolouring(_y);
 //			set_root(balance_tree(root()));
 			_y = _recursive_avl_tree_search(root(), val.first);
 			return (_y);
+*/
 		}
 
 		void	delete_tree_node(const key_type& k)
