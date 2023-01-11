@@ -2,6 +2,7 @@
 # define SET
 
 # include <iostream>
+# include <string>
 # include <memory>
 # include <algorithm>
 # include <cstddef>
@@ -74,6 +75,8 @@ namespace ft
 			void		set_left(Node *left) { _left = left; }
 			void		set_right(Node *right) { _right = right; }
 			void		set_parent(Node *parent) { _parent = parent; }
+			void		set_height(int height) { _height = height; }
+			void		set_colour(std::string colour) { _colour = colour; }
 			value_type	&data() { return _data; }
 			Node		*left() { return _left; }
 			Node		*right() { return _right; }
@@ -91,9 +94,9 @@ namespace ft
 */
 	public:
 		explicit set(const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type())
-			: _root(NULL), _alloc_node(node_allocator()), _alloc_pair(alloc), _key_comp(comp), _size() {
+			: _root(NULL), _alloc_node(node_allocator()), _alloc_pair(alloc), _key_comp(comp), _size(), _black_height() {
 				_root = new_node();
-			}
+		}
 
 		template <class InputIterator>
 		set(InputIterator first, InputIterator last, const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type());
@@ -416,18 +419,6 @@ namespace ft
 			return (root);
 		}
 
-		static int	calculate_height(Node *temp)
-		{
-			int h = 0;
-			if (temp != NULL) {
-				int l_height = calculate_height(temp->left());
-				int r_height = calculate_height(temp->right());
-				int max_height = std::max(l_height, r_height);
-				h = max_height + 1;
-			}
-			return h;
-		}
-
 		int	diff(Node *temp)
 		{
 			int l_height = calculate_height(temp->left());
@@ -454,14 +445,92 @@ namespace ft
 			return (temp);
 		}
 
+		Node	*_Rb_tree_recolouring(Node *_x)
+		{
+			Node	*uncle(NULL), *parent(NULL), *gp(NULL), *temp(NULL);
+
+			while (_x != root() && _x->parent()->colour() == "red")
+			{
+				uncle = get_uncle_node(_x);
+				parent = _x->parent();
+				gp = parent->parent();
+				if (!uncle || !gp)
+					return (NULL);
+				if (uncle->colour() == "red")
+				{
+					_x->parent()->set_colour("black");
+					uncle->set_colour("black");
+					gp->set_colour("red");
+				}
+				else if (uncle->colour() == "red")
+				{
+					if (parent == gp->left() && _x == parent->left())
+					{
+						temp = _avl_tree_ll_rotation(gp);
+						temp->set_colour("black");
+						temp->left()->set_colour("red");
+					}
+					else if (parent == gp->left() && _x == parent->right())
+					{
+						temp = _avl_tree_lr_rotation(gp);
+						temp->set_colour("black");
+						temp->right()->set_colour("red");
+					}
+					else if (parent == gp->right() && _x == parent->right())
+					{
+						temp = _avl_tree_rr_rotation(gp);
+						temp->set_colour("black");
+						temp->right()->set_colour("red");
+					}
+					else if (parent == gp->right() && _x == parent->left())
+					{
+						temp->set_right(_avl_tree_rl_rotation(gp));
+						temp->set_colour("black");
+						temp->left()->set_colour("red");
+					}
+				}
+				_x = gp;
+			}
+			return (temp);
+		}
+
 		Node	*balance_tree(Node *root)
 		{
 			if (root == NULL)
 				return (NULL);
 			root->set_left(balance_tree(root->left()));
 			root->set_right(balance_tree(root->right()));
-			root = balance(root);
+			root = _Rb_tree_recolouring(root);
 			return (root);
+		}
+
+		bool	is_red(Node *node)
+		{
+			return (node != NULL && node->color() == ("red"));
+		}
+
+		Node	*get_uncle_node(Node *node)
+		{
+			if (node->parent() && node->parent()->parent())
+			{
+				if (node->parent() == node->parent()->parent()->left())
+					return (node->parent()->parent()->right());
+				else
+					return (node->parent()->parent()->left());
+			}
+			return (NULL);
+		}
+
+		static int	calculate_height(Node *temp)
+		{
+			int h = 0;
+			if (temp != NULL) {
+				int l_height = calculate_height(temp->left());
+				int r_height = calculate_height(temp->right());
+				int max_height = std::max(l_height, r_height);
+				h = max_height + 1;
+			}
+			return h;
 		}
 
 		static void	recomp_height(Node *_x)
@@ -473,7 +542,7 @@ namespace ft
 			}
 		}
 
-		Node	*_avl_tree_insert(Node *_x, const value_type& val)
+		Node	*_Rb_tree_insert(Node *_x, const value_type& val)
 		{
 			Node	*newNode = new_node(val);
 			Node	*_y;
@@ -481,7 +550,11 @@ namespace ft
 			if (!_x)
 			{
 				_x = newNode;
+				set_root(_x);
+				_x->set_parent(NULL);
+				_x->set_colour("black");
 				++_size;
+				++_black_height;
 				return (_x);
 			}
 			while (_x != NULL) {
@@ -512,6 +585,7 @@ namespace ft
 				newNode->set_parent(_y);
 			}
 			++_size;
+			
 			set_root(balance_tree(root()));
 			_y = _recursive_avl_tree_search(root(), val.first);
 			return (_y);
@@ -525,12 +599,7 @@ namespace ft
 
 		pair<iterator, bool>	insert(const value_type& val)
 		{
-			Node *temp = _avl_tree_insert(root(), val);
-			if (!root())
-			{
-				set_root(temp);
-				temp->set_parent(NULL);
-			}
+			Node *temp = _Rb_tree_insert(root(), val);
 			iterator it(temp);
 
 			if (it->second == val.second)
@@ -542,9 +611,7 @@ namespace ft
 		{
 			if (pos >= begin() && pos <= end())
 			{
-				Node *temp = _avl_tree_insert(pos.base(), val);
-				if (!root())
-					set_root(temp);
+				Node *temp = _Rb_tree_insert(pos.base(), val);
 				return (iterator(temp));
 			}
 			else
@@ -585,6 +652,7 @@ namespace ft
 		allocator_type	_alloc_pair;
 		key_compare		_key_comp;
 		size_type		_size;
+		size_type		_black_height;
 	};
 }
 

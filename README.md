@@ -52,4 +52,5 @@ More specifically about AVL trees:
 And red-black trees:
 * <https://en.wikipedia.org/wiki/Red%E2%80%93black_tree>;
 * <https://www.geeksforgeeks.org/introduction-to-red-black-tree>;
-* <https://www.geeksforgeeks.org/red-black-trees-top-down-insertion>.
+* <https://www.geeksforgeeks.org/insertion-in-red-black-tree>;
+* <https://www.geeksforgeeks.org/deletion-in-red-black-tree>.

@@ -90,7 +90,7 @@ namespace ft
 		explicit map(const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type())
 			: _root(NULL), _alloc_node(node_allocator()), _alloc_pair(alloc), _key_comp(comp), _size() {
 				_root = new_node();
-			}
+		}
 
 		template <class InputIterator>
 		map(InputIterator first, InputIterator last, const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type());
@@ -476,6 +476,8 @@ namespace ft
 			if (!_x)
 			{
 				_x = newNode;
+				set_root(_x);
+				_x->set_parent(NULL);
 				++_size;
 				return (_x);
 			}
@@ -521,11 +523,6 @@ namespace ft
 		pair<iterator, bool>	insert(const value_type& val)
 		{
 			Node *temp = _avl_tree_insert(root(), val);
-			if (!root())
-			{
-				set_root(temp);
-				temp->set_parent(NULL);
-			}
 			iterator it(temp);
 
 			if (it->second == val.second)
@@ -538,8 +535,6 @@ namespace ft
 			if (pos >= begin() && pos <= end())
 			{
 				Node *temp = _avl_tree_insert(pos.base(), val);
-				if (!root())
-					set_root(temp);
 				return (iterator(temp));
 			}
 			else

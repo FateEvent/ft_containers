@@ -8,6 +8,7 @@
 	namespace ft = std;
 #else
 	#include <map.hpp>
+	#include <set.hpp>
 	#include <stack.hpp>
 	#include <vector.hpp>
 #endif
@@ -185,7 +186,7 @@ int main(int argc, char** argv) {
 	for (ft::vector<char>::iterator it = newDeck.begin(); it != newDeck.end(); it++)
 		std::cout << *it << std::endl;
 */
-
+/*
 	ft::pair<char, int> b = ft::make_pair('b', 5);
 	ft::pair<char, int> c = ft::make_pair('c', 3);
 	ft::pair<char, int> d = ft::make_pair('d', 15);
@@ -243,5 +244,64 @@ int main(int argc, char** argv) {
 	}
 	std::cout << tree['a'] << std::endl;
 	std::cout << tree['r'] << std::endl;
+*/
+
+	ft::pair<char, int> b = ft::make_pair('b', 5);
+	ft::pair<char, int> c = ft::make_pair('c', 3);
+	ft::pair<char, int> d = ft::make_pair('d', 15);
+	ft::pair<char, int> f = ft::make_pair('f', 6);
+	ft::pair<char, int> l = ft::make_pair('l', -1);
+
+	ft::set<char, int> tree;
+
+	tree.insert(tree.begin(), ft::make_pair('a', 1));
+	std::cout << (tree.begin())->first << std::endl;
+	tree.insert(ft::make_pair('c', 4));
+	std::cout << (tree.begin())->first << std::endl;
+	tree.print_tree();
+	tree.insert(b);
+	tree.print_tree();
+	std::cout << std::endl;
+	tree.insert(c);
+	tree.insert(d);
+	tree.insert(f);
+	tree.insert(l);
+
+//	tree.print_tree();
+	tree.level_order_traversal(tree.protoroot(), tree.print_node);
+
+	std::cout << std::endl;
+
+//	tree.delete_tree_node('c');
+//	tree.print_tree();
+//	tree.delete_tree_node('d');
+//	std::cout << tree.root()->height() << std::endl;
+//	tree.print_tree();
+//	tree.delete_tree_node('f');
+//	tree.print_tree();
+
+//	std::cout << (tree.find('c'))->first << std::endl;
+//	std::cout << (tree.find('a'))->first << std::endl;
+
+//	ft::set<char, int>::iterator it = tree.begin();
+//	std::cout << it->first << std::endl;
+//	std::cout << &it << std::endl;
+//	it++;
+//	it++;
+//	std::cout << it->first << std::endl;
+//	it--;
+//	std::cout << it->first << std::endl;
+//	it--;
+//	std::cout << it->first << std::endl;
+
+//	std::cout << tree.at('a') << std::endl;
+//	try {
+//		std::cout << tree.at('c') << std::endl;
+//	}
+//	catch (ContainerException& e){
+//		std::cout << e.what() << std::endl;
+//	}
+//	std::cout << tree['a'] << std::endl;
+//	std::cout << tree['r'] << std::endl;
 
 }
