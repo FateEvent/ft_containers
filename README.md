@@ -53,4 +53,5 @@ And red-black trees:
 * <https://en.wikipedia.org/wiki/Red%E2%80%93black_tree>;
 * <https://www.geeksforgeeks.org/introduction-to-red-black-tree>;
 * <https://www.geeksforgeeks.org/insertion-in-red-black-tree>;
+* <https://www.cs.auckland.ac.nz/software/AlgAnim/red_black.html>;
 * <https://www.geeksforgeeks.org/deletion-in-red-black-tree>.

@@ -445,9 +445,69 @@ namespace ft
 			return (temp);
 		}
 
+		Node	*recolouring(Node *_y)
+		{
+			_y->set_colour("red");
+			while (_y != root() && _y->parent()->colour() == "red") {
+				if ( _y->parent() == _y->parent()->parent()->left()) {
+					/* If _y's parent() is a left, _y is _y's right 'uncle' */
+					Node *_z = _y->parent()->parent()->right();
+					if ( _z->colour() == "red" ) {
+						/* case 1 - change the colours */
+						_y->parent()->set_colour("black");
+						_z->set_colour("black");
+						_y->parent()->parent()->set_colour("red");
+						/* Move _y up the tree */
+						_y = _y->parent()->parent();
+					}
+					else {
+						/* _y is a black node */
+						if ( _y == _y->parent()->right()) {
+							/* and _y is to the right */ 
+							/* case 2 - move _y up and rotate */
+							_y = _y->parent();
+							_y->set_left(_avl_tree_ll_rotation(_y));
+							}
+						/* case 3 */
+						_y->parent()->set_colour("black");
+						_y->parent()->parent()->set_colour("red");
+						_y->set_parent()->set_right(_avl_tree_rr_rotation(_y->parent()->parent()));
+					}
+				}
+				else {
+					/* repeat the "if" part with right and left
+					exchanged */
+					Node *_z = _y->parent()->parent()->left();
+					if ( _z->colour() == "red" ) {
+						/* case 1 - change the colours */
+						_y->parent()->set_colour("black");
+						_z->set_colour("black");
+						_y->parent()->parent()->set_colour("red");
+						/* Move _y up the tree */
+						_y = _y->parent()->parent();
+					}
+					else {
+						/* _y is a black node */
+						if ( _y == _y->parent()->left() ) {
+							/* and _y is to the right */ 
+							/* case 2 - move _y up and rotate */
+							_y = _y->parent();
+							_y->set_right(_avl_tree_rr_rotation(_y));
+							}
+						/* case 3 */
+						_y->parent()->set_colour("black");
+						_y->parent()->parent()->set_colour("red");
+						_y->set_parent()->set_left(_avl_tree_ll_rotation(_y->parent()->parent()));
+					}
+				}
+			}
+			/* Colour the root black */
+			root()->set_colour("black");
+		}
+
 		Node	*_Rb_tree_recolouring(Node *_x)
 		{
-			Node	*uncle(NULL), *parent(NULL), *gp(NULL), *temp(NULL);
+			Node	*uncle(NULL), *parent(NULL), *gp(NULL);
 
 			while (_x != root() && _x->parent()->colour() == "red")
 			{
@@ -456,42 +516,41 @@ namespace ft
 				gp = parent->parent();
 				if (!uncle || !gp)
 					return (NULL);
-				if (uncle->colour() == "red")
-				{
-					_x->parent()->set_colour("black");
-					uncle->set_colour("black");
-					gp->set_colour("red");
-				}
-				else if (uncle->colour() == "red")
-				{
-					if (parent == gp->left() && _x == parent->left())
-					{
-						temp = _avl_tree_ll_rotation(gp);
-						temp->set_colour("black");
-						temp->left()->set_colour("red");
-					}
-					else if (parent == gp->left() && _x == parent->right())
-					{
-						temp = _avl_tree_lr_rotation(gp);
-						temp->set_colour("black");
-						temp->right()->set_colour("red");
-					}
-					else if (parent == gp->right() && _x == parent->right())
-					{
-						temp = _avl_tree_rr_rotation(gp);
-						temp->set_colour("black");
-						temp->right()->set_colour("red");
-					}
-					else if (parent == gp->right() && _x == parent->left())
-					{
-						temp->set_right(_avl_tree_rl_rotation(gp));
-						temp->set_colour("black");
-						temp->left()->set_colour("red");
-					}
-				}
+				if (uncle->colour() == "black")
+					break ;
+				_x->parent()->set_colour("black");
+				uncle->set_colour("black");
+				gp->set_colour("red");
 				_x = gp;
 			}
-			return (temp);
+			if (uncle->colour() == "red")
+			{
+				if (parent == gp->left() && _x == parent->left())
+				{
+					_x = _avl_tree_ll_rotation(_x);
+					_x->set_colour("black");
+					_x->left()->set_colour("red");
+				}
+				else if (parent == gp->left() && _x == parent->right())
+				{
+					_x = _avl_tree_lr_rotation(_x);
+					_x->set_colour("black");
+					_x->right()->set_colour("red");
+				}
+				else if (parent == gp->right() && _x == parent->right())
+				{
+					_x = _avl_tree_rr_rotation(_x);
+					_x->set_colour("black");
+					_x->right()->set_colour("red");
+				}
+				else if (parent == gp->right() && _x == parent->left())
+				{
+					_x->set_right(_avl_tree_rl_rotation(_x));
+					_x->set_colour("black");
+					_x->left()->set_colour("red");
+				}
+			}
+			return (_x);
 		}
 
 		Node	*balance_tree(Node *root)
@@ -502,11 +561,6 @@ namespace ft
 			root->set_right(balance_tree(root->right()));
 			root = _Rb_tree_recolouring(root);
 			return (root);
-		}
-
-		bool	is_red(Node *node)
-		{
-			return (node != NULL && node->color() == ("red"));
 		}
 
 		Node	*get_uncle_node(Node *node)
@@ -541,6 +595,8 @@ namespace ft
 				_x = _x->parent();
 			}
 		}
+
+
 
 		Node	*_Rb_tree_insert(Node *_x, const value_type& val)
 		{
@@ -586,7 +642,7 @@ namespace ft
 			}
 			++_size;
 			
-			set_root(balance_tree(root()));
+//			set_root(balance_tree(root()));
 			_y = _recursive_avl_tree_search(root(), val.first);
 			return (_y);
 		}
