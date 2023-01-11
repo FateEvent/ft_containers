@@ -466,12 +466,12 @@ namespace ft
 							/* and _y is to the right */ 
 							/* case 2 - move _y up and rotate */
 							_y = _y->parent();
-							_y->set_left(_avl_tree_ll_rotation(_y));
+							_y->set_right(_avl_tree_ll_rotation(_y));
 							}
 						/* case 3 */
 						_y->parent()->set_colour("black");
 						_y->parent()->parent()->set_colour("red");
-						_y->parent()->set_right(_avl_tree_rr_rotation(_y->parent()->parent()));
+						_y->parent()->set_parent(_avl_tree_rr_rotation(_y->parent()->parent()));
 					}
 				}
 				else {
@@ -492,12 +492,12 @@ namespace ft
 							/* and _y is to the right */ 
 							/* case 2 - move _y up and rotate */
 							_y = _y->parent();
-							_y->set_right(_avl_tree_rr_rotation(_y));
+							_y->set_left(_avl_tree_rr_rotation(_y));
 							}
 						/* case 3 */
 						_y->parent()->set_colour("black");
 						_y->parent()->parent()->set_colour("red");
-						_y->parent()->set_left(_avl_tree_ll_rotation(_y->parent()->parent()));
+						_y->parent()->set_parent(_avl_tree_ll_rotation(_y->parent()->parent()));
 					}
 				}
 			}
@@ -528,27 +528,27 @@ namespace ft
 			{
 				if (parent == gp->left() && _x == parent->left())
 				{
-					_x = _avl_tree_ll_rotation(_x);
-					_x->set_colour("black");
-					_x->left()->set_colour("red");
+					parent = _avl_tree_ll_rotation(parent);
+					parent->set_colour("black");
+					parent->left()->set_colour("red");
 				}
 				else if (parent == gp->left() && _x == parent->right())
 				{
-					_x = _avl_tree_lr_rotation(_x);
-					_x->set_colour("black");
-					_x->right()->set_colour("red");
+					parent = _avl_tree_lr_rotation(parent);
+					parent->set_colour("black");
+					parent->right()->set_colour("red");
 				}
 				else if (parent == gp->right() && _x == parent->right())
 				{
-					_x = _avl_tree_rr_rotation(_x);
-					_x->set_colour("black");
-					_x->right()->set_colour("red");
+					parent = _avl_tree_rr_rotation(parent);
+					parent->set_colour("black");
+					parent->right()->set_colour("red");
 				}
 				else if (parent == gp->right() && _x == parent->left())
 				{
-					_x->set_right(_avl_tree_rl_rotation(_x));
-					_x->set_colour("black");
-					_x->left()->set_colour("red");
+					parent->set_right(_avl_tree_rl_rotation(parent));
+					parent->set_colour("black");
+					parent->left()->set_colour("red");
 				}
 			}
 			return (_x);
@@ -642,7 +642,7 @@ namespace ft
 				newNode->set_parent(_y);
 			}
 			++_size;
-			set_root(recolouring(_y));
+			set_root(_Rb_tree_recolouring(_y));
 //			set_root(balance_tree(root()));
 			_y = _recursive_avl_tree_search(root(), val.first);
 			return (_y);

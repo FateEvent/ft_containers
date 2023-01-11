@@ -56,8 +56,8 @@ namespace ft
 		template<class U>
 		wrapper_it(const wrapper_it<U>& other): _current(other.base()) {}
 
-		reference	operator* () const { return *_current; }
-		pointer		operator-> () const { return &(operator*()); }
+		reference	operator* () { return *_current; }
+		pointer		operator-> () { return &(operator*()); }
 
 		value_type	base() const { return _current; }
 
@@ -105,8 +105,8 @@ namespace ft
 		template<class U>
 		reverse_iterator(const reverse_iterator<U>& other): _current(other.base()) {}
 
-		reference	operator* () const { return *_current; }
-		pointer		operator-> () const { return &(operator*()); }
+		reference	operator* () { return *_current; }
+		pointer		operator-> () { return &(operator*()); }
 
 		value_type	base() const { return _current; }
 
