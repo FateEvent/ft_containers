@@ -267,8 +267,8 @@ int main(int argc, char** argv) {
 	tree.insert(f);
 	tree.insert(l);
 
-//	tree.print_tree();
-	tree.level_order_traversal(tree.protoroot(), tree.print_node);
+	tree.print_tree();
+//	tree.level_order_traversal(tree.protoroot(), tree.print_node);
 
 	std::cout << std::endl;
 

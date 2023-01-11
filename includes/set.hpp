@@ -448,7 +448,7 @@ namespace ft
 		Node	*recolouring(Node *_y)
 		{
 			_y->set_colour("red");
-			while (_y != root() && _y->parent()->colour() == "red") {
+			while (_y != root() && _y->parent() && _y->parent()->colour() == "red") {
 				if ( _y->parent() == _y->parent()->parent()->left()) {
 					/* If _y's parent() is a left, _y is _y's right 'uncle' */
 					Node *_z = _y->parent()->parent()->right();
@@ -471,7 +471,7 @@ namespace ft
 						/* case 3 */
 						_y->parent()->set_colour("black");
 						_y->parent()->parent()->set_colour("red");
-						_y->set_parent()->set_right(_avl_tree_rr_rotation(_y->parent()->parent()));
+						_y->parent()->set_right(_avl_tree_rr_rotation(_y->parent()->parent()));
 					}
 				}
 				else {
@@ -497,12 +497,13 @@ namespace ft
 						/* case 3 */
 						_y->parent()->set_colour("black");
 						_y->parent()->parent()->set_colour("red");
-						_y->set_parent()->set_left(_avl_tree_ll_rotation(_y->parent()->parent()));
+						_y->parent()->set_left(_avl_tree_ll_rotation(_y->parent()->parent()));
 					}
 				}
 			}
 			/* Colour the root black */
 			root()->set_colour("black");
+			return (_y);
 		}
 
 		Node	*_Rb_tree_recolouring(Node *_x)
@@ -641,7 +642,7 @@ namespace ft
 				newNode->set_parent(_y);
 			}
 			++_size;
-			
+			set_root(recolouring(_y));
 //			set_root(balance_tree(root()));
 			_y = _recursive_avl_tree_search(root(), val.first);
 			return (_y);
