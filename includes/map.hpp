@@ -99,6 +99,7 @@ namespace ft
 		~map() { delete_node(protoroot()); }
 		map&	operator= (map const& base);
 		Node	*protoroot() { return (_root); }
+		Node	*dummy() { return (protoroot()); }
 		Node	*root() { return (_root->right()); }
 		void	set_root(Node *current) { _root->set_right(current); }
 

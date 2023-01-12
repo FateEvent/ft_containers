@@ -84,11 +84,11 @@ namespace ft
 			int			&height() { return _height; }
 			std::string	&colour() { return _colour; }
 
-			bool		is_on_left() { return this == this->parent()->left(); }
+			bool		is_left_child() { return this == this->parent()->left(); }
 
 			void		move_down(Node *parent) {
 				if (this->parent() != NULL) {
-					if (this->is_on_left()) {
+					if (this->is_left_child()) {
 						this->parent()->set_left(parent);
 					} else {
 						this->parent()->set_right(parent);
@@ -106,7 +106,7 @@ namespace ft
 			Node	*get_sibling() {
 				if (this->parent() == NULL)
 						return (NULL);
-				if (this->is_on_left())
+				if (this->is_left_child())
 						return this->parent()->right();
 				return (this->parent()->left());
 			}
@@ -144,6 +144,7 @@ namespace ft
 		~set() { delete_node(protoroot()); }
 		set&	operator= (set const& base);
 		Node	*protoroot() { return (_root); }
+		Node	*dummy() { return (protoroot()); }
 		Node	*root() { return (_root->right()); }
 		void	set_root(Node *current) { _root->set_right(current); }
 
@@ -228,7 +229,7 @@ namespace ft
 
 		iterator	find(const key_type& k)
 		{
-			Node *found = _recursive_avl_tree_search(root(), k);
+			Node *found = _recursive_Rb_tree_search(root(), k);
 			if (found)
 				return (iterator(found));
 			return (end());
@@ -268,7 +269,7 @@ namespace ft
 		** 																			**
 		\****************************************************************************/
 
-		Node	*_iterative_avl_tree_search(const key_type& k)
+		Node	*_iterative_Rb_tree_search(const key_type& k)
 		{
 			Node	*current(root());
 			Node	*prev(root());
@@ -291,7 +292,7 @@ namespace ft
 			return (prev);
 		}
 
-		Node	*_recursive_avl_tree_search(Node *node, const key_type& k)
+		Node	*_recursive_Rb_tree_search(Node *node, const key_type& k)
 		{
 			if (node == NULL)
 				return (NULL);
@@ -299,12 +300,12 @@ namespace ft
 				return (node);
 			else if (_key_comp(k, node->data().first))
 			{
-				Node *temp = _recursive_avl_tree_search(node->left(), k);
+				Node *temp = _recursive_Rb_tree_search(node->left(), k);
 				return (temp);
 			}
 			else
 			{
-				Node *temp = _recursive_avl_tree_search(node->right(), k);
+				Node *temp = _recursive_Rb_tree_search(node->right(), k);
 				return (temp);
 			}
 		}
@@ -340,64 +341,116 @@ namespace ft
 			}
 		}
 
-		void	_avl_tree_node_deletion(const key_type& k)
+		void fix_double_black_conflicts(Node *x) {
+			if (x == root())
+				return ;
+			Node *sibling = x->get_sibling(), *parent = x->parent();
+			if (sibling == NULL) {
+				fix_double_black_conflicts(parent);
+			} else {
+				if (sibling->colour() == "red") {
+					parent->set_colour("red");
+					sibling->set_colour("black");
+					if (sibling->is_left_child()) {
+						_Rb_tree_right_rotation(parent);
+					} else {
+						_Rb_tree_left_rotation(parent);
+					}
+					fix_double_black_conflicts(x);
+				} else {
+					if (sibling->has_red_child()) {
+						if (sibling->left() != NULL and sibling->left()->colour() == "red") {
+							if (sibling->is_left_child()) {
+								sibling->left()->set_colour(sibling->colour());
+								sibling->set_colour(parent->colour());
+								_Rb_tree_right_rotation(parent);
+							} else {
+								sibling->left()->set_colour(parent->colour());
+								_Rb_tree_right_rotation(sibling);
+								_Rb_tree_left_rotation(parent);
+							}
+						} else {
+							if (sibling->is_left_child()) {
+								sibling->right()->set_colour(parent->colour());
+								_Rb_tree_left_rotation(sibling);
+								_Rb_tree_right_rotation(parent);
+							} else {
+								sibling->right()->set_colour(sibling->colour());
+								sibling->set_colour(parent->colour());
+								_Rb_tree_left_rotation(parent);
+							}
+						}
+						parent->set_colour("black");
+					} else {
+						sibling->set_colour("red");
+						if (parent->colour() == "black")
+							fix_double_black_conflicts(parent);
+						else
+							parent->set_colour("black");
+					}
+				}
+			}
+		}
+
+		Node	*BST_replace_node(Node *x) {
+			if (x->left() != NULL && x->right() != NULL)
+				return successor(x);
+			if (x->left() == NULL && x->right() == NULL)
+				return (NULL);
+			if (x->left() != NULL)
+				return (x->left());
+			else
+				return (x->right());
+		}
+
+		void _Rb_tree_node_deletion(Node *v)
 		{
-			Node	*p(NULL);
-			Node	*parent(NULL);
-			Node	*succ(NULL);
+			Node *u = BST_replace_node(v);
 
-			p = _recursive_avl_tree_search(root(), k);
-			if (!p)
-				return ;
-			--_size;
-			if (p->left() == NULL && p->right() == NULL)
-			{
-				parent = p->parent();
+			bool uvBlack = ((u == NULL || u->colour() == "black") && (v->colour() == "black"));
+			Node *parent = v->parent();
 
-				if (parent->left() == p)
-					parent->set_left(NULL);
-				else
-					parent->set_right(NULL);
-				delete_node(p);
-				set_root(balance_tree(root()));
+			if (u == NULL) {
+				if (v == root()) {
+					set_root(NULL);
+				} else {
+					if (uvBlack)
+						fix_double_black_conflicts(v);
+					else {
+						if (v->get_sibling() != NULL)
+						v->get_sibling()->set_colour("red");
+					}
+					if (v->is_left_child()) {
+						parent->set_left(NULL);
+					} else {
+						parent->set_right(NULL);
+					}
+				}
+				delete_node(v);
 				return ;
 			}
-			if (p->left() == NULL)
-			{
-				parent = p->parent();
-				if (parent->left() == p)
-					parent->set_left(p->right());
-				else
-					parent->set_right(p->right());
-				delete_node(p);
-				set_root(balance_tree(root()));
+			if (v->left() == NULL or v->right() == NULL) {
+				if (v == root()) {
+					transplant(v, u);
+					v->set_left(NULL);
+					v->set_right(NULL);
+					delete_node(u);
+				} else {
+					if (v->is_left_child())
+						parent->set_left(u);
+					else
+						parent->set_right(u);
+					delete_node(v);
+					u->set_parent(parent);
+					if (uvBlack)
+						fix_double_black_conflicts(u);
+					else
+						u->set_colour("black");
+				}
 				return ;
 			}
-			if (p->right() == NULL)
-			{
-				parent = p->parent();
-				if (parent->left() == p)
-					parent->set_left(p->left());
-				else
-					parent->set_right(p->left());
-				delete_node(p);	
-				set_root(balance_tree(root()));
-				return ;
-			}
-			succ = successor(p);
-			if (p->right() != succ)
-			{
-				transplant(succ, succ->right());
-				succ->set_right(p->right());
-				succ->right()->set_parent(succ);
-			}
-			transplant(p, succ);
-			succ->set_left(p->left());
-			succ->left()->set_parent(succ);
-			delete_node(p);
-			recomp_height(succ);
-			set_root(balance_tree(root()));
-			return ;
+			transplant(u, v);
+			_Rb_tree_node_deletion(u);
 		}
 
 		void	swap_colours(Node *_x, Node *_y) {
@@ -441,8 +494,8 @@ namespace ft
 					grandparent->set_colour("red");
 					fix_red_red_violations(grandparent);
 				} else {
-					if (parent->is_on_left()) {
-						if (_x->is_on_left()) {
+					if (parent->is_left_child()) {
+						if (_x->is_left_child()) {
 							swap_colours(parent, grandparent);
 						} else {
 							_Rb_tree_left_rotation(parent);
@@ -450,7 +503,7 @@ namespace ft
 						}
 						_Rb_tree_right_rotation(grandparent);
 					} else {
-						if (_x->is_on_left()) {
+						if (_x->is_left_child()) {
 							_Rb_tree_right_rotation(parent);
 							swap_colours(_x, grandparent);
 						} else {
@@ -497,7 +550,7 @@ namespace ft
 				++_black_height;
 				return (_x);
 			}
-			Node *temp = _iterative_avl_tree_search(val.first);
+			Node *temp = _iterative_Rb_tree_search(val.first);
 			if (temp->data().first == val.first)
 			{
 				delete_node(_y);
@@ -511,14 +564,18 @@ namespace ft
 			fix_red_red_violations(_y);
 			suffix_traversal(root(), recomp_height);
 			++_size;
-			_y = _recursive_avl_tree_search(root(), val.first);
+			_y = _recursive_Rb_tree_search(root(), val.first);
 			return (_y);
 		}
 
 		void	delete_tree_node(const key_type& k)
 		{
+			Node *p = _recursive_Rb_tree_search(root(), k);
+			if (!p)
+				return ;
+			--_size;
 //			return (iterator(_avl_tree_node_deletion(k)));
-			_avl_tree_node_deletion(k);
+			_Rb_tree_node_deletion(p);
 		}
 
 		pair<iterator, bool>	insert(const value_type& val)
@@ -550,7 +607,7 @@ namespace ft
 
 		mapped_type&	operator[] (const key_type& k)
 		{
-			Node *found = _recursive_avl_tree_search(root(), k);
+			Node *found = _recursive_Rb_tree_search(root(), k);
 			if (found)
 				return (found->data().second);
 			iterator it = insert(root(), ft::make_pair(k, mapped_type()));
@@ -559,7 +616,7 @@ namespace ft
 
 		mapped_type&	at(const key_type& k)
 		{
-			Node *found = _recursive_avl_tree_search(root(), k);
+			Node *found = _recursive_Rb_tree_search(root(), k);
 			if (found)
 				return (found->data().second);
 			throw(ContainerException("out_of_range"));
