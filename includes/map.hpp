@@ -473,7 +473,7 @@ namespace ft
 			Node	*newNode = new_node(val);
 			Node	*_y;
 
-			if (!_x)
+			if (!_x || _x == protoroot())
 			{
 				_x = newNode;
 				set_root(_x);
