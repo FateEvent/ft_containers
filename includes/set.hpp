@@ -361,254 +361,25 @@ namespace ft
 			return ;
 		}
 
-		Node	*_avl_tree_rr_rotation(Node *root)
-		{
-			Node *temp = root->right();
-			root->set_right(temp->left());
-			if (temp->left() != NULL)
-				temp->left()->set_parent(root);
-			temp->set_left(root);
-			temp->set_parent(root->parent());
-			root->set_parent(temp);
-			if (temp->parent() != NULL
-				&& _key_comp(root->data().first, temp->parent()->data().first)) {
-				temp->parent()->set_left(temp);
-			}
-			else {
-				if (temp->parent() != NULL)
-					temp->parent()->set_right(temp);
-			}
-			root = temp;
-			recomp_height(root->left());
-			recomp_height(root->right());
-			return (root);
-		}
-		
-		Node	*_avl_tree_rl_rotation(Node *root)
-		{
-			root->set_right(_avl_tree_ll_rotation(root->right()));
-			return (_avl_tree_rr_rotation(root));
-		}
-
-		Node	*_avl_tree_lr_rotation(Node *root)
-		{
-			root->set_left(_avl_tree_rr_rotation(root->left()));
-			return (_avl_tree_ll_rotation(root));
-		}
-
-		Node	*_avl_tree_ll_rotation(Node *root)
-		{
-			Node *temp = root->left();
-			root->set_left(temp->right());
-			if (temp->right() != NULL)
-				temp->right()->set_parent(root);
-			temp->set_right(root);
-			temp->set_parent(root->parent());
-			root->set_parent(temp);
-			if (temp->parent() != NULL
-				&& _key_comp(root->data().first, temp->parent()->data().first)) {
-				temp->parent()->set_left(temp);
-			}
-			else {
-				if (temp->parent() != NULL)
-					temp->parent()->set_right(temp);
-			}
-			root = temp;
-			recomp_height(root->left());
-			recomp_height(root->right());
-			return (root);
-		}
-
-		int	diff(Node *temp)
-		{
-			int l_height = calculate_height(temp->left());
-			int r_height = calculate_height(temp->right());
-			int b_factor = l_height - r_height;
-			return (b_factor);
-		}
-
-		Node	*balance(Node *temp)
-		{
-			int bal_factor = diff(temp);
-			if (bal_factor > 1) {
-				if (diff(temp->left()) > 0)
-					temp = _avl_tree_ll_rotation(temp);
-				else
-					temp = _avl_tree_lr_rotation(temp);
-			}
-			else if (bal_factor < -1) {
-				if (diff(temp->right()) > 0)
-					temp = _avl_tree_rl_rotation(temp);
-				else
-					temp = _avl_tree_rr_rotation(temp);
-			}
-			return (temp);
-		}
-
-		void	_Rb_right_rotation(Node	*_x)
-		{
-			Node	*_y(NULL);
-			_y = _x->left();
-			_x->set_left(_y->right());
-			if ( _y->right() != NULL )
-				_y->right()->set_parent(_x);
-			_y->set_parent(_x->parent());
-			if ( _x->parent() == NULL )
-				set_root(_y);
-			else
-				if ( _x == _x->parent()->right())
-					_x->parent()->set_right(_y);
-				else
-					_x->parent()->set_left(_y);
-			_y->set_right(_x);
-			_x->set_parent(_y);
-		}
-
-		void	_Rb_left_rotation(Node	*_x)
-		{
-			Node	*_y(NULL);
-			_y = _x->right();
-			_x->set_right(_y->left());
-			if ( _y->left() != NULL )
-				_y->left()->set_parent(_x);
-			_y->set_parent(_x->parent());
-			if ( _x->parent() == NULL )
-				set_root(_y);
-			else
-				if ( _x == _x->parent()->left())
-					_x->parent()->set_left(_y);
-				else
-					_x->parent()->set_right(_y);
-			_y->set_left(_x);
-			_x->set_parent(_y);
-		}
-
-		void	recolouring(Node *_x)
-		{
-			Node	*_y(NULL);
-			_x->set_colour("red");
-			while (_x->parent() && _x->parent() != root() && _x != root() && _x->parent()->colour() == "red") {
-				if ( _x->parent() == _x->parent()->parent()->left()) {
-					_y = _x->parent()->parent()->right();
-					if ( _y->colour() == "red" ) {
-						_x->parent()->set_colour("black");
-						_y->set_colour("black");
-						_x->parent()->parent()->set_colour("red");
-						_x = _x->parent()->parent();
-					}
-					else
-					{
-						if ( _x == _x->parent()->right())
-						{
-							_x = _x->parent();
-							_Rb_left_rotation(_x);
-						}
-						_x->parent()->set_colour("black");
-						_x->parent()->parent()->set_colour("red");
-						_Rb_right_rotation(_x->parent()->parent());
-					}
-				}
-				else
-				{
-					_y = _x->parent()->parent()->left();
-					if ( _y->colour() == "red" ) {
-						_x->parent()->set_colour("black");
-						_y->set_colour("black");
-						_x->parent()->parent()->set_colour("red");
-						_x = _x->parent()->parent();
-					}
-					else
-					{
-						if ( _x == _x->parent()->left() ) {
-							_x = _x->parent();
-							_Rb_right_rotation(_x);
-						}
-						_x->parent()->set_colour("black");
-						_x->parent()->parent()->set_colour("red");
-						_Rb_left_rotation(_x->parent()->parent());
-					}
-				}
-			}
-			root()->set_colour("black");
-		}
-
-		Node	*_Rb_tree_recolouring(Node *_x)
-		{
-			Node	*uncle(NULL), *parent(NULL), *gp(NULL);
-
-			while (_x != root() && _x->parent()->colour() == "red")
-			{
-				uncle = get_uncle_node(_x);
-				parent = _x->parent();
-				gp = parent->parent();
-				if (!uncle || !gp)
-					return (NULL);
-				if (uncle->colour() == "black")
-					break ;
-				_x->parent()->set_colour("black");
-				uncle->set_colour("black");
-				gp->set_colour("red");
-				_x = gp;
-			}
-			if (uncle->colour() == "red")
-			{
-				if (parent == gp->left() && _x == parent->left())
-				{
-					parent = _avl_tree_ll_rotation(parent);
-					parent->set_colour("black");
-					parent->left()->set_colour("red");
-				}
-				else if (parent == gp->left() && _x == parent->right())
-				{
-					parent = _avl_tree_lr_rotation(parent);
-					parent->set_colour("black");
-					parent->right()->set_colour("red");
-				}
-				else if (parent == gp->right() && _x == parent->right())
-				{
-					parent = _avl_tree_rr_rotation(parent);
-					parent->set_colour("black");
-					parent->right()->set_colour("red");
-				}
-				else if (parent == gp->right() && _x == parent->left())
-				{
-					parent->set_right(_avl_tree_rl_rotation(parent));
-					parent->set_colour("black");
-					parent->left()->set_colour("red");
-				}
-			}
-			return (_x);
-		}
-
-		Node	*balance_tree(Node *root)
-		{
-			if (root == NULL)
-				return (NULL);
-			root->set_left(balance_tree(root->left()));
-			root->set_right(balance_tree(root->right()));
-			root = _Rb_tree_recolouring(root);
-			return (root);
-		}
-
-		void	swapColours(Node *_x, Node *_y) {
+		void	swap_colours(Node *_x, Node *_y) {
 			std::string temp = _x->colour();
 			_x->set_colour(_y->colour());
 			_y->set_colour(temp);
 		}
 
-		bool	isOnLeft(Node *node) { return node == node->parent()->left(); }
+		bool	is_on_left(Node *node) { return node == node->parent()->left(); }
 
-		Node	*sibling(Node *node) {
+		Node	*get_sibling(Node *node) {
 				if (node->parent() == NULL)
 						return (NULL);
-				if (isOnLeft(node))
+				if (is_on_left(node))
 						return node->parent()->right();
 				return (node->parent()->left());
 		}
 
-		void	moveDown(Node *node, Node *parent) {
+		void	move_down(Node *node, Node *parent) {
 			if (node->parent() != NULL) {
-				if (isOnLeft(node)) {
+				if (is_on_left(node)) {
 					node->parent()->set_left(parent);
 				} else {
 					node->parent()->set_right(parent);
@@ -635,57 +406,57 @@ namespace ft
 			return (NULL);
 		}
 
-		void	leftRotate(Node *_x) {
+		void	_Rb_tree_left_rotation(Node *_x) {
 			Node *nParent = _x->right();
 			if (_x == root())
 				set_root(nParent);
-			moveDown(_x, nParent);
+			move_down(_x, nParent);
 			_x->set_right(nParent->left());
 			if (nParent->left() != NULL)
 				nParent->left()->set_parent(_x);
 			nParent->set_left(_x);
 		}
 
-		void	rightRotate(Node *_x) {
+		void	_Rb_tree_right_rotation(Node *_x) {
 			Node *nParent = _x->left();
 			if (_x == root())
 				set_root(nParent);
-			moveDown(_x, nParent);
+			move_down(_x, nParent);
 			_x->set_left(nParent->right());
 			if (nParent->right() != NULL)
 				nParent->right()->set_parent(_x);
 			nParent->set_right(_x);
 		}
 
-		void	fixRedRed(Node *x) {
-			if (x == root()) {
-				x->set_colour("black");
+		void	fix_red_red_violations(Node *_x) {
+			if (_x == root()) {
+				_x->set_colour("black");
 				return ;
 			}
-			Node *parent = x->parent(), *grandparent = parent->parent(), *uncle = get_uncle_node(x);
+			Node *parent = _x->parent(), *grandparent = parent->parent(), *uncle = get_uncle_node(_x);
 			if (parent->colour() != "black") {
 				if (uncle != NULL && uncle->colour() == "red") {
 					parent->set_colour("black");
 					uncle->set_colour("black");
 					grandparent->set_colour("red");
-					fixRedRed(grandparent);
+					fix_red_red_violations(grandparent);
 				} else {
-					if (isOnLeft(parent)) {
-						if (isOnLeft(x)) {
-							swapColours(parent, grandparent);
+					if (is_on_left(parent)) {
+						if (is_on_left(_x)) {
+							swap_colours(parent, grandparent);
 						} else {
-							leftRotate(parent);
-							swapColours(x, grandparent);
+							_Rb_tree_left_rotation(parent);
+							swap_colours(_x, grandparent);
 						}
-						rightRotate(grandparent);
+						_Rb_tree_right_rotation(grandparent);
 					} else {
-						if (isOnLeft(x)) {
-							rightRotate(parent);
-							swapColours(x, grandparent);
+						if (is_on_left(_x)) {
+							_Rb_tree_right_rotation(parent);
+							swap_colours(_x, grandparent);
 						} else {
-							swapColours(parent, grandparent);
+							swap_colours(parent, grandparent);
 						}
-						leftRotate(grandparent);
+						_Rb_tree_left_rotation(grandparent);
 					}
 				}
 			}
@@ -737,7 +508,8 @@ namespace ft
 				temp->set_left(_y);
 			else
 				temp->set_right(_y);
-			fixRedRed(_y);
+			fix_red_red_violations(_y);
+			suffix_traversal(root(), recomp_height);
 			++_size;
 			_y = _recursive_avl_tree_search(root(), val.first);
 			return (_y);
