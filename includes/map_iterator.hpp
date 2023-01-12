@@ -26,17 +26,15 @@ namespace ft
 		typedef Content*							pointer;
 		typedef Content&							reference;
 
-		map_iterator() : _ptr(&_dummy), _last(NULL), _dummy() {}
-		map_iterator(node_pointer ptr) : _ptr(ptr), _last(NULL), _dummy() {}
-		map_iterator(const map_iterator &other) : _ptr(other._ptr), _last(other._last), _dummy(other._dummy) {}
+		map_iterator() : _ptr(NULL) {}
+		map_iterator(node_pointer ptr) : _ptr(ptr) {}
+		map_iterator(const map_iterator &other) : _ptr(other._ptr) {}
 
 		node_pointer	base() const { return _ptr; }
 
 		reference	operator* () const { return _ptr->data(); }	// regarder la doc su les itérateurs
 		pointer		operator-> () const { return &(_ptr->data()); }	// OK!
 
-//		node_pointer	last() const { return _last; }
-//		void			set_last(node_pointer last) { _last = last; }
 		void			set_ptr(node_pointer ptr) { _ptr = ptr; }
 
 		static Node	*local_Rb_tree_decrement(Node *_x) throw ()
@@ -144,8 +142,6 @@ namespace ft
 
 	private:
 		Node	*_ptr;
-		Node	*_last;
-		Node	_dummy;
 	};
 }
 

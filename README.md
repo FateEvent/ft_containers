@@ -51,6 +51,7 @@ More specifically about AVL trees:
 
 And red-black trees:
 * <https://en.wikipedia.org/wiki/Red%E2%80%93black_tree>;
+* <https://www.cs.usfca.edu/~galles/visualization/RedBlack.html>;
 * <https://www.geeksforgeeks.org/introduction-to-red-black-tree>;
 * <https://www.geeksforgeeks.org/insertion-in-red-black-tree>;
 * <https://www.cs.auckland.ac.nz/software/AlgAnim/red_black.html>;

@@ -208,7 +208,6 @@ int main(int argc, char** argv) {
 	tree.insert(f);
 	tree.insert(l);
 
-//	tree.print_tree();
 	tree.level_order_traversal(tree.protoroot(), tree.print_node);
 
 	std::cout << std::endl;
@@ -283,16 +282,16 @@ int main(int argc, char** argv) {
 //	std::cout << (tree.find('c'))->first << std::endl;
 //	std::cout << (tree.find('a'))->first << std::endl;
 
-//	ft::set<char, int>::iterator it = tree.begin();
-//	std::cout << it->first << std::endl;
-//	std::cout << &it << std::endl;
-//	it++;
-//	it++;
-//	std::cout << it->first << std::endl;
-//	it--;
-//	std::cout << it->first << std::endl;
-//	it--;
-//	std::cout << it->first << std::endl;
+	ft::set<char, int>::iterator it = tree.begin();
+	std::cout << it->first << std::endl;
+	std::cout << &it << std::endl;
+	it++;
+	it++;
+	std::cout << it->first << std::endl;
+	it--;
+	std::cout << it->first << std::endl;
+	it--;
+	std::cout << it->first << std::endl;
 
 //	std::cout << tree.at('a') << std::endl;
 //	try {

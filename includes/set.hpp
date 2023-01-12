@@ -83,6 +83,45 @@ namespace ft
 			Node		*parent() { return _parent; }
 			int			&height() { return _height; }
 			std::string	&colour() { return _colour; }
+
+			bool		is_on_left() { return this == this->parent()->left(); }
+
+			void		move_down(Node *parent) {
+				if (this->parent() != NULL) {
+					if (this->is_on_left()) {
+						this->parent()->set_left(parent);
+					} else {
+						this->parent()->set_right(parent);
+					}
+				}
+				parent->set_parent(this->parent());
+				this->set_parent(parent);
+			}
+
+			bool		has_red_child() {
+			return (this->left() != NULL and this->left()->colour() == "red") or
+			(this->right() != NULL and this->right()->colour() == "red");
+			}
+
+			Node	*get_sibling() {
+				if (this->parent() == NULL)
+						return (NULL);
+				if (this->is_on_left())
+						return this->parent()->right();
+				return (this->parent()->left());
+			}
+
+			Node	*get_uncle_node()
+			{
+				if (this->parent() && this->parent()->parent())
+				{
+					if (this->parent() == this->parent()->parent()->left())
+						return (this->parent()->parent()->right());
+					else
+						return (this->parent()->parent()->left());
+				}
+				return (NULL);
+			}
 		};
 /*
 		std::ostream	&operator<< (std::ostream &o, const Node &node) {
@@ -135,7 +174,7 @@ namespace ft
 			}
 		}
 
-		void	level_order_traversal(Node *current, void (*f)(Node *)) {
+		void	level_order_traversal(Node *current, void (*f)(Node *)){
 			vector<Node *>	deck;
 
 			deck.push_back(current);
@@ -367,50 +406,11 @@ namespace ft
 			_y->set_colour(temp);
 		}
 
-		bool	is_on_left(Node *node) { return node == node->parent()->left(); }
-
-		Node	*get_sibling(Node *node) {
-				if (node->parent() == NULL)
-						return (NULL);
-				if (is_on_left(node))
-						return node->parent()->right();
-				return (node->parent()->left());
-		}
-
-		void	move_down(Node *node, Node *parent) {
-			if (node->parent() != NULL) {
-				if (is_on_left(node)) {
-					node->parent()->set_left(parent);
-				} else {
-					node->parent()->set_right(parent);
-				}
-			}
-			parent->set_parent(node->parent());
-			node->set_parent(parent);
-		}
-
-		bool	hasRedChild(Node *node) {
-			return (node->left() != NULL and node->left()->colour() == "red") or
-			(node->right() != NULL and node->right()->colour() == "red");
-		}
-
-		Node	*get_uncle_node(Node *node)
-		{
-			if (node->parent() && node->parent()->parent())
-			{
-				if (node->parent() == node->parent()->parent()->left())
-					return (node->parent()->parent()->right());
-				else
-					return (node->parent()->parent()->left());
-			}
-			return (NULL);
-		}
-
 		void	_Rb_tree_left_rotation(Node *_x) {
 			Node *nParent = _x->right();
 			if (_x == root())
 				set_root(nParent);
-			move_down(_x, nParent);
+			_x->move_down(nParent);
 			_x->set_right(nParent->left());
 			if (nParent->left() != NULL)
 				nParent->left()->set_parent(_x);
@@ -421,7 +421,7 @@ namespace ft
 			Node *nParent = _x->left();
 			if (_x == root())
 				set_root(nParent);
-			move_down(_x, nParent);
+			_x->move_down(nParent);
 			_x->set_left(nParent->right());
 			if (nParent->right() != NULL)
 				nParent->right()->set_parent(_x);
@@ -433,7 +433,7 @@ namespace ft
 				_x->set_colour("black");
 				return ;
 			}
-			Node *parent = _x->parent(), *grandparent = parent->parent(), *uncle = get_uncle_node(_x);
+			Node *parent = _x->parent(), *grandparent = parent->parent(), *uncle = _x->get_uncle_node();
 			if (parent->colour() != "black") {
 				if (uncle != NULL && uncle->colour() == "red") {
 					parent->set_colour("black");
@@ -441,8 +441,8 @@ namespace ft
 					grandparent->set_colour("red");
 					fix_red_red_violations(grandparent);
 				} else {
-					if (is_on_left(parent)) {
-						if (is_on_left(_x)) {
+					if (parent->is_on_left()) {
+						if (_x->is_on_left()) {
 							swap_colours(parent, grandparent);
 						} else {
 							_Rb_tree_left_rotation(parent);
@@ -450,7 +450,7 @@ namespace ft
 						}
 						_Rb_tree_right_rotation(grandparent);
 					} else {
-						if (is_on_left(_x)) {
+						if (_x->is_on_left()) {
 							_Rb_tree_right_rotation(parent);
 							swap_colours(_x, grandparent);
 						} else {
