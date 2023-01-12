@@ -186,7 +186,7 @@ int main(int argc, char** argv) {
 	for (ft::vector<char>::iterator it = newDeck.begin(); it != newDeck.end(); it++)
 		std::cout << *it << std::endl;
 */
-/*
+
 	ft::pair<char, int> b = ft::make_pair('b', 5);
 	ft::pair<char, int> c = ft::make_pair('c', 3);
 	ft::pair<char, int> d = ft::make_pair('d', 15);
@@ -243,8 +243,8 @@ int main(int argc, char** argv) {
 	}
 	std::cout << tree['a'] << std::endl;
 	std::cout << tree['r'] << std::endl;
-*/
 
+/*
 	ft::pair<char, int> b = ft::make_pair('b', 5);
 	ft::pair<char, int> c = ft::make_pair('c', 3);
 	ft::pair<char, int> d = ft::make_pair('d', 15);
@@ -279,8 +279,8 @@ int main(int argc, char** argv) {
 	tree.delete_tree_node('f');
 	tree.print_tree();
 
-//	std::cout << (tree.find('c'))->first << std::endl;
-//	std::cout << (tree.find('a'))->first << std::endl;
+	std::cout << (tree.find('c'))->first << std::endl;
+	std::cout << (tree.find('a'))->first << std::endl;
 
 	ft::set<char, int>::iterator it = tree.begin();
 	std::cout << it->first << std::endl;
@@ -293,14 +293,14 @@ int main(int argc, char** argv) {
 	it--;
 	std::cout << it->first << std::endl;
 
-//	std::cout << tree.at('a') << std::endl;
-//	try {
-//		std::cout << tree.at('c') << std::endl;
-//	}
-//	catch (ContainerException& e){
-//		std::cout << e.what() << std::endl;
-//	}
-//	std::cout << tree['a'] << std::endl;
-//	std::cout << tree['r'] << std::endl;
-
+	std::cout << tree.at('a') << std::endl;
+	try {
+		std::cout << tree.at('c') << std::endl;
+	}
+	catch (ContainerException& e){
+		std::cout << e.what() << std::endl;
+	}
+	std::cout << tree['a'] << std::endl;
+	std::cout << tree['r'] << std::endl;
+*/
 }

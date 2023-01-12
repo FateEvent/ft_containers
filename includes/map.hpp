@@ -263,7 +263,7 @@ namespace ft
 			}
 		}
 
-		void	transplant(Node *u, Node *v)
+		void	_avl_tree_transplant(Node *u, Node *v)
 		{
 			if (u == NULL)
 				return ;
@@ -277,7 +277,7 @@ namespace ft
 				v->set_parent(u->parent());
 		}
 
-		Node	*successor(Node *node)
+		Node	*_avl_tree_successor(Node *node)
 		{
 			if (node->right() != NULL)
 			{
@@ -338,14 +338,14 @@ namespace ft
 				set_root(balance_tree(root()));
 				return ;
 			}
-			succ = successor(p);
+			succ = _avl_tree_successor(p);
 			if (p->right() != succ)
 			{
-				transplant(succ, succ->right());
+				_avl_tree_transplant(succ, succ->right());
 				succ->set_right(p->right());
 				succ->right()->set_parent(succ);
 			}
-			transplant(p, succ);
+			_avl_tree_transplant(p, succ);
 			succ->set_left(p->left());
 			succ->left()->set_parent(succ);
 			delete_node(p);

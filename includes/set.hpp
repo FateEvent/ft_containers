@@ -310,7 +310,7 @@ namespace ft
 			}
 		}
 
-		void	transplant(Node *u, Node *v)
+		void	_Rb_tree_transplant(Node *u, Node *v)
 		{
 			if (u == NULL)
 				return ;
@@ -324,7 +324,7 @@ namespace ft
 				v->set_parent(u->parent());
 		}
 
-		Node	*successor(Node *node)
+		Node	*_Rb_tree_successor(Node *node)
 		{
 			if (node->right() != NULL)
 			{
@@ -394,7 +394,7 @@ namespace ft
 
 		Node	*BST_replace_node(Node *x) {
 			if (x->left() != NULL && x->right() != NULL)
-				return successor(x);
+				return _Rb_tree_successor(x);
 			if (x->left() == NULL && x->right() == NULL)
 				return (NULL);
 			if (x->left() != NULL)
@@ -431,7 +431,7 @@ namespace ft
 			}
 			if (v->left() == NULL or v->right() == NULL) {
 				if (v == root()) {
-					transplant(v, u);
+					_Rb_tree_transplant(v, u);
 					v->set_left(NULL);
 					v->set_right(NULL);
 					delete_node(u);
@@ -449,7 +449,7 @@ namespace ft
 				}
 				return ;
 			}
-			transplant(u, v);
+			_Rb_tree_transplant(u, v);
 			_Rb_tree_node_deletion(u);
 		}
 
