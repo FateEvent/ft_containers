@@ -56,17 +56,17 @@ namespace ft
 		template<class U>
 		wrapper_it(const wrapper_it<U>& other): _current(other.base()) {}
 
-		wrapper_it	&operator = (wrapper_it const& other) {
+		wrapper_it	&operator= (wrapper_it const& other) {
 			if (this == &other)
 				return (*this);
 			this->_current = other._current;
 			return (*this);
 		}
 
+		value_type	base() const { return _current; }
+
 		reference	operator* () { return *_current; }
 		pointer		operator-> () { return &(operator*()); }
-
-		value_type	base() const { return _current; }
 
 		wrapper_it	&operator++ () { _current++; return *this; }
 		wrapper_it	operator++ (int) { wrapper_it tmp = *this; ++(*this); return tmp; }
@@ -113,17 +113,17 @@ namespace ft
 		template<class U>
 		reverse_iterator(const reverse_iterator<U>& other): _current(other.base()) {}
 
-		reverse_iterator	&operator = (reverse_iterator const& other) {
+		reverse_iterator	&operator= (reverse_iterator const& other) {
 			if (this == &other)
 				return (*this);
 			this->_current = other._current;
 			return (*this);
 		}
 
+		value_type	base() const { return _current; }
+
 		reference	operator* () { return *_current; }
 		pointer		operator-> () { return &(operator*()); }
-
-		value_type	base() const { return _current; }
 
 		reverse_iterator	&operator++ () { _current--; return *this; }
 		reverse_iterator 	operator++ (int) { reverse_iterator tmp = *this; --(*this); return tmp; }
@@ -174,7 +174,7 @@ namespace ft
 		move_iterator(const move_iterator &it) : _ptr(it._ptr) {}
 		move_iterator(const pointer &ptr) : _ptr(ptr) {}
 
-		move_iterator	&operator = (move_iterator const& other) {
+		move_iterator	&operator= (move_iterator const& other) {
 			if (this == &other)
 				return (*this);
 			this->_ptr = other._ptr;
@@ -223,14 +223,14 @@ namespace ft
 		const_iter(const const_iter &it) : _ptr(it._ptr) {}
 		const_iter(pointer ptr) : _ptr(ptr) {}
 
-		pointer			base() const { return _ptr; }
-
-		const_iter	&operator = (const_iter const& other) {
+		const_iter	&operator= (const_iter const& other) {
 			if (this == &other)
 				return (*this);
 			this->_ptr = other._ptr;
 			return (*this);
 		}
+
+		pointer		base() const { return _ptr; }
 
 		reference	operator* () const { return *_ptr; }
 		pointer		operator-> () const { return &(operator*()); }

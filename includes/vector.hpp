@@ -42,12 +42,12 @@ namespace ft
 
 		template <class InputIt>
 		vector( InputIt first, InputIt last, const Allocator& alloc = Allocator(),
-		typename ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::value* = nullptr) : _alloc(alloc), _v(NULL)
+				typename ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::value* = 0 ) : _alloc(alloc), _v(NULL)
 		{
 			ptrdiff_t	dist = last - first;
 			_size = _capacity = dist;
 			_v = _alloc.allocate(capacity());
-			std::copy(first, last, _v);
+			assign(first, last);
 		}
 
 		vector( const vector& other ) : _size(other._size), _capacity(other._capacity), _alloc(other._alloc)
@@ -90,40 +90,26 @@ namespace ft
 		}
 
 		void	assign( size_type count, const T& value ) {
-			for (iterator p = _v; p < _v + size(); ++p)
-				_alloc.destroy(&*p);
-			_alloc.deallocate(_v, capacity());
-			_size = _capacity = count;
-			pointer	temp = _alloc.allocate(count);
-			for (iterator p = temp; p < temp + count; ++p)
+			clear();
+			if (capacity() < count)
+				reserve(count);
+			for (iterator p = _v; p < _v + count; ++p)
 				_alloc.construct(&*p, value);
-			_v = temp;
+			_size = count;
 		}
 
-		template <class InputIt >
-		typename ft::enable_if<!ft::is_integral<InputIt>::value, void>::type
-		assign( InputIt first, InputIt last )
+		template <class InputIt>
+		void	assign( InputIt first, InputIt last, typename ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::value* = 0 )
 		{
-			pointer	temp;
-
-			for (iterator p = _v; p < _v + size(); ++p)
-				_alloc.destroy(&*p);
-			_alloc.deallocate(_v, capacity());
-			ptrdiff_t	dist = last - first;
-			if (dist > 0)
+			difference_type	size = last - first;
+			if (size >= 0)
 			{
-				_size = _capacity = dist;
-				try
-				{
-					temp = _alloc.allocate(dist);
-				}
-				catch (std::exception& e)
-				{
-					std::cout << "Standard exception: " << e.what() << std::endl;
-				}
-				for (iterator p = temp; p < temp + dist && first < last; ++p, ++first)
+				clear();
+				if (capacity() < static_cast<unsigned long long>(size))
+					reserve(size);
+				_size = size;
+				for (iterator p = _v; p < _v + size && first != last; ++p, ++first)
 					_alloc.construct(&*p, *first);
-				_v = temp;
 			}
 			else
 				throw(ContainerException("out_of_range"));			
@@ -302,8 +288,7 @@ namespace ft
 		}
 
 		template <class InputIt>
-		typename ft::enable_if<!ft::is_integral<InputIt>::value, void>::type
-		insert(iterator pos, InputIt first, InputIt last)
+		iterator	insert(iterator pos, InputIt first, InputIt last, typename ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::value* = 0)
 		{
 			if (pos >= begin() && pos <= end())
 			{
