@@ -46,7 +46,7 @@ namespace ft
 			_size = _capacity = dist;
 			_v = _alloc.allocate(capacity());
 			std::copy(first, last, _v);
-		};
+		}
 
 		vector( const vector& other ) : _size(other._size), _capacity(other._capacity), _alloc(other._alloc)
 		{
@@ -68,15 +68,15 @@ namespace ft
 
 		vector&	operator= ( const vector& rhs )
 		{
-			if (this == rhs)
+			if (this == &rhs)
 				return (*this);
 			for (iterator p = _v; p < _v + size(); ++p)
 				_alloc.destroy(&*p);
 			_alloc.deallocate(_v, capacity());
 
-			iterator	first = rhs.begin();
-			iterator	last = rhs.end();
-			ptrdiff_t	dist = last - first;
+			const_iterator	first = rhs.begin();
+			const_iterator	last = rhs.end();
+			ptrdiff_t		dist = last - first;
 
 			_size = rhs._size;
 			_capacity = rhs._capacity;
@@ -159,20 +159,20 @@ namespace ft
 		const value_type*	data() const { return (size() ? _v : NULL); };
 
 		iterator				begin()	{ return iterator(&_v[0]); }
-		const_iterator			begin() const	{ return const_iterator(&_v[0]); }
-		iterator				end()	{ return iterator(&_v[_size]); }
-		const_iterator			end() const	{ return const_iterator(&_v[_size]); }
+		const_iterator			begin() const { return const_iterator(&(static_cast<pointer>(_v)[0])); }
+		iterator				end() { return iterator(&_v[_size]); }
+		const_iterator			end() const { return const_iterator(&(static_cast<pointer>(_v)[_size])); }
 
-		reverse_iterator		rbegin()	{ return reverse_iterator(&_v[_size - 1]); }
-		const_reverse_iterator	rbegin() const	{ return const_reverse_iterator(&_v[_size - 1]); }
-		reverse_iterator		rend()	{ return reverse_iterator(&_v[-1]); }
-		const_reverse_iterator	rend() const	{ return const_reverse_iterator(&_v[-1]); }
+		reverse_iterator		rbegin() { return reverse_iterator(&_v[_size - 1]); }
+		const_reverse_iterator	rbegin() const { return const_reverse_iterator(&(static_cast<pointer>(_v)[_size - 1])); }
+		reverse_iterator		rend() { return reverse_iterator(&_v[-1]); }
+		const_reverse_iterator	rend() const	{ return const_reverse_iterator(&(static_cast<pointer>(_v)[-1])); }
 		
 		bool empty() const { return !size(); }
 
 		size_type	size() const { return _size; }
 
-		size_type	max_size() { return std::min<size_type>(_alloc.max_size(),
+		size_type	max_size() const { return std::min<size_type>(_alloc.max_size(),
 								std::numeric_limits<difference_type>::max()); }
 
 		void	reserve(size_type n)
@@ -203,7 +203,7 @@ namespace ft
 				throw (ContainerException("out_of_range"));
 		}
 
-		size_type	capacity() { return _capacity; }
+		size_type	capacity() const { return _capacity; }
 
 		void	clear() {
 			for (iterator p = _v; p < _v + size(); ++p)

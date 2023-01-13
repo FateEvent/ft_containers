@@ -10,9 +10,9 @@ class ContainerException : public std::exception
 private:
 	std::string	_msg;
 public:
-	explicit ContainerException(const std::string& what_arg);
-	virtual ~ContainerException() throw();
-	virtual const char* what() const throw();
+	explicit ContainerException(const std::string& what_arg) : _msg(what_arg) {}
+	virtual ~ContainerException() throw() {}
+	virtual const char* what() const throw() { return (_msg.c_str()); }
 };
 
 #endif

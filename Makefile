@@ -1,7 +1,7 @@
 NAME = ft_containers
 CC = c++
 FLAGS = -Wall -Wextra -Werror -std=c++98 -g3
-LIBLINKS	=	-I./includes
+LIBLINKS	=	-I. #-I./includes
 SRC_PATH	=	srcs/
 OBJ_PATH	=	bin/
 CPP_EXTENSION = .cpp
