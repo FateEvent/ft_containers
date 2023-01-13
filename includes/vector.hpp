@@ -33,9 +33,10 @@ namespace ft
 
 		explicit vector( size_type count, const value_type& value = value_type(), const Allocator& alloc = Allocator() ) : _alloc(alloc), _v(NULL)
 		{
+			std::cout << "msg" << std::endl;
 			_size = _capacity = count;
-			_v = _alloc.allocate(_capacity);
-			for (iterator p = _v; p < _v + _capacity; ++p)
+			_v = _alloc.allocate(capacity());
+			for (iterator p = _v; p < _v + size(); ++p)
 				_alloc.construct(&*p, value);
 		}
 
@@ -123,8 +124,7 @@ namespace ft
 				_v = temp;
 			}
 			else
-				throw(ContainerException("out_of_range"));
-			
+				throw(ContainerException("out_of_range"));			
 		}
 
 		allocator_type	get_allocator() const { return _alloc; }

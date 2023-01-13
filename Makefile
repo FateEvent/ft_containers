@@ -1,7 +1,7 @@
 NAME = ft_containers
 CC = c++
 FLAGS = -Wall -Wextra -Werror -std=c++98 -g3
-LIBLINKS	=	-I. #-I./includes
+LIBLINKS	=	-I./includes
 SRC_PATH	=	srcs/
 OBJ_PATH	=	bin/
 CPP_EXTENSION = .cpp
@@ -9,7 +9,7 @@ CPP_EXTENSION = .cpp
 #		눈_눈			SOURCES			눈_눈
 
 MAIN_PATH	=	
-MAIN_FILES	=	main ContainerException
+MAIN_FILES	=	main
 SRCS_FILES	+=	$(addprefix $(MAIN_PATH), $(MAIN_FILES))
 
 SRCS_FILES_EXT	+=	$(addsuffix $(CPP_EXTENSION), $(SRCS_FILES))
