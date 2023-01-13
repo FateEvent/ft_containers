@@ -382,21 +382,6 @@ namespace ft
 
 				_alloc.destroy(&*last);
 				--_size;
-/*				if (size() == capacity() / 2)
-				{
-					pointer	temp = _alloc.allocate(capacity() / 2);
-					for (iterator p = temp, q = _v; p < temp + size(); ++p, ++q)
-					{
-						_alloc.construct(&*p, *q);
-						_alloc.destroy(&*q);
-					}
-					_alloc.deallocate(_v, capacity());
-					_capacity /= 2;
-					if (capacity() == 0)
-						_capacity = 1;
-					_v = temp;
-				}
-*/
 			}
 		}
 
