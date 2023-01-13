@@ -28,9 +28,13 @@ namespace ft
 		typedef ft::reverse_iterator<const_iterator>	const_reverse_iterator;
 
 	public:
-		vector() : _size(), _capacity(), _v(NULL) {}
+		vector() : _size(), _capacity(1), _v(NULL) {
+			_v = _alloc.allocate(capacity());
+		}
 
-		explicit vector( const Allocator& alloc ) : _size(), _capacity(), _alloc(alloc), _v(NULL) {}
+		explicit vector( const Allocator& alloc ) : _size(), _capacity(1), _alloc(alloc), _v(NULL) {
+			_v = _alloc.allocate(capacity());
+		}
 
 		explicit vector( size_type count, const value_type& value = value_type(), const Allocator& alloc = Allocator() ) : _alloc(alloc), _v(NULL)
 		{
@@ -355,7 +359,7 @@ namespace ft
 
 		void	push_back(const value_type& value)
 		{
-			if (_size == capacity()) {
+			if (size() == capacity()) {
 				pointer	temp = _alloc.allocate(_capacity * 2);
 				for (iterator p = temp, q = _v; p < temp + size(); ++p, ++q)
 				{
@@ -374,11 +378,11 @@ namespace ft
 		{
 			if (size())
 			{
-				pointer	last = _v[size() - 1];
+				pointer	last = &_v[size() - 1];
 
 				_alloc.destroy(&*last);
 				--_size;
-				if (size() == capacity() / 2)
+/*				if (size() == capacity() / 2)
 				{
 					pointer	temp = _alloc.allocate(capacity() / 2);
 					for (iterator p = temp, q = _v; p < temp + size(); ++p, ++q)
@@ -388,8 +392,11 @@ namespace ft
 					}
 					_alloc.deallocate(_v, capacity());
 					_capacity /= 2;
+					if (capacity() == 0)
+						_capacity = 1;
 					_v = temp;
 				}
+*/
 			}
 		}
 

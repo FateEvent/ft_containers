@@ -223,13 +223,6 @@ namespace ft
 		const_iter(const const_iter &it) : _ptr(it._ptr) {}
 		const_iter(pointer ptr) : _ptr(ptr) {}
 
-		const_iter	&operator= (const_iter const& other) {
-			if (this == &other)
-				return (*this);
-			this->_ptr = other._ptr;
-			return (*this);
-		}
-
 		pointer		base() const { return _ptr; }
 
 		reference	operator* () const { return *_ptr; }
@@ -255,6 +248,13 @@ namespace ft
 
 	private:
 		pointer	_ptr;
+
+		const_iter	&operator= (const_iter const& other) {
+			if (this == &other)
+				return (*this);
+			this->_ptr = other._ptr;
+			return (*this);
+		}
 	};
 }
 
