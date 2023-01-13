@@ -7,6 +7,7 @@
 # include <cstddef>
 # include "ContainerException.hpp"
 # include "iterator.hpp"
+# include "utilities.hpp"
 
 namespace ft
 {
@@ -33,7 +34,6 @@ namespace ft
 
 		explicit vector( size_type count, const value_type& value = value_type(), const Allocator& alloc = Allocator() ) : _alloc(alloc), _v(NULL)
 		{
-			std::cout << "msg" << std::endl;
 			_size = _capacity = count;
 			_v = _alloc.allocate(capacity());
 			for (iterator p = _v; p < _v + size(); ++p)
@@ -41,7 +41,8 @@ namespace ft
 		}
 
 		template <class InputIt>
-		vector( InputIt first, InputIt last, const Allocator& alloc = Allocator() ) : _alloc(alloc), _v(NULL)
+		vector( InputIt first, InputIt last, const Allocator& alloc = Allocator(),
+		typename ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::value* = nullptr) : _alloc(alloc), _v(NULL)
 		{
 			ptrdiff_t	dist = last - first;
 			_size = _capacity = dist;
@@ -100,7 +101,8 @@ namespace ft
 		}
 
 		template <class InputIt >
-		void	assign( InputIt first, InputIt last )
+		typename ft::enable_if<!ft::is_integral<InputIt>::value, void>::type
+		assign( InputIt first, InputIt last )
 		{
 			pointer	temp;
 
@@ -300,7 +302,8 @@ namespace ft
 		}
 
 		template <class InputIt>
-		iterator	insert(iterator pos, InputIt first, InputIt last)
+		typename ft::enable_if<!ft::is_integral<InputIt>::value, void>::type
+		insert(iterator pos, InputIt first, InputIt last)
 		{
 			if (pos >= begin() && pos <= end())
 			{

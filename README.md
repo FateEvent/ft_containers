@@ -24,15 +24,17 @@ Other materials about maps and map iterators:
 * <https://stackoverflow.com/questions/17150544/what-is-the-definition-of-rb-tree-increment-in-bits-stl-tree-h/17150988#17150988>;
 * <https://stackoverflow.com/questions/3487087/how-to-implement-an-end-in-a-map>.
 
-* <https://github.com/lobbyra/ft_containers>.
-
 Using const_cast:
 * <https://stackoverflow.com/questions/65408815/opposite-of-const-cast>;
 Checking if the return value of a function is cost:
 * <https://stackoverflow.com/questions/65659802/using-c-20-concept-to-check-if-a-function-returns-a-const-value>.
 
+About enable_if() function:
+* <https://stackoverflow.com/questions/72604511/understanding-enable-if-implementation-in-c98>;
+
 I found helpful tips about binary search trees, AVL and red-black trees in the following playlist by Jenny (Jenny's Lectures CS IT) (the videos from 5.1 to 5.17 are about trees):
-* <https://www.youtube.com/playlist?list=PLdo5W4Nhv31bbKJzrsKfMpo_grxuLl8LU>
+* <https://www.youtube.com/playlist?list=PLdo5W4Nhv31bbKJzrsKfMpo_grxuLl8LU>;
+* <https://stackoverflow.com/questions/61557539/how-can-i-use-my-custom-enable-if-in-c98>.
 
 Generally about binary search trees (BST):
 * __L'algorithmique__, pp. 400... .
