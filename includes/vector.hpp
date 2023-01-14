@@ -152,11 +152,11 @@ namespace ft
 
 		iterator				begin()	{ return iterator(&_v[0]); }
 		const_iterator			begin() const { return const_iterator(&(static_cast<pointer>(_v)[0])); }
-		iterator				end() { return iterator(&_v[_size]); }
-		const_iterator			end() const { return const_iterator(&(static_cast<pointer>(_v)[_size])); }
+		iterator				end() { return iterator(&_v[size()]); }
+		const_iterator			end() const { return const_iterator(&(static_cast<pointer>(_v)[size()])); }
 
-		reverse_iterator		rbegin() { return reverse_iterator(&_v[_size - 1]); }
-		const_reverse_iterator	rbegin() const { return const_reverse_iterator(&(static_cast<pointer>(_v)[_size - 1])); }
+		reverse_iterator		rbegin() { return reverse_iterator(&_v[size() - 1]); }
+		const_reverse_iterator	rbegin() const { return const_reverse_iterator(&(static_cast<pointer>(_v)[size() - 1])); }
 		reverse_iterator		rend() { return reverse_iterator(&_v[-1]); }
 		const_reverse_iterator	rend() const	{ return const_reverse_iterator(&(static_cast<pointer>(_v)[-1])); }
 		
@@ -209,40 +209,16 @@ namespace ft
 		{
 			if (pos >= begin() && pos <= end())
 			{
-				iterator	p, q;
-
 				if (size() == capacity())
-				{
-					pointer temp = _alloc.allocate(capacity() * 2);
-					_capacity *= 2;
-					++_size;
-					for (p = temp, q = _v; q < pos - 1; ++p, ++q)
-					{
-						_alloc.construct(&*p, *q);
-						_alloc.destroy(&*q);
-					}
-					_alloc.construct(&*(p++), value);
-					difference_type dist = pos - begin();
-					for (iterator p2 = p, q2 = q; q2 < begin() + size() + 1 - dist; ++p2, ++q2)
-					{
-						_alloc.construct(&*p2, *q2);
-						_alloc.destroy(&*q2);
-					}
-					_alloc.deallocate(_v, capacity());
-					_v = temp;
-					return (p);
-				}
-				else
-				{
-					difference_type dist = pos - 1 - begin();
-					iterator p = _v + dist;
+					reserve(size() + 1);
+				difference_type dist = pos - begin();
+				iterator p = _v + dist;
 
-					for (iterator q = p + size() - dist; q > p; --q)
-						_alloc.construct(&*q, *(q - 1));	
-					_alloc.construct(&*p, value);
-					++_size;
-					return (p);
-				}
+				for (iterator q = p + size() - dist - 1; q > p; --q)
+					_alloc.construct(&*q, *(q - 1));
+				_alloc.construct(&*p, value);
+				++_size;
+				return (p);
 			}
 			else
 				throw (ContainerException("out_of_range"));
