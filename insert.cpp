@@ -20,6 +20,8 @@ int		main(void)
 	TESTED_NAMESPACE::vector<TESTED_TYPE> vct2;
 	TESTED_NAMESPACE::vector<TESTED_TYPE> vct3;
 
+	printSize(vct3);
+
 	for (unsigned long int i = 0; i < vct.size(); ++i)
 		vct[i] = (vct.size() - i) * 3;
 	printSize(vct);
