@@ -335,17 +335,8 @@ namespace ft
 
 		void	push_back(const value_type& value)
 		{
-			if (size() == capacity()) {
-				pointer	temp = _alloc.allocate(_capacity * 2);
-				for (iterator p = temp, q = _v; p < temp + size(); ++p, ++q)
-				{
-					_alloc.construct(&*p, *q);
-					_alloc.destroy(&*q);
-				}
-				_alloc.deallocate(_v, capacity());
-				_capacity *= 2;
-				_v = temp;
-			}
+			if (capacity() == 0 || size() == capacity())
+				_extend();
 			_alloc.construct(&*(_v + size()), value);
 			++_size;
 		}
@@ -452,6 +443,27 @@ namespace ft
 		size_type		_capacity;
 		allocator_type	_alloc;
 		pointer			_v;
+
+		void	_extend()
+		{
+			if (capacity() == 0)
+			{
+				_v = _alloc.allocate(1);
+				++_capacity;
+			}
+			else
+			{
+				pointer temp = _alloc.allocate(capacity() * 2);
+				for (size_t i = 0; i < size(); i++)
+				{
+					_alloc.construct(temp + i, *(_v + i));
+					_alloc.destroy(_v + i);
+				}
+				_alloc.deallocate(_v, capacity());
+				_v = temp;
+				_capacity *= 2;
+			}
+		};
 	};
 
 	template<class T, class Alloc>
