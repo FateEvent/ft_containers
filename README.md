@@ -14,9 +14,14 @@ As concerning the iterator_traits template:
 
 and more generally about iterators:
 * <https://www.simplilearn.com/tutorials/cpp-tutorial/iterators-in-cpp>;
-* <https://www.internalpointers.com/post/writing-custom-iterators-modern-cpp>.
+* <https://www.internalpointers.com/post/writing-custom-iterators-modern-cpp>;
+* <https://stdcxx.apache.org/doc/stdlibug/16-3.html>.
 
-* <https://stdcxx.apache.org/doc/stdlibug/16-3.html>
+and the difference between iterators and const_iterators:
+* <https://stackoverflow.com/questions/5346890/what-is-the-difference-between-const-iterator-and-iterator>;
+* <https://stackoverflow.com/questions/309581/what-is-the-difference-between-const-iterator-and-non-const-iterator-in-the-c>;
+* <https://stackoverflow.com/questions/12646998/how-does-begin-know-which-return-type-to-return-const-or-non-const>;
+* <https://stackoverflow.com/questions/21022449/wrong-type-of-iterator-used>.
 
 Other materials about maps and map iterators:
 * <https://stackoverflow.com/questions/11373796/custom-memory-allocator-for-stl-map>;
@@ -31,6 +36,7 @@ Checking if the return value of a function is cost:
 
 About enable_if() function:
 * <https://stackoverflow.com/questions/72604511/understanding-enable-if-implementation-in-c98>;
+* <https://stackoverflow.com/questions/17829874/understanding-sfinae>;
 
 I found helpful tips about binary search trees, AVL and red-black trees in the following playlist by Jenny (Jenny's Lectures CS IT) (the videos from 5.1 to 5.17 are about trees):
 * <https://www.youtube.com/playlist?list=PLdo5W4Nhv31bbKJzrsKfMpo_grxuLl8LU>;
@@ -58,3 +64,5 @@ And red-black trees:
 * <https://www.geeksforgeeks.org/insertion-in-red-black-tree>;
 * <https://www.cs.auckland.ac.nz/software/AlgAnim/red_black.html>;
 * <https://www.geeksforgeeks.org/deletion-in-red-black-tree>.
+
+* <https://github.com/lobbyra/ft_containers>.

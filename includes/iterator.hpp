@@ -185,6 +185,7 @@ namespace ft
 
 		reference	operator* () { return *_ptr; }
 		pointer		operator-> () { return &(*_ptr); }
+//		pointer		operator-> () const { return &(*_ptr); };
 
 		move_iterator	&operator++ () { _ptr++; return *this; }
 		move_iterator	operator++ (int) { move_iterator tmp = *this; ++(*this); return tmp; }
@@ -209,7 +210,7 @@ namespace ft
 		pointer	_ptr;
 	};
 
-	template <class T>
+	template<class T>
 	class const_iter
 		: public iterator<std::random_access_iterator_tag, T>
 	{
@@ -221,12 +222,22 @@ namespace ft
 
 		const_iter() : _ptr() {}
 		const_iter(const const_iter &it) : _ptr(it._ptr) {}
+		const_iter(const move_iterator<T> &it) : _ptr(it.operator->()) {}
 		const_iter(pointer ptr) : _ptr(ptr) {}
 
 		pointer		base() const { return _ptr; }
 
 		reference	operator* () const { return *_ptr; }
 		pointer		operator-> () const { return &(operator*()); }
+		pointer		operator-> () { return &(operator*()); }
+//		operator const_iter() const { const_iter(); }
+
+		const_iter	&operator= (const_iter const& other) {
+			if (this == &other)
+				return (*this);
+			this->_ptr = other._ptr;
+			return (*this);
+		}
 
 		const const_iter	&operator++ () { _ptr++; return *this; }
 		const const_iter 	operator++ (int) { const_iter tmp = *this; ++(*this); return tmp; }
@@ -237,7 +248,7 @@ namespace ft
 		const const_iter	operator+ (std::size_t dist) { return (_ptr + dist); }
 		const const_iter	operator- (std::size_t dist) { return (_ptr - dist); }
 		const reference		operator[] (std::size_t index) { return (_ptr[index]); }
-		ptrdiff_t			operator- (const const_iter &it) { return (_ptr - it._ptr); }
+		ptrdiff_t			operator- (const const_iter &it) const { return (_ptr - it._ptr); }
 
 		bool		operator== (const const_iter &it) { return this->base() == it.base(); }
 		bool		operator!= (const const_iter &it) { return this->base() != it.base(); }
@@ -248,13 +259,6 @@ namespace ft
 
 	private:
 		pointer	_ptr;
-
-		const_iter	&operator= (const_iter const& other) {
-			if (this == &other)
-				return (*this);
-			this->_ptr = other._ptr;
-			return (*this);
-		}
 	};
 }
 
