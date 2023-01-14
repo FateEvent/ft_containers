@@ -5,6 +5,11 @@
 # include <memory>
 # include <cstddef>
 
+template<class T>
+class move_iterator;
+template<class T>
+class const_iter;
+
 namespace ft
 {
 	template <typename Iter>
@@ -168,10 +173,12 @@ namespace ft
 		typedef T																		value_type;
 		typedef typename iterator<std::random_access_iterator_tag, T>::difference_type	difference_type;
 		typedef typename iterator<std::random_access_iterator_tag, T>::reference		reference;
+		typedef const reference															const_reference;
 		typedef typename iterator<std::random_access_iterator_tag, T>::pointer			pointer;
 
 		move_iterator() : _ptr() {}
 		move_iterator(const move_iterator &it) : _ptr(it._ptr) {}
+		move_iterator(const const_iter<T> &it) : _ptr(it.operator->()) {}
 		move_iterator(const pointer &ptr) : _ptr(ptr) {}
 
 		move_iterator	&operator= (move_iterator const& other) {
@@ -183,9 +190,14 @@ namespace ft
 
 		pointer	base() const { return _ptr; }
 
-		reference	operator* () { return *_ptr; }
-		pointer		operator-> () { return &(*_ptr); }
-//		pointer		operator-> () const { return &(*_ptr); };
+		const_reference	operator* () const { return *_ptr; }
+		reference		operator* () { return *_ptr; }
+		pointer			operator-> () const { return &(operator*()); }
+		pointer			operator-> () { return &(operator*()); }
+		const_reference	operator[] (std::size_t index) const { return (_ptr[index]); }
+		reference		operator[] (std::size_t index) { return (_ptr[index]); }
+
+		operator		const_iter<T>() const { return (_ptr); }
 
 		move_iterator	&operator++ () { _ptr++; return *this; }
 		move_iterator	operator++ (int) { move_iterator tmp = *this; ++(*this); return tmp; }
@@ -195,8 +207,7 @@ namespace ft
 		move_iterator	&operator-= (std::size_t dist) { _ptr -= dist; return *this; }
 		move_iterator	operator+ (std::size_t dist) { return (_ptr + dist); }
 		move_iterator	operator- (std::size_t dist) { return (_ptr - dist); }
-		reference		operator[] (std::size_t index) { return (_ptr[index]); }
-		
+
 		ptrdiff_t		operator- (const move_iterator &it) { return (_ptr - it._ptr); }
 
 		bool		operator== (const move_iterator &it) { return this->base() == it.base(); }
@@ -207,7 +218,7 @@ namespace ft
 		bool		operator>= (const move_iterator &it) { return this->base() >= it.base(); }
 
 	protected:
-		pointer	_ptr;
+		pointer		_ptr;
 	};
 
 	template<class T>
@@ -217,7 +228,8 @@ namespace ft
 		public:
 		typedef T																		value_type;
 		typedef typename iterator<std::random_access_iterator_tag, T>::difference_type	difference_type;
-		typedef typename iterator<std::random_access_iterator_tag, T>::reference const	reference;
+		typedef typename iterator<std::random_access_iterator_tag, T>::reference		reference;
+		typedef const reference															const_reference;
 		typedef typename iterator<std::random_access_iterator_tag, T>::pointer			pointer;
 
 		const_iter() : _ptr() {}
@@ -227,10 +239,14 @@ namespace ft
 
 		pointer		base() const { return _ptr; }
 
-		reference	operator* () const { return *_ptr; }
-		pointer		operator-> () const { return &(operator*()); }
-		pointer		operator-> () { return &(operator*()); }
-//		operator const_iter() const { const_iter(); }
+		const_reference	operator* () const { return *_ptr; }
+		reference		operator* () { return *_ptr; }
+		pointer			operator-> () const { return &(operator*()); }
+		pointer			operator-> () { return &(operator*()); }
+		const_reference	operator[] (std::size_t index) const { return (_ptr[index]); }
+		reference		operator[] (std::size_t index) { return (_ptr[index]); }
+
+		operator	move_iterator<T>() const { return (_ptr); }
 
 		const_iter	&operator= (const_iter const& other) {
 			if (this == &other)
@@ -247,7 +263,6 @@ namespace ft
 		const const_iter	&operator-= (std::size_t dist) { _ptr -= dist; return *this; }
 		const const_iter	operator+ (std::size_t dist) { return (_ptr + dist); }
 		const const_iter	operator- (std::size_t dist) { return (_ptr - dist); }
-		const reference		operator[] (std::size_t index) { return (_ptr[index]); }
 		ptrdiff_t			operator- (const const_iter &it) const { return (_ptr - it._ptr); }
 
 		bool		operator== (const const_iter &it) { return this->base() == it.base(); }

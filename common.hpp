@@ -1,5 +1,5 @@
 #include "base.hpp"
-#if defined(USING_STD)
+#if !defined(USING_STD)
 # include "includes/vector.hpp"
 #else
 # include <vector>
