@@ -194,8 +194,8 @@ namespace ft
 		reference		operator* () { return *_ptr; }
 		pointer			operator-> () const { return &(operator*()); }
 		pointer			operator-> () { return &(operator*()); }
-		const_reference	operator[] (std::size_t index) const { return (_ptr[index]); }
-		reference		operator[] (std::size_t index) { return (_ptr[index]); }
+		const_reference	operator[] (const std::size_t index) const { return (_ptr[index]); }
+		reference		operator[] (const std::size_t index) { return (_ptr[index]); }
 
 		operator		const_iter<T>() const { return (_ptr); }
 
@@ -203,12 +203,25 @@ namespace ft
 		move_iterator	operator++ (int) { move_iterator tmp = *this; ++(*this); return tmp; }
 		move_iterator	&operator-- () { _ptr--; return *this; }
 		move_iterator	operator-- (int) { move_iterator tmp = *this; --(*this); return tmp; }		
-		move_iterator	&operator+= (std::size_t dist) { _ptr += dist; return *this; }
-		move_iterator	&operator-= (std::size_t dist) { _ptr -= dist; return *this; }
-		move_iterator	operator+ (std::size_t dist) { return (_ptr + dist); }
-		move_iterator	operator- (std::size_t dist) { return (_ptr - dist); }
-
+		move_iterator	&operator+= (const std::size_t dist) { _ptr += dist; return *this; }
+		move_iterator	&operator-= (const std::size_t dist) { _ptr -= dist; return *this; }
+		move_iterator	operator+ (const std::size_t dist) { return (_ptr + dist); }
+		move_iterator	operator- (const std::size_t dist) { return (_ptr - dist); }
 		ptrdiff_t		operator- (const move_iterator &it) { return (_ptr - it._ptr); }
+
+		friend move_iterator	operator+ (const std::size_t dist, const move_iterator &src)
+		{
+			move_iterator it(src._ptr);
+			it += dist;
+			return (it);
+		}
+		
+		friend move_iterator	operator- (const std::size_t dist, const move_iterator &src)
+		{
+			move_iterator it(src._ptr);
+			it -= dist;
+			return (it);
+		}
 
 		bool		operator== (const move_iterator &it) { return this->base() == it.base(); }
 		bool		operator!= (const move_iterator &it) { return this->base() != it.base(); }
@@ -259,11 +272,25 @@ namespace ft
 		const const_iter 	operator++ (int) { const_iter tmp = *this; ++(*this); return tmp; }
 		const const_iter	&operator-- () { _ptr--; return *this; }
 		const const_iter 	operator-- (int) { const_iter tmp = *this; --(*this); return tmp; }
-		const const_iter	&operator+= (std::size_t dist) { _ptr += dist; return *this; }
-		const const_iter	&operator-= (std::size_t dist) { _ptr -= dist; return *this; }
-		const const_iter	operator+ (std::size_t dist) { return (_ptr + dist); }
-		const const_iter	operator- (std::size_t dist) { return (_ptr - dist); }
+		const const_iter	&operator+= (const std::size_t dist) { _ptr += dist; return *this; }
+		const const_iter	&operator-= (const std::size_t dist) { _ptr -= dist; return *this; }
+		const const_iter	operator+ (const std::size_t dist) { return (_ptr + dist); }
+		const const_iter	operator- (const std::size_t dist) { return (_ptr - dist); }
 		ptrdiff_t			operator- (const const_iter &it) const { return (_ptr - it._ptr); }
+
+		friend const_iter	operator+ (const std::size_t dist, const const_iter &src)
+		{
+			const_iter it(src._ptr);
+			it += dist;
+			return (it);
+		}
+		
+		friend const_iter	operator- (const std::size_t dist, const const_iter &src)
+		{
+			const_iter it(src._ptr);
+			it -= dist;
+			return (it);
+		}
 
 		bool		operator== (const const_iter &it) const { return this->base() == it.base(); }
 		bool		operator!= (const const_iter &it) const { return this->base() != it.base(); }
