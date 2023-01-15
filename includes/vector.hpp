@@ -5,6 +5,8 @@
 # include <memory>
 # include <algorithm>
 # include <cstddef>
+#include <sstream>
+# include <stdexcept>
 # include "ContainerException.hpp"
 # include "iterator.hpp"
 # include "utilities.hpp"
@@ -105,32 +107,32 @@ namespace ft
 		template <class InputIt>
 		void	assign( InputIt first, InputIt last, typename ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::value* = 0 )
 		{
-			difference_type	size = last - first;
-			if (size >= 0)
+			difference_type	pos = last - first;
+			if (pos >= 0)
 			{
 				clear();
-				if (capacity() < static_cast<unsigned long long>(size))
-					reserve(size);
-				_size = size;
-				for (iterator p = _v; p < _v + size && first != last; ++p, ++first)
+				if (capacity() < static_cast<unsigned long long>(pos))
+					reserve(pos);
+				_size = pos;
+				for (iterator p = _v; p < _v + pos && first != last; ++p, ++first)
 					_alloc.construct(&*p, *first);
 			}
 			else
-				throw(ContainerException("out_of_range"));			
+				throw(_out_of_range(pos));			
 		}
 
 		allocator_type	get_allocator() const { return _alloc; }
 
 		reference	at( size_type pos ) {
 			if (pos >= size())
-				throw (ContainerException("out_of_range"));
+				throw (_out_of_range(pos));
 			else
 				return (_v[pos]);
 		};
 		
 		const_reference	at( size_type pos ) const {
 			if (pos >= size())
-				throw (ContainerException("out_of_range"));
+				throw (_out_of_range(pos));
 			else
 				return (_v[pos]);
 		};
@@ -192,7 +194,7 @@ namespace ft
 				_v = temp;
 			}
 			else if (n > max_size())
-				throw (ContainerException("out_of_range"));
+				throw (_out_of_range(n));
 		}
 
 		size_type	capacity() const { return _capacity; }
@@ -207,42 +209,52 @@ namespace ft
 
 		iterator	insert(iterator pos, const T& value)
 		{
-			difference_type		dist = pos - begin();
+			if (pos >= begin() && pos <= end())
+			{
+				difference_type dist = pos - begin();
 
-			if (capacity() == 0 || capacity() == size())
-				_extend();
-			iterator absolute_iterator = begin() + dist;
+				if (capacity() == 0 || capacity() == size())
+					_extend();
+				iterator absolute_iterator = begin() + dist;
+				vector temp(absolute_iterator, end());
 
-			vector	temp(absolute_iterator, end());
+				for (size_type i = 0; i < temp.size(); i++)
+					pop_back();
+				push_back(value);
+				iterator it = temp.begin();
 
-			for (size_type i = 0; i < temp.size(); i++)
-				pop_back();
-
-			push_back(value);
-			iterator it = temp.begin();
-			for (size_type i = 0; i < temp.size(); i++, it++)
-				push_back(*it);
-
-			return (begin() + dist);
+				for (size_type i = 0; i < temp.size(); i++, it++)
+					push_back(*it);
+				return (begin() + dist);
+			}
+			else
+				throw (_out_of_range(pos - begin()));
 		};
 
 		void	insert(iterator pos, size_type count, const T& value)
 		{
-			difference_type		dist = pos - begin();
-
-			if (size() + count >= capacity())
-				reserve(size() + count);
-			vector	temp(begin() + dist, end());
-
-			for (size_t i = 0; i < temp.size(); i++)
-				pop_back();
-			while (count > 0)
+			if (pos >= begin() && pos <= end())
 			{
-				push_back(value);
-				count--;
-			} 
-			for (iterator it = temp.begin(); it != temp.end(); it++)
-				push_back(*it);
+				difference_type dist = pos - begin();
+
+				if (capacity() == 0)
+					_extend();
+				if (size() + count >= capacity())
+					reserve(size() + count);
+				vector temp(begin() + dist, end());
+
+				for (size_t i = 0; i < temp.size(); i++)
+					pop_back();
+				while (count > 0)
+				{
+					push_back(value);
+					count--;
+				}
+				for (iterator it = temp.begin(); it != temp.end(); it++)
+					push_back(*it);
+			}
+			else
+				throw (_out_of_range(pos - begin()));
 		};
 
 		template <class InputIt>
@@ -250,35 +262,28 @@ namespace ft
 		{
 			if (pos >= begin() && pos <= end())
 			{
-				difference_type	dist = pos - 1 - begin();
-				difference_type	interval = last - first;
+				difference_type		count = last - first;
+				difference_type		dist = pos - this->begin();
 
-				if (size() + interval >= capacity())
-				{
-					size_type	diff = size() + interval - capacity();
-					pointer temp = _alloc.allocate(capacity() + diff);
-					_capacity += diff;
-					std::copy(begin(), pos - 1, temp);
-					std::copy(first, last, temp + dist);
-					std::copy(pos - 1, end(), temp + dist + interval);
-					_alloc.deallocate(_v, capacity());
-					_v = temp;
-					_size = capacity();
-					iterator p = _v + dist;
-					return (p);
-				}
-				else
-				{
-					iterator p = _v + dist;
-					_size += interval;
+				if (capacity() == 0)
+					_extend();
+				if (size() + count >= capacity())
+					reserve(size() + count);
+				vector		temp(this->begin() + dist, this->end());
 
-					std::copy(pos - 1, end(), end() - 1);
-					std::copy(first, last, pos - 1);
-					return (p);
+				for (size_t i = 0; i < temp.size(); i++)
+					this->pop_back();
+				while (first != last)
+				{
+					this->push_back(*first);
+					first++;
 				}
+				for (iterator it = temp.begin(); it != temp.end(); it++)
+					this->push_back(*it);
+				return (begin() + dist);
 			}
 			else
-				throw (ContainerException("out_of_range"));
+				throw (_out_of_range(pos - begin()));
 		}
 
 		iterator	erase(iterator pos)
@@ -291,7 +296,7 @@ namespace ft
 				return (pos);
 			}
 			else
-				throw (ContainerException("out_of_range"));
+				throw (_out_of_range(pos - begin()));
 		};
 
 		iterator	erase(iterator first, iterator last)
@@ -308,7 +313,7 @@ namespace ft
 				return (first);
 			}
 			else
-				throw (ContainerException("out_of_range"));
+				throw (_out_of_range(last - begin()));
 		}
 
 		void	push_back(const value_type& value)
@@ -400,7 +405,7 @@ namespace ft
 				}
 			}
 			else
-				throw (ContainerException("out_of_range"));
+				throw (_out_of_range(count));
 		}
 
 		void	swap(vector& other)
@@ -441,6 +446,15 @@ namespace ft
 				_v = temp;
 				_capacity *= 2;
 			}
+		};
+
+		std::out_of_range	_out_of_range(size_type pos) const
+		{
+			std::stringstream ss;
+
+			ss << "vector::_M_range_check: __n (which is " << pos << ")" <<	\
+			" >= this->size() (which is " << size() << ")";
+			return (std::out_of_range(ss.str()));
 		};
 	};
 
