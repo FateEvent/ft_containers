@@ -539,7 +539,7 @@ namespace ft
 				return (iterator(temp));
 			}
 			else
-				throw(ContainerException("out_of_range"));
+				throw(_out_of_range(begin() - pos));
 		}
 
 		template<class InputIterator> void	insert(InputIterator first, InputIterator last)
@@ -576,6 +576,15 @@ namespace ft
 		allocator_type	_alloc_pair;
 		key_compare		_key_comp;
 		size_type		_size;
+
+		std::out_of_range	_out_of_range(size_type pos) const
+		{
+			std::stringstream ss;
+
+			ss << "vector::_M_range_check: __n (which is " << pos << ")" <<	\
+			" >= this->size() (which is " << size() << ")";
+			return (std::out_of_range(ss.str()));
+		};
 	};
 }
 

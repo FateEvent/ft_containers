@@ -265,12 +265,12 @@ namespace ft
 		const const_iter	operator- (std::size_t dist) { return (_ptr - dist); }
 		ptrdiff_t			operator- (const const_iter &it) const { return (_ptr - it._ptr); }
 
-		bool		operator== (const const_iter &it) { return this->base() == it.base(); }
-		bool		operator!= (const const_iter &it) { return this->base() != it.base(); }
-		bool		operator< (const const_iter &it) { return this->base() < it.base(); }
-		bool		operator<= (const const_iter &it) { return this->base() <= it.base(); }
-		bool		operator> (const const_iter &it) { return this->base() > it.base(); }
-		bool		operator>= (const const_iter &it) { return this->base() >= it.base(); }
+		bool		operator== (const const_iter &it) const { return this->base() == it.base(); }
+		bool		operator!= (const const_iter &it) const { return this->base() != it.base(); }
+		bool		operator< (const const_iter &it) const { return this->base() < it.base(); }
+		bool		operator<= (const const_iter &it) const { return this->base() <= it.base(); }
+		bool		operator> (const const_iter &it) const { return this->base() > it.base(); }
+		bool		operator>= (const const_iter &it) const { return this->base() >= it.base(); }
 
 	private:
 		pointer	_ptr;
