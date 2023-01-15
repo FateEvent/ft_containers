@@ -43,6 +43,19 @@ namespace ft {
 	** 																			**
 	\****************************************************************************/
 
+	
+	template<class T> struct equal_to
+		: public std::binary_function<T, T, bool>
+	{
+		bool	operator()(const T &lhs, const T &rhs) const {	return lhs == rhs; }
+	};
+
+	/****************************************************************************\
+	** 																			**
+	**							is_integral utilities							**
+	** 																			**
+	\****************************************************************************/
+
 	template<class T> struct is_integral { static const bool value = false; };
 	template<> struct is_integral<char> { static const bool value = true; };
 	template<> struct is_integral<char16_t> { static const bool value = true; };
