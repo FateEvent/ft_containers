@@ -205,67 +205,45 @@ namespace ft
 
 		// https://stackoverflow.com/questions/40767476/how-does-rhs-work
 
-		iterator	insert(iterator pos, const value_type& value)
+		iterator	insert(iterator pos, const T& value)
 		{
-			if (pos >= begin() && pos <= end())
-			{
-				if (size() == capacity())
-					reserve(size() + 1);
-				difference_type dist = pos - begin();
-				iterator p = _v + dist;
+			difference_type		dist = pos - begin();
 
-				for (iterator q = p + size() - dist - 1; q > p; --q)
-					_alloc.construct(&*q, *(q - 1));
-				_alloc.construct(&*p, value);
-				++_size;
-				return (p);
-			}
-			else
-				throw (ContainerException("out_of_range"));
-		}
+			if (capacity() == 0 || capacity() == size())
+				_extend();
+			iterator absolute_iterator = begin() + dist;
 
-		void	insert(iterator pos, size_type count, const value_type& value)
+			vector	temp(absolute_iterator, end());
+
+			for (size_type i = 0; i < temp.size(); i++)
+				pop_back();
+
+			push_back(value);
+			iterator it = temp.begin();
+			for (size_type i = 0; i < temp.size(); i++, it++)
+				push_back(*it);
+
+			return (begin() + dist);
+		};
+
+		void	insert(iterator pos, size_type count, const T& value)
 		{
-			if (pos >= begin() && pos <= end())
+			difference_type		dist = pos - begin();
+
+			if (size() + count >= capacity())
+				reserve(size() + count);
+			vector	temp(begin() + dist, end());
+
+			for (size_t i = 0; i < temp.size(); i++)
+				pop_back();
+			while (count > 0)
 			{
-				iterator	p, q, r;
-
-				if (size() + count >= capacity())
-				{
-					size_type diff = size() + count - capacity();
-					pointer temp = _alloc.allocate(capacity() + diff);
-					_capacity += diff;
-					for (p = temp, q = _v; q < pos - 1; ++p, ++q)
-					{
-						_alloc.construct(&*p, *q);
-						_alloc.destroy(&*q);
-					}
-					for (; count > 0; ++p, --count)
-						_alloc.construct(&*p, value);
-					for (; q < _v + size(); ++p, ++q)
-					{
-						_alloc.construct(&*p, *q);
-						_alloc.destroy(&*q);
-					}
-					_alloc.deallocate(_v, capacity());
-					_v = temp;
-					_size = capacity();
-				}
-				else
-				{
-					_size += count;
-					difference_type dist = pos - 1 - begin();
-					iterator p = _v + dist;
-
-					for (iterator q = p + size(); q > p; --q)
-						_alloc.construct(&*q, *(q - count));
-					for (iterator r = p; count > 0; ++r, --count)
-						_alloc.construct(&*r, value);
-				}
-			}
-			else
-				throw (ContainerException("out_of_range"));
-		}
+				push_back(value);
+				count--;
+			} 
+			for (iterator it = temp.begin(); it != temp.end(); it++)
+				push_back(*it);
+		};
 
 		template <class InputIt>
 		iterator	insert(iterator pos, InputIt first, InputIt last, typename ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::value* = 0)
@@ -318,7 +296,7 @@ namespace ft
 
 		iterator	erase(iterator first, iterator last)
 		{
-			if ((first >= begin() && first < end()) && (last >= begin() && last < end())
+			if ((first >= begin() && first <= end()) && (last >= begin() && last <= end())
 				&& first <= last)
 			{
 				difference_type	dist = last - first;
