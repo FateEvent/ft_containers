@@ -5,9 +5,8 @@
 # include <memory>
 # include <algorithm>
 # include <cstddef>
-#include <sstream>
 # include <stdexcept>
-# include "ContainerException.hpp"
+# include <sstream>
 # include "iterator.hpp"
 # include "utilities.hpp"
 
@@ -16,18 +15,18 @@ namespace ft
 	template <class T, class Allocator = std::allocator<T> > class vector {
 
 	public:
-		typedef T										value_type;
-		typedef std::size_t								size_type;
-		typedef Allocator								allocator_type;
-		typedef std::ptrdiff_t							difference_type;
-		typedef value_type&								reference;
-		typedef const value_type&						const_reference;
-		typedef typename Allocator::pointer				pointer;
-		typedef typename Allocator::const_pointer		const_pointer;		
-		typedef ft::move_iterator<value_type>			iterator;
-		typedef ft::const_iter<value_type>				const_iterator;
-		typedef ft::reverse_iterator<iterator>			reverse_iterator;
-		typedef ft::reverse_iterator<const_iterator>	const_reverse_iterator;
+		typedef T												value_type;
+		typedef std::size_t										size_type;
+		typedef Allocator										allocator_type;
+		typedef std::ptrdiff_t									difference_type;
+		typedef value_type&										reference;
+		typedef const value_type&								const_reference;
+		typedef typename Allocator::pointer						pointer;
+		typedef typename Allocator::const_pointer				const_pointer;		
+		typedef ft::move_iterator<value_type>					iterator;
+		typedef ft::const_iter<value_type>						const_iterator;
+		typedef typename ft::reverse_iterator<iterator>			reverse_iterator;
+		typedef typename ft::reverse_iterator<const_iterator>	const_reverse_iterator;
 
 	public:
 		vector() : _size(), _capacity(), _v(NULL) {}
@@ -153,10 +152,10 @@ namespace ft
 		iterator				end() { return iterator(&_v[size()]); }
 		const_iterator			end() const { return const_iterator(&(static_cast<pointer>(_v)[size()])); }
 
-		reverse_iterator		rbegin() { return reverse_iterator(&_v[size() - 1]); }
-		const_reverse_iterator	rbegin() const { return const_reverse_iterator(&(static_cast<pointer>(_v)[size() - 1])); }
-		reverse_iterator		rend() { return reverse_iterator(&_v[-1]); }
-		const_reverse_iterator	rend() const	{ return const_reverse_iterator(&(static_cast<pointer>(_v)[-1])); }
+		reverse_iterator		rbegin() { return reverse_iterator(end()); }
+		const_reverse_iterator	rbegin() const { return const_reverse_iterator(end()); }
+		reverse_iterator		rend() { return reverse_iterator(begin()); }
+		const_reverse_iterator	rend() const { return const_reverse_iterator(begin()); }
 		
 		bool empty() const { return !size(); }
 
@@ -414,7 +413,7 @@ namespace ft
 			_size = temp;
 			temp = other._capacity;
 			other._capacity = _capacity;
-			_capacity = other._capacity;
+			_capacity = temp;
 			allocator_type temporary_alloc = other._alloc;
 			other._alloc = _alloc;
 			_alloc = temporary_alloc;
@@ -466,20 +465,16 @@ namespace ft
 		typename vector<T, Alloc>::const_iterator lend = lhs.end();
 		typename vector<T, Alloc>::const_iterator rstart = rhs.begin();
 		typename vector<T, Alloc>::const_iterator rend = rhs.end();
-		for (; lstart != lend && rstart != rend;)
-		{
+		for (; lstart != lend && rstart != rend; ++lstart, ++rstart)
 			if (*lstart != *rstart)
 				return (false);
-			++lstart;
-			++rstart;
-		}
-			return (true);
+		return (true);
 	}
 
 	template<class T, class Alloc>
 	bool	operator!= (const ft::vector<T, Alloc> &lhs, const ft::vector<T, Alloc> &rhs)
 	{
-		return !(lhs != rhs);
+		return (!(lhs == rhs));
 	}
 
 	template<class T, class Alloc>
@@ -491,19 +486,19 @@ namespace ft
 	template<class T, class Alloc>
 	bool	operator> (const ft::vector<T, Alloc> &lhs, const ft::vector<T, Alloc> &rhs)
 	{
-		return rhs < lhs;
+		return (rhs < lhs);
 	}
 
 	template<class T, class Alloc>
 	bool	operator<= (const ft::vector<T, Alloc> &lhs, const ft::vector<T, Alloc> &rhs)
 	{
-		return !(rhs < lhs);
+		return (!(rhs < lhs));
 	}
 
 	template<class T, class Alloc>
 	bool	operator>= (const ft::vector<T, Alloc> &lhs, const ft::vector<T, Alloc> &rhs)
 	{
-		return !(rhs > lhs);
+		return (!(rhs > lhs));
 	}
 }
 

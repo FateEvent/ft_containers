@@ -4,6 +4,7 @@
 # include <iostream>
 # include <memory>
 # include <cstddef>
+# include <iterator>
 
 template<class T>
 class move_iterator;
@@ -127,19 +128,33 @@ namespace ft
 
 		value_type	base() const { return _current; }
 
-		reference	operator* () { return *_current; }
+		reference	operator* () const { return *(std::prev(_current)); }
 		pointer		operator-> () { return &(operator*()); }
 
-		reverse_iterator	&operator++ () { _current--; return *this; }
+		reverse_iterator	&operator++ () { --_current; return std::prev(*this); }
 		reverse_iterator 	operator++ (int) { reverse_iterator tmp = *this; --(*this); return tmp; }
-		reverse_iterator	&operator-- () { _current++; return *this; }
+		reverse_iterator	&operator-- () { ++_current; return *this; }
 		reverse_iterator	operator-- (int) { reverse_iterator tmp = *this; ++(*this); return tmp; }
-		reverse_iterator	&operator+= (std::size_t dist) { _current += dist; return *this; }
-		reverse_iterator	&operator-= (std::size_t dist) { _current -= dist; return *this; }
-		reverse_iterator	operator+ (std::size_t dist) { return (_current + dist); }
-		reverse_iterator	operator- (std::size_t dist) { return (_current - dist); }
-		reference			operator[] (std::size_t index) { return (_current[index]); }
+		reverse_iterator	&operator+= (std::size_t dist) { _current -= dist; return *this; }
+		reverse_iterator	&operator-= (std::size_t dist) { _current += dist; return *this; }
+		reverse_iterator	operator+ (std::size_t dist) { return reverse_iterator(_current - dist); }
+		reverse_iterator	operator- (std::size_t dist) { return reverse_iterator(_current + dist); }
+		reference			operator[] (std::size_t index) { return (std::prev(_current))[-index]; }
 		ptrdiff_t			operator- (const reverse_iterator &it) { return (_current - it._current); }
+
+		friend reverse_iterator	operator+ (const std::size_t dist, const reverse_iterator &src)
+		{
+			reverse_iterator it(src._current);
+			it -= dist;
+			return (it);
+		}
+		
+		friend reverse_iterator	operator- (const std::size_t dist, const reverse_iterator &src)
+		{
+			reverse_iterator it(src._current);
+			it += dist;
+			return (it);
+		}
 	};
 
 	template<class It1, class It2>
@@ -173,9 +188,9 @@ namespace ft
 		typedef T																		value_type;
 		typedef typename iterator<std::random_access_iterator_tag, T>::difference_type	difference_type;
 		typedef typename iterator<std::random_access_iterator_tag, T>::reference		reference;
-		typedef typename iterator<std::random_access_iterator_tag, T>::const_reference	const_reference;
+		typedef reference const															const_reference;
 		typedef typename iterator<std::random_access_iterator_tag, T>::pointer			pointer;
-		typedef typename iterator<std::random_access_iterator_tag, T>::const_pointer	const_pointer;
+		typedef pointer const															const_pointer;
 
 		move_iterator() : _ptr() {}
 		move_iterator(const move_iterator &it) : _ptr(it._ptr) {}
@@ -193,7 +208,7 @@ namespace ft
 
 		const_reference	operator* () const { return *_ptr; }
 		reference		operator* () { return *_ptr; }
-		const_pointer	operator-> () const { return _ptr; }
+		const_pointer	operator-> () const { return &(operator*()); }
 		pointer			operator-> () { return &(operator*()); }
 		const_reference	operator[] (const std::size_t index) const { return (_ptr[index]); }
 		reference		operator[] (const std::size_t index) { return (_ptr[index]); }
@@ -224,12 +239,12 @@ namespace ft
 			return (it);
 		}
 
-		bool		operator== (const move_iterator &it) { return this->base() == it.base(); }
-		bool		operator!= (const move_iterator &it) { return this->base() != it.base(); }
-		bool		operator< (const move_iterator &it) { return this->base() < it.base(); }
-		bool		operator<= (const move_iterator &it) { return this->base() <= it.base(); }
-		bool		operator> (const move_iterator &it) { return this->base() > it.base(); }
-		bool		operator>= (const move_iterator &it) { return this->base() >= it.base(); }
+		bool		operator== (const move_iterator &it) const { return this->base() == it.base(); }
+		bool		operator!= (const move_iterator &it) const { return this->base() != it.base(); }
+		bool		operator< (const move_iterator &it) const { return this->base() < it.base(); }
+		bool		operator<= (const move_iterator &it) const { return this->base() <= it.base(); }
+		bool		operator> (const move_iterator &it) const { return this->base() > it.base(); }
+		bool		operator>= (const move_iterator &it) const { return this->base() >= it.base(); }
 
 	protected:
 		pointer		_ptr;
@@ -243,9 +258,9 @@ namespace ft
 		typedef T																		value_type;
 		typedef typename iterator<std::random_access_iterator_tag, T>::difference_type	difference_type;
 		typedef typename iterator<std::random_access_iterator_tag, T>::reference		reference;
-		typedef typename iterator<std::random_access_iterator_tag, T>::const_reference	const_reference;
+		typedef reference const															const_reference;
 		typedef typename iterator<std::random_access_iterator_tag, T>::pointer			pointer;
-		typedef typename iterator<std::random_access_iterator_tag, T>::const_pointer	const_pointer;
+		typedef pointer const															const_pointer;
 
 		const_iter() : _ptr() {}
 		const_iter(const const_iter &it) : _ptr(it._ptr) {}
@@ -256,10 +271,10 @@ namespace ft
 
 		const_reference	operator* () const { return *_ptr; }
 		reference		operator* () { return *_ptr; }
-		const_pointer	operator-> () const { return _ptr; }
-		pointer			operator-> () { return _ptr; }
-		const_reference	operator[] (std::size_t index) const { return (_ptr[index]); }
-		reference		operator[] (std::size_t index) { return (_ptr[index]); }
+		const_pointer	operator-> () const { return &(operator*()); }
+		pointer			operator-> () { return &(operator*()); }
+		const_reference	operator[] (const std::size_t index) const { return (_ptr[index]); }
+		reference		operator[] (const std::size_t index) { return (_ptr[index]); }
 
 		operator	move_iterator<T>() const { return (_ptr); }
 

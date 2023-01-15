@@ -6,15 +6,19 @@ int		main(void)
 {
 	const int size = 5;
 	TESTED_NAMESPACE::vector<TESTED_TYPE> vct(size);
-	TESTED_NAMESPACE::vector<TESTED_TYPE>::iterator it(vct.begin());
-	TESTED_NAMESPACE::vector<TESTED_TYPE>::const_iterator ite(vct.end());
+	TESTED_NAMESPACE::vector<TESTED_TYPE>::reverse_iterator it(vct.rbegin());
+	TESTED_NAMESPACE::vector<TESTED_TYPE>::const_reverse_iterator ite(vct.rend());
 
+	std::cout << "ciao " << std::endl;
 	for (int i = 1; it != ite; ++i)
-		*it++ = i;
+	{
+		std::cout << i << std::endl;
+		*it++ = (i * 7);
+	}
 	printSize(vct, 1);
 
-	it = vct.begin();
-	ite = vct.begin();
+	it = vct.rbegin();
+	ite = vct.rbegin();
 
 	std::cout << *(++ite) << std::endl;
 	std::cout << *(ite++) << std::endl;
