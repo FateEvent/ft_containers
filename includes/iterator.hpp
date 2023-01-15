@@ -173,8 +173,9 @@ namespace ft
 		typedef T																		value_type;
 		typedef typename iterator<std::random_access_iterator_tag, T>::difference_type	difference_type;
 		typedef typename iterator<std::random_access_iterator_tag, T>::reference		reference;
-		typedef const reference															const_reference;
+		typedef typename iterator<std::random_access_iterator_tag, T>::const_reference	const_reference;
 		typedef typename iterator<std::random_access_iterator_tag, T>::pointer			pointer;
+		typedef typename iterator<std::random_access_iterator_tag, T>::const_pointer	const_pointer;
 
 		move_iterator() : _ptr() {}
 		move_iterator(const move_iterator &it) : _ptr(it._ptr) {}
@@ -192,7 +193,7 @@ namespace ft
 
 		const_reference	operator* () const { return *_ptr; }
 		reference		operator* () { return *_ptr; }
-		pointer			operator-> () const { return &(operator*()); }
+		const_pointer	operator-> () const { return _ptr; }
 		pointer			operator-> () { return &(operator*()); }
 		const_reference	operator[] (const std::size_t index) const { return (_ptr[index]); }
 		reference		operator[] (const std::size_t index) { return (_ptr[index]); }
@@ -242,8 +243,9 @@ namespace ft
 		typedef T																		value_type;
 		typedef typename iterator<std::random_access_iterator_tag, T>::difference_type	difference_type;
 		typedef typename iterator<std::random_access_iterator_tag, T>::reference		reference;
-		typedef const reference															const_reference;
+		typedef typename iterator<std::random_access_iterator_tag, T>::const_reference	const_reference;
 		typedef typename iterator<std::random_access_iterator_tag, T>::pointer			pointer;
+		typedef typename iterator<std::random_access_iterator_tag, T>::const_pointer	const_pointer;
 
 		const_iter() : _ptr() {}
 		const_iter(const const_iter &it) : _ptr(it._ptr) {}
@@ -254,8 +256,8 @@ namespace ft
 
 		const_reference	operator* () const { return *_ptr; }
 		reference		operator* () { return *_ptr; }
-		pointer			operator-> () const { return &(operator*()); }
-		pointer			operator-> () { return &(operator*()); }
+		const_pointer	operator-> () const { return _ptr; }
+		pointer			operator-> () { return _ptr; }
 		const_reference	operator[] (std::size_t index) const { return (_ptr[index]); }
 		reference		operator[] (std::size_t index) { return (_ptr[index]); }
 
