@@ -48,7 +48,7 @@ namespace ft
 	{
 	protected:
 		Iter											_current;
-		typedef iterator_traits<Iter>					traits_type;
+		typedef ft::iterator_traits<Iter>				traits_type;
 
 	public:
 		typedef Iter									value_type;
@@ -105,7 +105,7 @@ namespace ft
 	{
 	protected:
 		Iter											_current;
-		typedef iterator_traits<Iter>					traits_type;
+		typedef ft::iterator_traits<Iter>				traits_type;
 
 	public:
 		typedef Iter									value_type;
@@ -185,7 +185,7 @@ namespace ft
 		: public iterator<std::random_access_iterator_tag, T>
 	{
 	public:
-		typedef T																		value_type;
+		typedef T																			value_type;
 		typedef typename iterator<std::random_access_iterator_tag, T>::difference_type	difference_type;
 		typedef typename iterator<std::random_access_iterator_tag, T>::reference		reference;
 		typedef reference const															const_reference;
@@ -269,13 +269,14 @@ namespace ft
 
 		pointer		base() const { return _ptr; }
 
-		const_reference	operator* () const { return *_ptr; }
+		const_reference			operator* () const { return *_ptr; }
+		const_pointer			operator-> () const { return &(operator*()); }
+		const_reference			operator[] (const std::size_t index) const { return (_ptr[index]); }
 		reference		operator* () { return *_ptr; }
-		const_pointer	operator-> () const { return &(operator*()); }
 		pointer			operator-> () { return &(operator*()); }
-		const_reference	operator[] (const std::size_t index) const { return (_ptr[index]); }
 		reference		operator[] (const std::size_t index) { return (_ptr[index]); }
 
+		operator	const_iter<const T>() const { return (const_iter<const T>(operator->())); }
 		operator	move_iterator<T>() const { return (_ptr); }
 
 		const_iter	&operator= (const_iter const& other) {
