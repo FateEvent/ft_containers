@@ -607,7 +607,8 @@ namespace ft
 		{
 			if (pos >= begin() && pos <= end())
 			{
-				Node *temp = _avl_tree_insert(pos.node_base(), val);
+				(void)pos;
+				Node *temp = _avl_tree_insert(root(), val);
 				if (!root())
 				{
 					set_root(temp);
