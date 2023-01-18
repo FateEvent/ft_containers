@@ -191,7 +191,7 @@ namespace ft
 				it.leftmost();
 				return (it);
 			}
-			iterator it(protoroot());
+			iterator it(root());
 			return (it);
 		}
 
@@ -203,13 +203,33 @@ namespace ft
 				it.leftmost();
 				return (it);
 			}
-			const_iterator it(protoroot());
+			const_iterator it(root());
 			return (it);
 		}
 
-		iterator	end() { return iterator(root() ? root() : protoroot()); }
+		iterator	end() {
+			if (root())
+			{
+				iterator it(root());
 
-		const_iterator	end() const { return const_iterator(root() ? root() : protoroot()); }
+				it.rightmost();
+				return (it);
+			}
+			iterator it(root());
+			return (it);
+		}
+
+		const_iterator	end() const {
+			if (root())
+			{
+				const_iterator it(root());
+
+				it.rightmost();
+				return (it);
+			}
+			const_iterator it(root());
+			return (it);
+		}
 
 		iterator	find(const key_type& k)
 		{
