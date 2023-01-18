@@ -7,7 +7,6 @@
 # include <algorithm>
 # include <cstddef>
 # include <limits>
-# include "ContainerException.hpp"
 # include "pair.hpp"
 # include "vector.hpp"
 # include "set_iterator.hpp"
@@ -403,7 +402,7 @@ namespace ft
 				return (x->right());
 		}
 
-		void _Rb_tree_node_deletion(Node *v)
+		void	_Rb_tree_node_deletion(Node *v)
 		{
 			Node *u = BST_replace_node(v);
 
@@ -540,11 +539,9 @@ namespace ft
 		{
 			Node	*_y = new_node(val);
 
-			if (!_x || _x == protoroot())
+			if (!_x)
 			{
 				_x = _y;
-				set_root(_x);
-				_x->set_parent(NULL);
 				_x->set_colour("black");
 				++_size;
 				++_black_height;
@@ -568,19 +565,34 @@ namespace ft
 			return (_y);
 		}
 
-		void	delete_tree_node(const key_type& k)
+		void erase( iterator pos );
+//		iterator erase( const_iterator pos );	//C++ 11
+		void erase( iterator first, iterator last );
+//		iterator erase( const_iterator first, const_iterator last );	//C++ 11
+
+		size_type	erase( const key_type& key )
 		{
-			Node *p = _recursive_Rb_tree_search(root(), k);
+			Node *p = _recursive_Rb_tree_search(root(), key);
 			if (!p)
-				return ;
+				return (0);
 			--_size;
-//			return (iterator(_avl_tree_node_deletion(k)));
 			_Rb_tree_node_deletion(p);
+			return (1);
 		}
 
+/*
+		void	clear() {
+			erase(begin(), end());
+		}
+*/
 		pair<iterator, bool>	insert(const value_type& val)
 		{
 			Node *temp = _Rb_tree_insert(root(), val);
+			if (!root())
+			{
+				set_root(temp);
+				temp->set_parent(NULL);
+			}
 			iterator it(temp);
 
 			if (it->second == val.second)
@@ -593,10 +605,15 @@ namespace ft
 			if (pos >= begin() && pos <= end())
 			{
 				Node *temp = _Rb_tree_insert(pos.base(), val);
+				if (!root())
+				{
+					set_root(temp);
+					temp->set_parent(NULL);
+				}
 				return (iterator(temp));
 			}
 			else
-				throw(ContainerException("out_of_range"));
+				throw(std::out_of_range("set"));
 		}
 
 		template<class InputIterator> void	insert(InputIterator first, InputIterator last)
@@ -619,7 +636,7 @@ namespace ft
 			Node *found = _recursive_Rb_tree_search(root(), k);
 			if (found)
 				return (found->data().second);
-			throw(ContainerException("out_of_range"));
+			throw(std::out_of_range("set"));
 		}
 
 		const mapped_type&	at(const key_type& k) const

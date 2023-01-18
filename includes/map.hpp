@@ -6,7 +6,6 @@
 # include <algorithm>
 # include <cstddef>
 # include <limits>
-# include "ContainerException.hpp"
 # include "pair.hpp"
 # include "vector.hpp"
 # include "map_iterator.hpp"
@@ -20,22 +19,22 @@ namespace ft
 	class map {
 		struct Node;
 	public:
-		typedef Key													key_type;
-		typedef T													mapped_type;
-		typedef pair<const key_type, mapped_type>					value_type;
-		typedef Compare												key_compare;
-		typedef Allocator											allocator_type;
-		typedef typename allocator_type::reference					reference;
-		typedef typename allocator_type::const_reference			const_reference;
-		typedef typename allocator_type::pointer					pointer;
-		typedef typename allocator_type::const_pointer				const_pointer;
-		typedef typename allocator_type::size_type					size_type;
-		typedef typename allocator_type::difference_type			difference_type;
-		typedef typename Allocator:: template rebind<Node>::other	node_allocator;
-		typedef typename node_allocator::pointer					node_pointer;
+		typedef Key															key_type;
+		typedef T															mapped_type;
+		typedef pair<const key_type, mapped_type>							value_type;
+		typedef Compare														key_compare;
+		typedef Allocator													allocator_type;
+		typedef typename allocator_type::reference							reference;
+		typedef typename allocator_type::const_reference					const_reference;
+		typedef typename allocator_type::pointer							pointer;
+		typedef typename allocator_type::const_pointer						const_pointer;
+		typedef typename allocator_type::size_type							size_type;
+		typedef typename allocator_type::difference_type					difference_type;
+		typedef typename Allocator:: template rebind<Node>::other			node_allocator;
+		typedef typename node_allocator::pointer							node_pointer;
 
-		typedef ft::map_iterator<key_type, mapped_type, Node>		iterator;
-//		typedef implementation-defined								const_iterator;
+		typedef ft::map_iterator<key_type, mapped_type, Node, value_type>		iterator;
+		typedef ft::map_iterator<key_type, mapped_type, Node, const value_type>	const_iterator;
 //		typedef std::reverse_iterator<iterator>						reverse_iterator;
 //		typedef std::reverse_iterator<const_iterator>				const_reverse_iterator;
 
@@ -89,17 +88,36 @@ namespace ft
 	public:
 		explicit map(const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type())
 			: _root(NULL), _alloc_node(node_allocator()), _alloc_pair(alloc), _key_comp(comp), _size() {
-				_root = new_node();
+			_root = new_node();
 		}
 
 		template <class InputIterator>
-		map(InputIterator first, InputIterator last, const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type());
-		map(const map& x);
+		map(InputIterator first, InputIterator last, const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type())
+			: _root(NULL), _alloc_node(node_allocator()), _alloc_pair(alloc), _key_comp(comp), _size() {
+			_root = new_node();
+	
+			for (; first < last; ++first)
+				insert(*first);
+		}
+
+		map(const map& x)
+			: _root(NULL), _alloc_node(x._alloc_node), _alloc_pair(x._alloc_pair), _key_comp(x._key_comp), _size(x._size)
+		{
+			_root = new_node();
+			const_iterator	first = x.begin();
+			const_iterator	last = x.end();
+
+			for (; first < last; ++first)
+				insert(*first);
+		}
 
 		~map() { delete_node(protoroot()); }
 		map&	operator= (map const& base);
+		Node	*protoroot() const { return (_root); }
 		Node	*protoroot() { return (_root); }
+		Node	*dummy() const { return (protoroot()); }
 		Node	*dummy() { return (protoroot()); }
+		Node	*root() const { return (_root->right()); }
 		Node	*root() { return (_root->right()); }
 		void	set_root(Node *current) { _root->set_right(current); }
 
@@ -176,10 +194,22 @@ namespace ft
 			iterator it(protoroot());
 			return (it);
 		}
-//		const_iterator	begin() const;
+
+		const_iterator	begin() const {
+			if (root())
+			{
+				const_iterator it(root());
+
+				it.leftmost();
+				return (it);
+			}
+			const_iterator it(protoroot());
+			return (it);
+		}
 
 		iterator	end() { return iterator(root() ? root() : protoroot()); }
-//		const_iterator	end() const;
+
+		const_iterator	end() const { return const_iterator(root() ? root() : protoroot()); }
 
 		iterator	find(const key_type& k)
 		{
@@ -474,11 +504,9 @@ namespace ft
 			Node	*newNode = new_node(val);
 			Node	*_y;
 
-			if (!_x || _x == protoroot())
+			if (!_x)
 			{
 				_x = newNode;
-				set_root(_x);
-				_x->set_parent(NULL);
 				++_size;
 				return (_x);
 			}
@@ -515,27 +543,52 @@ namespace ft
 			return (_y);
 		}
 
-		void	delete_tree_node(const key_type& k)
+		void erase( iterator pos );
+//		iterator erase( const_iterator pos );	//C++ 11
+		void erase( iterator first, iterator last );
+//		iterator erase( const_iterator first, const_iterator last );	//C++ 11
+
+		size_type	erase( const key_type& key )
 		{
-//			return (iterator(_avl_tree_node_deletion(k)));
-			_avl_tree_node_deletion(k);
+			Node *p = _recursive_Rb_tree_search(root(), key);
+			if (!p)
+				return (0);
+			--_size;
+			_avl_tree_node_deletion(p);
+			return (1);
 		}
+
+/*
+		void	clear() {
+			erase(begin(), end());
+		}
+*/
 
 		pair<iterator, bool>	insert(const value_type& val)
 		{
 			Node *temp = _avl_tree_insert(root(), val);
+			if (!root())
+			{
+				set_root(temp);
+				temp->set_parent(NULL);
+			}
 			iterator it(temp);
 
 			if (it->second == val.second)
-				return (make_pair(it, true));
-			return (make_pair(it, false));
+				return (ft::make_pair(it, true));
+			return (ft::make_pair(it, false));
 		}
 
 		iterator	insert(iterator pos, const value_type& val)
 		{
 			if (pos >= begin() && pos <= end())
 			{
-				Node *temp = _avl_tree_insert(pos.base(), val);
+				Node *temp = _avl_tree_insert(pos.node_base(), val);
+				if (!root())
+				{
+					set_root(temp);
+					temp->set_parent(NULL);
+				}
 				return (iterator(temp));
 			}
 			else
@@ -562,13 +615,20 @@ namespace ft
 			Node *found = _recursive_avl_tree_search(root(), k);
 			if (found)
 				return (found->data().second);
-			throw(ContainerException("out_of_range"));
+			throw(std::out_of_range("map"));
 		}
 
 		const mapped_type&	at(const key_type& k) const
 		{
 			return (const_cast<mapped_type>(at((k))));
 		}
+
+		bool empty() const { return !size(); }
+
+		size_type	size() const { return _size; }
+
+		size_type	max_size() const { return std::min<size_type>(_alloc_pair.max_size(),
+								std::numeric_limits<difference_type>::max()); }
 
 	private :
 		Node			*_root;

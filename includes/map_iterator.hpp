@@ -11,14 +11,13 @@ class map;
 
 namespace ft
 {
-	template <class Key, class T, class Node>
+	template <class Key, class T, class Node, class Content>
 	class map_iterator
 	{
 	public :
 		typedef	std::bidirectional_iterator_tag		iterator_category;
 		typedef Key									key_type;
 		typedef T									mapped_type;
-		typedef pair<const key_type, mapped_type>	Content;
 		typedef std::size_t							size_type;
 		typedef std::ptrdiff_t						difference_type;
 		typedef Node*								node_pointer;
@@ -30,12 +29,13 @@ namespace ft
 		map_iterator(node_pointer ptr) : _ptr(ptr) {}
 		map_iterator(const map_iterator &other) : _ptr(other._ptr) {}
 
-		node_pointer	base() const { return _ptr; }
+		pointer			base() const { return &(_ptr->data()); }
+		node_pointer	node_base() const { return _ptr; }
 
-		reference	operator* () const { return _ptr->data(); }	// regarder la doc su les itérateurs
-		pointer		operator-> () const { return &(_ptr->data()); }	// OK!
+		reference	operator* () const { return _ptr->data(); }
+		pointer		operator-> () const { return &(_ptr->data()); }
 
-		void			set_ptr(node_pointer ptr) { _ptr = ptr; }
+		void		set_ptr(node_pointer ptr) { _ptr = ptr; }
 
 		static Node	*local_Rb_tree_decrement(Node *_x) throw ()
 		{

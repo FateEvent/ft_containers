@@ -7,6 +7,7 @@
 # include <cstddef>
 # include <stdexcept>
 # include <sstream>
+# include "iterator_traits.hpp"
 # include "iterator.hpp"
 # include "utilities.hpp"
 

@@ -238,7 +238,7 @@ int main(int argc, char** argv) {
 	try {
 		std::cout << tree.at('c') << std::endl;
 	}
-	catch (ContainerException& e){
+	catch (std::out_of_range &e){
 		std::cout << e.what() << std::endl;
 	}
 	std::cout << tree['a'] << std::endl;
