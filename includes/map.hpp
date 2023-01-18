@@ -309,6 +309,7 @@ namespace ft
 
 		Node	*_avl_tree_successor(Node *node)
 		{
+
 			if (node->right() != NULL)
 			{
 				node = node->right();
@@ -334,14 +335,17 @@ namespace ft
 			if (!p)
 				return ;
 			--_size;
-			if (p->left() == NULL && p->right() == NULL)
+			if (p->left() == NULL && p->right() == NULL)	// souci
 			{
 				parent = p->parent();
-
 				if (parent->left() == p)
 					parent->set_left(NULL);
 				else
+				{
+					std::cout << "miao:" << p->data().first << std::endl;
 					parent->set_right(NULL);
+				}
+				std::cout << "miao:" << p->data().first << std::endl;
 				delete_node(p);
 				set_root(balance_tree(root()));
 				return ;
@@ -550,11 +554,11 @@ namespace ft
 
 		size_type	erase( const key_type& key )
 		{
-			Node *p = _recursive_Rb_tree_search(root(), key);
+			Node *p = _recursive_avl_tree_search(root(), key);
 			if (!p)
 				return (0);
 			--_size;
-			_avl_tree_node_deletion(p);
+			_avl_tree_node_deletion(key);
 			return (1);
 		}
 
@@ -592,7 +596,7 @@ namespace ft
 				return (iterator(temp));
 			}
 			else
-				throw(_out_of_range(begin() - pos));
+				throw(std::out_of_range("map"));
 		}
 
 		template<class InputIterator> void	insert(InputIterator first, InputIterator last)
@@ -627,8 +631,8 @@ namespace ft
 
 		size_type	size() const { return _size; }
 
-		size_type	max_size() const { return std::min<size_type>(_alloc_pair.max_size(),
-								std::numeric_limits<difference_type>::max()); }
+		size_type	max_size() const { return std::min<size_type>(_alloc_node.max_size(),
+										std::numeric_limits<difference_type>::max()); }
 
 	private :
 		Node			*_root;
@@ -641,7 +645,7 @@ namespace ft
 		{
 			std::stringstream ss;
 
-			ss << "vector::_M_range_check: __n (which is " << pos << ")" <<	\
+			ss << "map::_M_range_check: __n (which is " << pos << ")" <<	\
 			" >= this->size() (which is " << size() << ")";
 			return (std::out_of_range(ss.str()));
 		};

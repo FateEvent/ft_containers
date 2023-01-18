@@ -195,10 +195,8 @@ int main(int argc, char** argv) {
 
 	ft::map<char, int> tree;
 
-	tree.insert(tree.begin(), ft::make_pair('a', 1));
-	std::cout << (tree.begin())->first << std::endl;
+	tree.insert(ft::make_pair('a', 1));
 	tree.insert(ft::make_pair('c', 4));
-	std::cout << (tree.begin())->first << std::endl;
 	tree.print_tree();
 	tree.insert(b);
 	tree.print_tree();
@@ -206,18 +204,27 @@ int main(int argc, char** argv) {
 	tree.insert(c);
 	tree.insert(d);
 	tree.insert(f);
-	tree.insert(l);
+	std::cout << "tree.begin()->first" << std::endl; 
+	std::cout << tree.begin()->first << std::endl; 
+	tree.insert(tree.begin(), l);
+	std::cout << "tree.begin()->first" << std::endl; 
+	std::cout << tree.begin()->first << std::endl;
+	if (tree.begin().node_base()->right())
+		std::cout << tree.begin().node_base()->right()->data().first << std::endl;
+	if (tree.begin().node_base()->left())
+		std::cout << tree.begin().node_base()->left()->data().first << std::endl;
+
 
 	tree.level_order_traversal(tree.protoroot(), tree.print_node);
 
 	std::cout << std::endl;
 
-	tree.delete_tree_node('c');
+	tree.erase('c');
 	tree.print_tree();
-	tree.delete_tree_node('d');
+	tree.erase('d');
 	std::cout << tree.root()->height() << std::endl;
 	tree.print_tree();
-	tree.delete_tree_node('f');
+	tree.erase('f');
 	tree.print_tree();
 
 	std::cout << (tree.find('c'))->first << std::endl;
@@ -271,12 +278,12 @@ int main(int argc, char** argv) {
 
 	std::cout << std::endl;
 
-	tree.delete_tree_node('c');
+	tree.erase('c');
 	tree.print_tree();
-	tree.delete_tree_node('d');
+	tree.erase('d');
 	std::cout << tree.root()->height() << std::endl;
 	tree.print_tree();
-	tree.delete_tree_node('f');
+	tree.erase('f');
 	tree.print_tree();
 
 	std::cout << (tree.find('c'))->first << std::endl;

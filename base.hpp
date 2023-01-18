@@ -1,7 +1,7 @@
 #ifndef BASE_HPP
 # define BASE_HPP
 
-# if !defined(USING_STD)
+# if defined(USING_STD)
 #  define TESTED_NAMESPACE ft
 # else
 #  define TESTED_NAMESPACE std
