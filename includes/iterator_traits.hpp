@@ -6,9 +6,15 @@
 # include <cstddef>
 # include <iterator>
 
+template <class Iter>
+class wrapper_it;
+template <class Iter>
+class reverse_iterator;
+
 namespace ft
 {
-	template <typename Iter> struct iterator_traits {
+	template <typename Iter>
+	struct iterator_traits {
 		typedef typename Iter::iterator_category	iterator_category;
 		typedef typename Iter::value_type			value_type;
 		typedef typename Iter::difference_type		difference_type;
@@ -16,7 +22,8 @@ namespace ft
 		typedef typename Iter::reference			reference;
 	};
 
-	template <typename T> struct iterator_traits<T *> {
+	template <typename T>
+	struct iterator_traits<T *> {
 		typedef std::random_access_iterator_tag		iterator_category;
 		typedef T									value_type;
 		typedef std::ptrdiff_t						difference_type;
@@ -24,7 +31,8 @@ namespace ft
 		typedef T&									reference;
 	};
 
-	template <typename T> struct iterator_traits<const T *>
+	template <typename T>
+	struct iterator_traits<const T *>
 	{
 		typedef std::random_access_iterator_tag		iterator_category;
 		typedef T									value_type;
@@ -41,28 +49,32 @@ namespace ft
 		typedef ft::iterator_traits<Iter>				traits_type;
 
 	public:
-		typedef Iter									value_type;
+		typedef Iter									iterator_type;
+		typedef typename traits_type::value_type		value_type;
 		typedef typename traits_type::difference_type	difference_type;
 		typedef typename traits_type::reference			reference;
 		typedef typename traits_type::pointer			pointer;
 		typedef std::size_t								size_type;
 
 		wrapper_it() : _current(Iter()) {}
-		wrapper_it(const value_type &it) : _current(it) {}
+		wrapper_it(const iterator_type &it) : _current(it) {}
 		template<class U>
 		wrapper_it(const wrapper_it<U>& other): _current(other.base()) {}
+		wrapper_it(const reverse_iterator<Iter> &it) : _current(it.operator->()) {}
+		~wrapper_it() {}
 
 		wrapper_it	&operator= (wrapper_it const& other) {
-			if (this == &other)
-				return (*this);
-			this->_current = other._current;
+			_current = other.base();
 			return (*this);
 		}
 
-		value_type	base() const { return _current; }
+		iterator_type	base() const { return _current; }
 
-		reference	operator* () { return *_current; }
-		pointer		operator-> () { return &(operator*()); }
+		reference	operator* () const { return (*_current); }
+		pointer		operator-> () const { return &(operator*()); }
+
+		operator	wrapper_it<const Iter>() const { return (wrapper_it<const Iter>(operator->())); }
+		operator	reverse_iterator<Iter>() const { return (_current); }
 
 		wrapper_it	&operator++ () { _current++; return *this; }
 		wrapper_it	operator++ (int) { wrapper_it tmp = *this; ++(*this); return tmp; }
@@ -73,7 +85,6 @@ namespace ft
 		wrapper_it	operator+ (size_type dist) const { return (_current + dist); }
 		wrapper_it	operator- (size_type dist) const { return (_current - dist); }
 		reference	operator[] (size_type index) { return (_current[index]); }
-
 		ptrdiff_t	operator- (const wrapper_it &it) { return (_current - it._current); }
 	};
 
@@ -98,28 +109,32 @@ namespace ft
 		typedef ft::iterator_traits<Iter>				traits_type;
 
 	public:
-		typedef Iter									value_type;
+		typedef Iter									iterator_type;
+		typedef typename traits_type::value_type		value_type;
 		typedef typename traits_type::difference_type	difference_type;
 		typedef typename traits_type::reference			reference;
 		typedef typename traits_type::pointer			pointer;
 		typedef std::size_t								size_type;
 
-		reverse_iterator() : _current(Iter()) {}
-		reverse_iterator(const value_type &it) : _current(it) {}
+		reverse_iterator() : _current() {}
+		reverse_iterator(const iterator_type &it) : _current(it) {}
 		template<class U>
 		reverse_iterator(const reverse_iterator<U>& other): _current(other.base()) {}
+		reverse_iterator(const wrapper_it<Iter> &it) : _current(it.operator->()) {}
+		~reverse_iterator() {}
 
 		reverse_iterator	&operator= (reverse_iterator const& other) {
-			if (this == &other)
-				return (*this);
-			this->_current = other._current;
+			_current = other.base();
 			return (*this);
 		}
 
-		value_type	base() const { return _current; }
+		iterator_type	base() const { return _current; }
 
 		reference	operator* () const { return *(std::prev(_current)); }
-		pointer		operator-> () { return &(operator*()); }
+		pointer		operator-> () const { return &(operator*()); }
+
+		operator	reverse_iterator<const Iter>() const { return (reverse_iterator<const Iter>(operator->())); }
+		operator	wrapper_it<Iter>() const { return (_current); }
 
 		reverse_iterator	&operator++ () { --_current; return std::prev(*this); }
 		reverse_iterator 	operator++ (int) { reverse_iterator tmp = *this; --(*this); return tmp; }

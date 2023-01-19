@@ -110,11 +110,11 @@ namespace ft
 		const_iter(const move_iterator<T> &it) : _ptr(it.operator->()) {}
 		const_iter(pointer ptr) : _ptr(ptr) {}
 
-		pointer		base() const { return _ptr; }
+		pointer	base() const { return _ptr; }
 
-		const_reference			operator* () const { return *_ptr; }
-		const_pointer			operator-> () const { return &(operator*()); }
-		const_reference			operator[] (const std::size_t index) const { return (_ptr[index]); }
+		const_reference	operator* () const { return *_ptr; }
+		const_pointer	operator-> () const { return &(operator*()); }
+		const_reference	operator[] (const std::size_t index) const { return (_ptr[index]); }
 		reference		operator* () { return *_ptr; }
 		pointer			operator-> () { return &(operator*()); }
 		reference		operator[] (const std::size_t index) { return (_ptr[index]); }

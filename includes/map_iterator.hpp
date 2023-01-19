@@ -6,8 +6,13 @@
 # include <cstddef>
 # include "map.hpp"
 # include "pair.hpp"
+# include "iterator_traits.hpp"
 
 class map;
+template <class Iter>
+class wrapper_it;
+template <class Iter>
+class reverse_iterator;
 
 namespace ft
 {
@@ -29,6 +34,9 @@ namespace ft
 		map_iterator() : _ptr(NULL) {}
 		map_iterator(node_pointer ptr) : _ptr(ptr) {}
 		map_iterator(const map_iterator &other) : _ptr(other._ptr) {}
+		template<class Iter>
+		map_iterator(const reverse_iterator<Iter> &other) : _ptr(other.base()._ptr) {}
+		~map_iterator() {}
 
 		pointer			base() const { return &(_ptr->data()); }
 		node_pointer	node_base() const { return _ptr; }

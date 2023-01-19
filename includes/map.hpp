@@ -33,11 +33,12 @@ namespace ft
 		typedef typename allocator_type::difference_type						difference_type;
 		typedef typename Allocator:: template rebind<Node>::other				node_allocator;
 		typedef typename node_allocator::pointer								node_pointer;
-
 		typedef ft::map_iterator<key_type, mapped_type, Node, value_type>		iterator;
 		typedef ft::map_iterator<key_type, mapped_type, Node, const value_type>	const_iterator;
-		typedef ft::reverse_iterator<iterator>									reverse_iterator;
-		typedef ft::reverse_iterator<const_iterator>							const_reverse_iterator;
+//		typedef ft::wrapper_it<iter>											iterator;
+//		typedef ft::wrapper_it<const_iter>										const_iterator;
+		typedef ft::reverse_iterator<iterator>										reverse_iterator;
+		typedef ft::reverse_iterator<const_iterator>								const_reverse_iterator;
 
 		class value_compare
 			: public std::binary_function<value_type, value_type, bool>
@@ -305,7 +306,6 @@ namespace ft
 			return (ft::make_pair(lower_bound(key), upper_bound(key)));
 		}
 
-
 		Node	*new_node(const value_type& pair = value_type(), Node *parent = NULL)
 		{
 			Node *ptr = _alloc_node.allocate(1);
@@ -338,6 +338,29 @@ namespace ft
 		**																			**
 		\****************************************************************************/
 
+		Node	*_iterative_avl_tree_search(const key_type& k) const
+		{
+			Node	*current(root());
+			Node	*prev(root());
+
+			while (current)
+			{
+				if (k == current->data().first)
+					return (current);
+				else if (_key_comp(k, current->data().first))
+				{
+					prev = current;
+					current = current->left();
+				}
+				else
+				{
+					prev = current;
+					current = current->right();
+				}
+			}
+			return (prev);
+		}
+
 		Node	*_iterative_avl_tree_search(const key_type& k)
 		{
 			Node	*current(root());
@@ -362,6 +385,24 @@ namespace ft
 		}
 
 		Node	*_recursive_avl_tree_search(Node *node, const key_type& k) const
+		{
+			if (node == NULL)
+				return (NULL);
+			else if (node->data().first == k)
+				return (node);
+			else if (_key_comp(k, node->data().first))
+			{
+				Node *temp = _recursive_avl_tree_search(node->left(), k);
+				return (temp);
+			}
+			else
+			{
+				Node *temp = _recursive_avl_tree_search(node->right(), k);
+				return (temp);
+			}
+		}
+
+		Node	*_recursive_avl_tree_search(Node *node, const key_type& k)
 		{
 			if (node == NULL)
 				return (NULL);
