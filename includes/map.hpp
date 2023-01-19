@@ -35,10 +35,8 @@ namespace ft
 		typedef typename node_allocator::pointer								node_pointer;
 		typedef ft::map_iterator<key_type, mapped_type, Node, value_type>		iterator;
 		typedef ft::map_iterator<key_type, mapped_type, Node, const value_type>	const_iterator;
-//		typedef ft::wrapper_it<iter>											iterator;
-//		typedef ft::wrapper_it<const_iter>										const_iterator;
-		typedef ft::reverse_iterator<iterator>										reverse_iterator;
-		typedef ft::reverse_iterator<const_iterator>								const_reverse_iterator;
+		typedef ft::reverse_iterator<iterator>									reverse_iterator;
+		typedef ft::reverse_iterator<const_iterator>							const_reverse_iterator;
 
 		class value_compare
 			: public std::binary_function<value_type, value_type, bool>
