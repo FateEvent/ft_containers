@@ -253,11 +253,12 @@ namespace ft
 		}
 
 		iterator		upper_bound(const key_type& key) {
-			iterator	it(begin());
+			iterator		it(begin());
+			const_iterator	ite(end());
 
-			while (it != end())
+			while (it != ite)
 			{
-				if (!_key_comp(key, it->first))
+				if (_key_comp(key, it->first))
 					break ;
 				it++;
 			}
@@ -265,11 +266,11 @@ namespace ft
 		}
 
 		const_iterator	upper_bound(const key_type& key) const {
-			const_iterator	it(begin());
+			const_iterator	it(begin()), ite(end());
 
-			while (it != end())
+			while (it != ite)
 			{
-				if (!_key_comp(key, it->first))
+				if (_key_comp(key, it->first))
 					break ;
 				it++;
 			}
@@ -277,27 +278,27 @@ namespace ft
 		}
 
 		iterator		lower_bound(const key_type& key) {
-			reverse_iterator	it(rbegin());
-			std::cout << "lb" << std::endl;
+			iterator		it(begin());
+			const_iterator	ite(end());
 
-			while (it != rend())
+			while (it != ite)
 			{
-				if (!_key_comp(key, it->first))
+				if (!_key_comp(it->first, key))
 					break ;
-				it--;
+				it++;
 			}
 			return (it);
 		}
 
 		const_iterator	lower_bound(const key_type& key) const {
-			const_reverse_iterator	it(rbegin());
+			const_iterator	it(begin());
+			const_iterator	ite(end());
 
-			while (it != rend())
+			while (it != ite)
 			{
-				std::cout << it->first << std::endl;
-				if (!_key_comp(key, it->first))
+				if (!_key_comp(it->first, key))
 					break ;
-				it--;
+				it++;
 			}
 			return (it);
 		}
