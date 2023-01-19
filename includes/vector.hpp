@@ -46,8 +46,10 @@ namespace ft
 		vector( InputIt first, InputIt last, const Allocator& alloc = Allocator(),
 				typename ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::value* = 0 ) : _alloc(alloc), _v(NULL)
 		{
-			ptrdiff_t	dist = last - first;
-			_size = _capacity = dist;
+			size_type	count(0);
+			for (; first != last; ++first)
+				count++;
+			_size = _capacity = count;
 			_v = _alloc.allocate(capacity());
 			assign(first, last);
 		}
@@ -103,7 +105,9 @@ namespace ft
 		template <class InputIt>
 		void	assign( InputIt first, InputIt last, typename ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::value* = 0 )
 		{
-			difference_type	pos = last - first;
+			size_type	pos(0);
+			for (; first != last; ++first)
+				pos++;
 			if (pos >= 0)
 			{
 				clear();
@@ -258,7 +262,9 @@ namespace ft
 		{
 			if (pos >= begin() && pos <= end())
 			{
-				difference_type		count = last - first;
+				size_type	count(0);
+				for (; first != last; ++first)
+					count++;
 				difference_type		dist = pos - this->begin();
 
 				if (capacity() == 0)

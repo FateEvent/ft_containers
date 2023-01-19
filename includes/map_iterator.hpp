@@ -44,7 +44,7 @@ namespace ft
 		reference	operator* () const { return _ptr->data(); }
 		pointer		operator-> () const { return &(_ptr->data()); }
 
-		operator	map_iterator<Key, T, Node, const Content>() const { return (map_iterator<Key, T, Node, const Content>(_ptr)); }
+		operator	map_iterator<Key, T, Node, const value_type>() const { return (map_iterator<Key, T, Node, const value_type>(_ptr)); }
 
 		void		set_ptr(node_pointer ptr) { _ptr = ptr; }
 
