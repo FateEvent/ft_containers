@@ -50,5 +50,7 @@ int		main(void)
 	ft_insert(mp2, mp2.end(), T3(1000, "Hello"));
 	ft_insert(mp2, mp2.end(), T3(1500, "World"));
 
+//	mp2.level_order_traversal(mp2.protoroot(), mp2.print_node);
+
 	return (0);
 }

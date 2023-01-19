@@ -96,7 +96,7 @@ namespace ft
 			: _root(NULL), _alloc_node(node_allocator()), _alloc_pair(alloc), _key_comp(comp), _size() {
 			_root = new_node();
 	
-			for (; first < last; ++first)
+			for (; first != last; ++first)
 				insert(*first);
 		}
 
@@ -191,7 +191,7 @@ namespace ft
 				it.leftmost();
 				return (it);
 			}
-			iterator it(root());
+			iterator it(protoroot());
 			return (it);
 		}
 
@@ -203,7 +203,7 @@ namespace ft
 				it.leftmost();
 				return (it);
 			}
-			const_iterator it(root());
+			const_iterator it(protoroot());
 			return (it);
 		}
 
@@ -215,7 +215,7 @@ namespace ft
 				it.rightmost();
 				return (it);
 			}
-			iterator it(root());
+			iterator it(protoroot());
 			return (it);
 		}
 
@@ -227,18 +227,75 @@ namespace ft
 				it.rightmost();
 				return (it);
 			}
-			const_iterator it(root());
+			const_iterator it(protoroot());
 			return (it);
 		}
 
-		iterator	find(const key_type& k)
-		{
-			Node *found = _recursive_avl_tree_search(root(), k);
+		iterator	find(const key_type& key) {
+			Node *found = _recursive_avl_tree_search(root(), key);
 			if (found)
 				return (iterator(found));
 			return (end());
 		}
-//		const_iterator	find (const key_type& k) const;
+		const_iterator	find (const key_type& key) const {
+			Node *found = _recursive_avl_tree_search(root(), key);
+			if (found)
+				return (const_iterator(found));
+			return (end());
+		}
+
+		iterator		upper_bound(const key_type& key) {
+			Node *found = _recursive_avl_tree_search(root(), key);
+			if (found)
+			{
+				iterator	it(found);
+
+				return (++it);	
+			}
+			return (end());
+		}
+
+		const_iterator	upper_bound(const key_type& key) const {
+			Node *found = _recursive_avl_tree_search(root(), key);
+			if (found)
+			{
+				const_iterator	it(found);
+
+				return (++it);	
+			}
+			return (end());
+		}
+
+		iterator		lower_bound(const key_type& key) {
+			Node *found = _recursive_avl_tree_search(root(), key);
+			if (found)
+			{
+				iterator	it(found);
+
+				return (--it);	
+			}
+			return (end());
+		}
+
+		const_iterator	lower_bound(const key_type& key) const {
+			Node *found = _recursive_avl_tree_search(root(), key);
+			if (found)
+			{
+				const_iterator	it(found);
+
+				return (--it);	
+			}
+			return (end());
+		}
+
+		ft::pair<iterator,iterator>	equal_range(const key_type& key) {
+			return (ft::make_pair(lower_bound(key), upper_bound(key)));
+		}
+
+		ft::pair<const_iterator,const_iterator>	equal_range(const key_type& key) const {
+			return (ft::make_pair(lower_bound(key), upper_bound(key)));
+		}
+
 
 		Node	*new_node(const value_type& pair = value_type(), Node *parent = NULL)
 		{
@@ -295,7 +352,7 @@ namespace ft
 			return (prev);
 		}
 
-		Node	*_recursive_avl_tree_search(Node *node, const key_type& k)
+		Node	*_recursive_avl_tree_search(Node *node, const key_type& k) const
 		{
 			if (node == NULL)
 				return (NULL);
@@ -563,6 +620,7 @@ namespace ft
 			}
 			++_size;
 			set_root(balance_tree(root()));
+			suffix_traversal(root(), recomp_height);
 			_y = _recursive_avl_tree_search(root(), val.first);
 			return (_y);
 		}
@@ -605,19 +663,14 @@ namespace ft
 
 		iterator	insert(iterator pos, const value_type& val)
 		{
-			if (pos >= begin() && pos <= end())
+			(void)pos;
+			Node *temp = _avl_tree_insert(root(), val);
+			if (!root())
 			{
-				(void)pos;
-				Node *temp = _avl_tree_insert(root(), val);
-				if (!root())
-				{
-					set_root(temp);
-					temp->set_parent(NULL);
-				}
-				return (iterator(temp));
+				set_root(temp);
+				temp->set_parent(NULL);
 			}
-			else
-				throw(std::out_of_range("map"));
+			return (iterator(temp));
 		}
 
 		template<class InputIterator> void	insert(InputIterator first, InputIterator last)

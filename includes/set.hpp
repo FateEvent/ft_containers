@@ -35,8 +35,8 @@ namespace ft
 		typedef typename Allocator:: template rebind<Node>::other	node_allocator;
 		typedef typename node_allocator::pointer					node_pointer;
 
-		typedef ft::set_iterator<key_type, mapped_type, Node>		iterator;
-//		typedef implementation-defined								const_iterator;
+		typedef ft::set_iterator<key_type, mapped_type, Node, value_type>		iterator;
+		typedef ft::set_iterator<key_type, mapped_type, Node, const value_type>	const_iterator;
 //		typedef std::reverse_iterator<iterator>						reverse_iterator;
 //		typedef std::reverse_iterator<const_iterator>				const_reverse_iterator;
 
@@ -221,10 +221,42 @@ namespace ft
 			iterator it(protoroot());
 			return (it);
 		}
-//		const_iterator	begin() const;
 
-		iterator	end() { return iterator(root() ? root() : protoroot()); }
-//		const_iterator	end() const;
+		const_iterator	begin() const {
+			if (root())
+			{
+				const_iterator it(root());
+
+				it.leftmost();
+				return (it);
+			}
+			const_iterator it(protoroot());
+			return (it);
+		}
+
+		iterator	end() {
+			if (root())
+			{
+				iterator it(root());
+
+				it.rightmost();
+				return (it);
+			}
+			iterator it(protoroot());
+			return (it);
+		}
+
+		const_iterator	end() const {
+			if (root())
+			{
+				const_iterator it(root());
+
+				it.rightmost();
+				return (it);
+			}
+			const_iterator it(protoroot());
+			return (it);
+		}
 
 		iterator	find(const key_type& k)
 		{
@@ -602,18 +634,14 @@ namespace ft
 
 		iterator	insert(iterator pos, const value_type& val)
 		{
-			if (pos >= begin() && pos <= end())
+			(void)pos;
+			Node *temp = _Rb_tree_insert(pos.base(), val);
+			if (!root())
 			{
-				Node *temp = _Rb_tree_insert(pos.base(), val);
-				if (!root())
-				{
-					set_root(temp);
-					temp->set_parent(NULL);
-				}
-				return (iterator(temp));
+				set_root(temp);
+				temp->set_parent(NULL);
 			}
-			else
-				throw(std::out_of_range("set"));
+			return (iterator(temp));
 		}
 
 		template<class InputIterator> void	insert(InputIterator first, InputIterator last)

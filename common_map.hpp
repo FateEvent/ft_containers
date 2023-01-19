@@ -1,5 +1,5 @@
 #include "base.hpp"
-#if defined(USING_STD)
+#if !defined(USING_STD)
 # include "includes/map.hpp"
 #else
 # include <map>

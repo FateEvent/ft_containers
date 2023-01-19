@@ -11,14 +11,13 @@ class set;
 
 namespace ft
 {
-	template <class Key, class T, class Node>
+	template <class Key, class T, class Node, class Content>
 	class set_iterator
 	{
 	public :
 		typedef	std::bidirectional_iterator_tag		iterator_category;
 		typedef Key									key_type;
 		typedef T									setped_type;
-		typedef pair<const key_type, setped_type>	Content;
 		typedef std::size_t							size_type;
 		typedef std::ptrdiff_t						difference_type;
 		typedef Node*								node_pointer;
@@ -30,7 +29,8 @@ namespace ft
 		set_iterator(node_pointer ptr) : _ptr(ptr) {}
 		set_iterator(const set_iterator &other) : _ptr(other._ptr) {}
 
-		node_pointer	base() const { return _ptr; }
+		pointer			base() const { return &(_ptr->data()); }
+		node_pointer	node_base() const { return _ptr; }
 
 		reference	operator* () const { return _ptr->data(); }	// regarder la doc su les itérateurs
 		pointer		operator-> () const { return &(_ptr->data()); }	// OK!
