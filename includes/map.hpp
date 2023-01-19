@@ -46,10 +46,10 @@ namespace ft
 		protected:
 			key_compare	comp;
 
-			value_compare(key_compare c);
+			value_compare(key_compare c) : comp(c) {};
 
 		public:
-			bool operator()(const value_type& x, const value_type& y) const { return x == y; }
+			bool operator()(const value_type& lhs, const value_type& rhs) const { return comp(lhs.first, rhs.first); }
 		};
 
 	private:
@@ -107,7 +107,7 @@ namespace ft
 			const_iterator	first = x.begin();
 			const_iterator	last = x.end();
 
-			for (; first < last; ++first)
+			for (; first != last; ++first)
 				insert(*first);
 		}
 
@@ -725,9 +725,10 @@ namespace ft
 			return (iterator(temp));
 		}
 
-		template<class InputIterator> void	insert(InputIterator first, InputIterator last)
+		template<class InputIterator>
+		void	insert(InputIterator first, InputIterator last)
 		{
-			for (; first < last; ++first)
+			for (; first != last; ++first)
 				insert(*first);
 		}
 
@@ -752,6 +753,12 @@ namespace ft
 		{
 			return (const_cast<mapped_type>(at((k))));
 		}
+
+		allocator_type	get_allocator() const { return _alloc_pair; }
+
+		key_compare	key_comp() const { return _key_comp; };
+
+		value_compare	value_comp() const { return value_compare(_key_comp); }
 
 		bool empty() const { return !size(); }
 

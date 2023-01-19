@@ -34,6 +34,10 @@ namespace ft
 		map_iterator() : _ptr(NULL) {}
 		map_iterator(node_pointer ptr) : _ptr(ptr) {}
 		map_iterator(const map_iterator &other) : _ptr(other._ptr) {}
+		template<typename U>
+		map_iterator(const map_iterator<Key, T, Node, U> &other,
+			typename ft::enable_if<!std::is_const<U>::value>::type* = 0)
+				: _ptr(other._ptr) {}
 		map_iterator(const wrapper_it<map_iterator> &other) : _ptr(other.base()._ptr) {}
 		map_iterator(const reverse_iterator<map_iterator> &other) : _ptr(other.base()._ptr) {}
 		~map_iterator() {}
