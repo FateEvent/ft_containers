@@ -130,21 +130,21 @@ namespace ft
 
 		iterator_type	base() const { return _current; }
 
-		reference	operator* () const { return *(std::prev(_current)); }
+		reference	operator* () const { return (*_current); }
 		pointer		operator-> () const { return &(operator*()); }
 
 		operator	reverse_iterator<const Iter>() const { return (reverse_iterator<const Iter>(operator->())); }
 		operator	wrapper_it<Iter>() const { return (_current); }
 
-		reverse_iterator	&operator++ () { --_current; return std::prev(*this); }
+		reverse_iterator	&operator++ () { --_current; return (*this); }
 		reverse_iterator 	operator++ (int) { reverse_iterator tmp = *this; --(*this); return tmp; }
-		reverse_iterator	&operator-- () { ++_current; return *this; }
+		reverse_iterator	&operator-- () { ++_current; return (*this); }
 		reverse_iterator	operator-- (int) { reverse_iterator tmp = *this; ++(*this); return tmp; }
 		reverse_iterator	&operator+= (size_type dist) { _current -= dist; return *this; }
 		reverse_iterator	&operator-= (size_type dist) { _current += dist; return *this; }
 		reverse_iterator	operator+ (size_type dist) { return reverse_iterator(_current - dist); }
 		reverse_iterator	operator- (size_type dist) { return reverse_iterator(_current + dist); }
-		reference			operator[] (size_type index) { return (std::prev(_current))[-index]; }
+		reference			operator[] (size_type index) { return ((_current))[-index]; }
 		ptrdiff_t			operator- (const reverse_iterator &it) { return (_current - it._current); }
 
 		friend reverse_iterator	operator+ (const size_type dist, const reverse_iterator &src)

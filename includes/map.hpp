@@ -233,11 +233,11 @@ namespace ft
 
 		reverse_iterator rbegin() { return (reverse_iterator(end())); }
 		
-		const_reverse_iterator rbegin() const { return (const_reverse_iterator(end())); }
+		const_reverse_iterator rbegin() const { return (const_iterator(end())); }
 
 		reverse_iterator rend() { return (reverse_iterator(begin())); }
 		
-		const_reverse_iterator rend() const { return (const_reverse_iterator(begin())); } 
+		const_reverse_iterator rend() const { return (const_iterator(begin())); } 
 
 		iterator	find(const key_type& key) {
 			Node *found = _recursive_avl_tree_search(root(), key);
@@ -259,6 +259,7 @@ namespace ft
 			{
 				if (!_key_comp(key, it->first))
 					break ;
+				it++;
 			}
 			return (it);
 		}
@@ -270,17 +271,20 @@ namespace ft
 			{
 				if (!_key_comp(key, it->first))
 					break ;
+				it++;
 			}
 			return (it);
 		}
 
 		iterator		lower_bound(const key_type& key) {
 			reverse_iterator	it(rbegin());
+			std::cout << "lb" << std::endl;
 
 			while (it != rend())
 			{
 				if (!_key_comp(key, it->first))
 					break ;
+				it--;
 			}
 			return (it);
 		}
@@ -290,8 +294,10 @@ namespace ft
 
 			while (it != rend())
 			{
+				std::cout << it->first << std::endl;
 				if (!_key_comp(key, it->first))
 					break ;
+				it--;
 			}
 			return (it);
 		}
