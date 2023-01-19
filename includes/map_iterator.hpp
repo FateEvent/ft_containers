@@ -34,6 +34,7 @@ namespace ft
 		map_iterator() : _ptr(NULL) {}
 		map_iterator(node_pointer ptr) : _ptr(ptr) {}
 		map_iterator(const map_iterator &other) : _ptr(other._ptr) {}
+//		map_iterator(const map_iterator<Key, T, Node, const value_type> &other) : _ptr(other._ptr) {}
 		map_iterator(const wrapper_it<map_iterator> &other) : _ptr(other.base()._ptr) {}
 		map_iterator(const reverse_iterator<map_iterator> &other) : _ptr(other.base()._ptr) {}
 		~map_iterator() {}
@@ -44,7 +45,7 @@ namespace ft
 		reference	operator* () const { return _ptr->data(); }
 		pointer		operator-> () const { return &(_ptr->data()); }
 
-		operator	map_iterator<Key, T, Node, const value_type>() const { return (map_iterator<Key, T, Node, const value_type>(_ptr)); }
+//		operator	map_iterator<Key, T, Node, const value_type>() const { return (map_iterator<Key, T, Node, const value_type>(_ptr)); }
 
 		void		set_ptr(node_pointer ptr) { _ptr = ptr; }
 

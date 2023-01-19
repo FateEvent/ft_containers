@@ -253,8 +253,7 @@ namespace ft
 		}
 
 		iterator		upper_bound(const key_type& key) {
-			iterator		it(begin());
-			const_iterator	ite(end());
+			iterator	it(begin()), ite(end());
 
 			while (it != ite)
 			{
@@ -278,8 +277,7 @@ namespace ft
 		}
 
 		iterator		lower_bound(const key_type& key) {
-			iterator		it(begin());
-			const_iterator	ite(end());
+			iterator	it(begin()), ite(end());
 
 			while (it != ite)
 			{
@@ -291,8 +289,7 @@ namespace ft
 		}
 
 		const_iterator	lower_bound(const key_type& key) const {
-			const_iterator	it(begin());
-			const_iterator	ite(end());
+			const_iterator	it(begin()), ite(end());
 
 			while (it != ite)
 			{
