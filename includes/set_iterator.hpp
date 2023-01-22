@@ -35,7 +35,7 @@ namespace ft
 		reference	operator* () const { return _ptr->data(); }	// regarder la doc su les itérateurs
 		pointer		operator-> () const { return &(_ptr->data()); }	// OK!
 
-		void			set_ptr(node_pointer ptr) { _ptr = ptr; }
+		void		set_ptr(node_pointer ptr) { _ptr = ptr; }
 
 		static Node	*local_Rb_tree_decrement(Node *_x) throw ()
 		{

@@ -149,7 +149,22 @@ namespace ft
 		ptrdiff_t			operator- (const map_iterator &it) { return (_ptr - it._ptr); }
 
 		bool		operator== (const map_iterator &it) { return this->base() == it.base(); }
+
 		bool		operator!= (const map_iterator &it) { return this->base() != it.base(); }
+
+		map_iterator& operator=(const map_iterator &assign) 
+		{
+			if (this != &assign)
+				_ptr = assign._ptr;
+			return (*this); 
+		}
+		
+		template<typename T1, typename T2>
+		friend bool	operator!=(map_iterator<Key, T, Node, T1>& lhs, map_iterator<Key, T, Node, T2>& rhs)
+		{
+			return (lhs._ptr != rhs._ptr);
+		}
+
 		bool		operator< (const map_iterator &it) { return this->base() < it.base(); }
 		bool		operator<= (const map_iterator &it) { return this->base() <= it.base(); }
 		bool		operator> (const map_iterator &it) { return this->base() > it.base(); }
