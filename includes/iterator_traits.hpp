@@ -79,10 +79,10 @@ namespace ft
 		wrapper_it	operator++ (int) { wrapper_it tmp = *this; ++(*this); return tmp; }
 		wrapper_it	&operator-- () { _current--; return *this; }
 		wrapper_it	operator-- (int) { wrapper_it tmp = *this; --(*this); return tmp; }		
-		wrapper_it	&operator+= (size_type dist) { _current += dist; return *this; }
-		wrapper_it	&operator-= (size_type dist) { _current -= dist; return *this; }
-		wrapper_it	operator+ (size_type dist) const { return (_current + dist); }
-		wrapper_it	operator- (size_type dist) const { return (_current - dist); }
+		wrapper_it	&operator+= (size_type n) { _current += n; return *this; }
+		wrapper_it	&operator-= (size_type n) { _current -= n; return *this; }
+		wrapper_it	operator+ (size_type n) const { return (_current + n); }
+		wrapper_it	operator- (size_type n) const { return (_current - n); }
 		reference	operator[] (size_type index) { return (_current[index]); }
 		ptrdiff_t	operator- (const wrapper_it &it) { return (_current - it._current); }
 	};
@@ -126,36 +126,42 @@ namespace ft
 			return (*this);
 		}
 
+		template<class U>
+		reverse_iterator	&operator= (reverse_iterator<U> const& other) {
+			_current = other.base();
+			return (*this);
+		}
+
 		iterator_type	base() const { return _current; }
 
 		reference	operator* () const { return ((--iterator_type(_current)).operator*()); }
-		pointer		operator-> () const { return &(operator*()); }
+		pointer		operator-> () const { return (&(operator*())); }
+		reference	operator[] (difference_type index) { return (*operator+(index)); }
 
 		operator	reverse_iterator<const Iter>() const { return (reverse_iterator<const Iter>(operator->())); }
 		operator	wrapper_it<Iter>() const { return (_current); }
 
+		reverse_iterator	operator+ (difference_type n) const { return reverse_iterator(_current - n); }
 		reverse_iterator	&operator++ () { --_current; return (*this); }
-		reverse_iterator 	operator++ (int) { reverse_iterator tmp = *this; --(*this); return tmp; }
+		reverse_iterator 	operator++ (int) { reverse_iterator tmp = *this; --_current; return (tmp); }
+		reverse_iterator	&operator+= (difference_type n) { _current -= n; return (*this); }
+		reverse_iterator	operator- (difference_type n) const { return reverse_iterator(_current + n); }
 		reverse_iterator	&operator-- () { ++_current; return (*this); }
-		reverse_iterator	operator-- (int) { reverse_iterator tmp = *this; ++(*this); return tmp; }
-		reverse_iterator	&operator+= (size_type dist) { _current -= dist; return *this; }
-		reverse_iterator	&operator-= (size_type dist) { _current += dist; return *this; }
-		reverse_iterator	operator+ (size_type dist) { return reverse_iterator(_current - dist); }
-		reverse_iterator	operator- (size_type dist) { return reverse_iterator(_current + dist); }
-		reference			operator[] (size_type index) { return (operator+(-index)); }
+		reverse_iterator	operator-- (int) { reverse_iterator tmp = *this; ++_current; return (tmp); }
+		reverse_iterator	&operator-= (difference_type n) { _current += n; return (*this); }
 		ptrdiff_t			operator- (const reverse_iterator &it) { return (_current - it._current); }
 
-		friend reverse_iterator	operator+ (const size_type dist, const reverse_iterator &src)
+		friend reverse_iterator	operator+ (const size_type n, const reverse_iterator &src)
 		{
 			reverse_iterator it(src._current);
-			it -= dist;
+			it -= n;
 			return (it);
 		}
 		
-		friend reverse_iterator	operator- (const size_type dist, const reverse_iterator &src)
+		friend reverse_iterator	operator- (const size_type n, const reverse_iterator &src)
 		{
 			reverse_iterator it(src._current);
-			it += dist;
+			it += n;
 			return (it);
 		}
 	};

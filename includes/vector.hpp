@@ -156,17 +156,17 @@ namespace ft
 
 		iterator				begin()	{ return (iterator(_v)); }
 		const_iterator			begin() const { return (const_iterator(_v)); }
-		iterator				end() { return (iterator(&_v + size())); }
-		const_iterator			end() const { return (const_iterator(&_v + size())); }
+		iterator				end() { return (iterator(_v + size())); }
+		const_iterator			end() const { return (const_iterator(_v + size())); }
 
 		reverse_iterator		rbegin() { return (reverse_iterator(&_v[_size])); }
 		const_reverse_iterator	rbegin() const { return (const_reverse_iterator(&_v[_size])); }
 		reverse_iterator		rend() { return (reverse_iterator(_v)); }
 		const_reverse_iterator	rend() const { return (const_reverse_iterator(_v)); }
 		
-		bool empty() const { return !size(); }
+		bool empty() const { return (!size()); }
 
-		size_type	size() const { return _size; }
+		size_type	size() const { return (_size); }
 
 		size_type	max_size() const { return std::min<size_type>(_alloc.max_size(),
 								std::numeric_limits<difference_type>::max()); }
