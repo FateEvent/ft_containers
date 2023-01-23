@@ -99,25 +99,34 @@ namespace ft
 			clear();
 			if (capacity() < count)
 				reserve(count);
+			std::cout << "OK!" << std::endl;
 			for (iterator p = _v; p < _v + count; ++p)
 				_alloc.construct(&*p, value);
 			_size = count;
 		}
 
-		template <class InputIt>
+		template<class InputIt>
 		void	assign( InputIt first, InputIt last, typename ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::value* = 0 )
 		{
+			std::cout << "Bau?" << std::endl;
 			size_type	pos(0);
 			for (; first != last; ++first)
 				pos++;
 			if (pos >= 0)
 			{
 				clear();
-				if (capacity() < static_cast<unsigned long long>(pos))
+				if (capacity() < pos)
 					reserve(pos);
 				_size = pos;
-				for (iterator p = _v; p < _v + pos && first != last; ++p, ++first)
-					_alloc.construct(&*p, *first);
+				std::cout << "Bau!" << std::endl;
+				std::cout << ":" << pos << std::endl;
+				std::cout << "iter " << *first << std::endl;
+				std::cout << "iter " << *last << std::endl;
+				for (; first != last; ++first)
+				{
+					std::cout << "iter " << *first << std::endl;
+					_alloc.construct(&_v[_size++], *first);
+				}
 			}
 			else
 				throw(_out_of_range(pos));			
@@ -198,11 +207,29 @@ namespace ft
 			else if (n > max_size())
 				throw (_out_of_range(n));
 		}
+/*
+		void	reserve(size_type n)
+		{
+			if (n > max_size())
+				throw std::length_error("length_error");
+			if (n != 0 && n > _capacity)
+			{
+				pointer	tmp = _alloc.allocate(n);
 
+				_capacity = n;
+				for (size_t i = 0; i < _size; i++)
+					_alloc.construct(&tmp[i], _v[i]);
+				for (size_t i = 0; i < _size; i++)
+					_alloc.destroy(&_v[i]);
+				_alloc.deallocate(_v, _capacity);
+				_v = tmp;
+			}
+		}
+*/
 		size_type	capacity() const { return _capacity; }
 
 		void	clear() {
-			for (iterator p = _v; p < _v + size(); ++p)
+			for (iterator p = begin(); p != end(); ++p)
 				_alloc.destroy(&*p);
 			_size = 0;
 		}
