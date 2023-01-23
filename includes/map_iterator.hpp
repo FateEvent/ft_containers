@@ -42,6 +42,13 @@ namespace ft
 		map_iterator(const reverse_iterator<map_iterator> &other) : _ptr(other.base()._ptr) {}
 		~map_iterator() {}
 
+		map_iterator&	operator=(const map_iterator &assign) 
+		{
+			if (this != &assign)
+				_ptr = assign._ptr;
+			return (*this); 
+		}
+
 		pointer			base() const { return &(_ptr->data()); }
 		node_pointer	node_base() const { return _ptr; }
 
@@ -151,16 +158,9 @@ namespace ft
 		bool		operator== (const map_iterator &it) { return this->base() == it.base(); }
 
 		bool		operator!= (const map_iterator &it) { return this->base() != it.base(); }
-
-		map_iterator& operator=(const map_iterator &assign) 
-		{
-			if (this != &assign)
-				_ptr = assign._ptr;
-			return (*this); 
-		}
 		
 		template<typename T1, typename T2>
-		friend bool	operator!=(map_iterator<Key, T, Node, T1>& lhs, map_iterator<Key, T, Node, T2>& rhs)
+		friend bool	operator!= (const map_iterator<Key, T, Node, T1>& lhs, const map_iterator<Key, T, Node, T2>& rhs)
 		{
 			return (lhs._ptr != rhs._ptr);
 		}

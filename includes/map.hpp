@@ -690,9 +690,19 @@ namespace ft
 			return (_y);
 		}
 
-		void erase( iterator pos );
+		void erase( iterator pos )
+		{
+			erase(pos->first);
+		}
+
 //		iterator erase( const_iterator pos );	//C++ 11
-		void erase( iterator first, iterator last );
+
+		void erase( iterator first, iterator last )
+		{
+			for (; first != last; ++first)
+				erase(first);
+		}
+
 //		iterator erase( const_iterator first, const_iterator last );	//C++ 11
 
 		size_type	erase( const key_type& key )
@@ -705,9 +715,9 @@ namespace ft
 			return (1);
 		}
 
-//		void	clear() {
-//			erase(begin(), end());
-//		}
+		void	clear() {
+			erase(begin(), end());
+		}
 
 		pair<iterator, bool>	insert(const value_type& val)
 		{
@@ -736,8 +746,9 @@ namespace ft
 			return (iterator(temp));
 		}
 
-		template<class InputIterator>
-		void	insert(InputIterator first, InputIterator last)
+		template<class InputIt>
+		void	insert(InputIt first, InputIt last,
+			typename ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::value* = 0)
 		{
 			for (; first != last; ++first)
 				insert(*first);

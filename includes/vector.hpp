@@ -16,18 +16,20 @@ namespace ft
 	template <class T, class Allocator = std::allocator<T> > class vector {
 
 	public:
-		typedef T												value_type;
-		typedef std::size_t										size_type;
-		typedef Allocator										allocator_type;
-		typedef std::ptrdiff_t									difference_type;
-		typedef value_type&										reference;
-		typedef const value_type&								const_reference;
-		typedef typename Allocator::pointer						pointer;
-		typedef typename Allocator::const_pointer				const_pointer;		
-		typedef ft::move_iterator<value_type>					iterator;
-		typedef ft::const_iter<value_type>						const_iterator;
-		typedef ft::reverse_iterator<iterator>					reverse_iterator;
-		typedef ft::reverse_iterator<const_iterator>			const_reverse_iterator;
+		typedef T														value_type;
+		typedef std::size_t												size_type;
+		typedef Allocator												allocator_type;
+		typedef std::ptrdiff_t											difference_type;
+		typedef value_type&												reference;
+		typedef const value_type&										const_reference;
+		typedef typename Allocator::pointer								pointer;
+		typedef typename Allocator::const_pointer						const_pointer;		
+//		typedef ft::wrapper_it<ft::move_iterator<value_type> >			iterator;
+//		typedef ft::wrapper_it<ft::move_iterator<const value_type> >	const_iterator;
+		typedef ft::move_iterator<value_type>							iterator;
+		typedef ft::move_iterator<const value_type>						const_iterator;
+		typedef ft::reverse_iterator<iterator>							reverse_iterator;
+		typedef ft::reverse_iterator<const_iterator>					const_reverse_iterator;
 
 	public:
 		vector() : _size(), _capacity(), _v(NULL) {}
@@ -152,15 +154,15 @@ namespace ft
 
 		const value_type*	data() const { return (size() ? _v : NULL); };
 
-		iterator				begin()	{ return iterator(&_v[0]); }
-		const_iterator			begin() const { return const_iterator(&(static_cast<pointer>(_v)[0])); }
-		iterator				end() { return iterator(&_v[size()]); }
-		const_iterator			end() const { return const_iterator(&(static_cast<pointer>(_v)[size()])); }
+		iterator				begin()	{ return (iterator(_v)); }
+		const_iterator			begin() const { return (const_iterator(_v)); }
+		iterator				end() { return (iterator(&_v + size())); }
+		const_iterator			end() const { return (const_iterator(&_v + size())); }
 
-		reverse_iterator		rbegin() { return reverse_iterator(end()); }
-		const_reverse_iterator	rbegin() const { return const_reverse_iterator(end()); }
-		reverse_iterator		rend() { return reverse_iterator(begin()); }
-		const_reverse_iterator	rend() const { return const_reverse_iterator(begin()); }
+		reverse_iterator		rbegin() { return (reverse_iterator(&_v[_size])); }
+		const_reverse_iterator	rbegin() const { return (const_reverse_iterator(&_v[_size])); }
+		reverse_iterator		rend() { return (reverse_iterator(_v)); }
+		const_reverse_iterator	rend() const { return (const_reverse_iterator(_v)); }
 		
 		bool empty() const { return !size(); }
 
@@ -184,7 +186,7 @@ namespace ft
 			else if (n > capacity() * 2 && n <= max_size())
 			{
 				pointer	temp = _alloc.allocate(n);
-				for (iterator p = temp, q = _v; p < temp + capacity(); ++p, ++q)
+				for (iterator p = temp, q = _v; p != temp + capacity(); ++p, ++q)
 				{
 					_alloc.construct(&*p, *q);
 					_alloc.destroy(&*q);

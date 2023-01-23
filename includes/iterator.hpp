@@ -5,11 +5,7 @@
 # include <memory>
 # include <cstddef>
 # include <iterator>
-
-template<class T>
-class move_iterator;
-template<class T>
-class const_iter;
+# include "utilities.hpp"
 
 namespace ft
 {
@@ -28,45 +24,51 @@ namespace ft
 		: public iterator<std::random_access_iterator_tag, T>
 	{
 	public:
-		typedef T																			value_type;
+		typedef T																		value_type;
+		typedef std::random_access_iterator_tag											iterator_category;
 		typedef typename iterator<std::random_access_iterator_tag, T>::difference_type	difference_type;
 		typedef typename iterator<std::random_access_iterator_tag, T>::reference		reference;
 		typedef reference const															const_reference;
 		typedef typename iterator<std::random_access_iterator_tag, T>::pointer			pointer;
 		typedef pointer const															const_pointer;
+		typedef move_iterator<const T>													const_iterator;
 
 		move_iterator() : _ptr() {}
 		move_iterator(const move_iterator &it) : _ptr(it._ptr) {}
-		move_iterator(const const_iter<T> &it) : _ptr(it.operator->()) {}
+		template<typename U>
+		move_iterator(const move_iterator<U> &other,
+			typename ft::enable_if<!std::is_const<U>::value>::type* = 0)
+				: _ptr(other._ptr) {}
 		move_iterator(const pointer &ptr) : _ptr(ptr) {}
+		~move_iterator() {}
 
-		move_iterator	&operator= (move_iterator const& other) {
-			if (this == &other)
-				return (*this);
-			this->_ptr = other._ptr;
-			return (*this);
+		move_iterator&	operator=(const move_iterator &assign) 
+		{
+			if (this != &assign)
+				_ptr = assign._ptr;
+			return (*this); 
 		}
 
-		pointer	base() const { return _ptr; }
+		pointer	base() const { return (_ptr); }
 
-		const_reference	operator* () const { return *_ptr; }
-		reference		operator* () { return *_ptr; }
-		const_pointer	operator-> () const { return &(operator*()); }
-		pointer			operator-> () { return &(operator*()); }
-		const_reference	operator[] (const std::size_t index) const { return (_ptr[index]); }
-		reference		operator[] (const std::size_t index) { return (_ptr[index]); }
+		reference		operator*() { return (*_ptr); }
+		const_reference	operator*() const { return (*_ptr); }
+		pointer			operator->() { return &(operator*()); }
+		const_pointer	operator->() const { return &(operator*()); }
+		reference		operator[] (const std::size_t index) { return (base()[index]); }
+		const_reference	operator[] const (const std::size_t index) { return (base()[index]); }
 
-		operator		const_iter<T>() const { return (_ptr); }
+		operator	move_iterator<const T>() const { return (move_iterator<const value_type>(_ptr)); }
 
-		move_iterator	&operator++ () { _ptr++; return *this; }
-		move_iterator	operator++ (int) { move_iterator tmp = *this; ++(*this); return tmp; }
-		move_iterator	&operator-- () { _ptr--; return *this; }
-		move_iterator	operator-- (int) { move_iterator tmp = *this; --(*this); return tmp; }		
-		move_iterator	&operator+= (const std::size_t dist) { _ptr += dist; return *this; }
-		move_iterator	&operator-= (const std::size_t dist) { _ptr -= dist; return *this; }
-		move_iterator	operator+ (const std::size_t dist) { return (_ptr + dist); }
-		move_iterator	operator- (const std::size_t dist) { return (_ptr - dist); }
-		ptrdiff_t		operator- (const move_iterator &it) { return (_ptr - it._ptr); }
+		const move_iterator	&operator++ () { _ptr++; return *this; }
+		const move_iterator	operator++ (int) { move_iterator tmp = *this; ++(*this); return tmp; }
+		const move_iterator	&operator-- () { _ptr--; return *this; }
+		const move_iterator	operator-- (int) { move_iterator tmp = *this; --(*this); return tmp; }		
+		const move_iterator	&operator+= (const std::size_t dist) { _ptr += dist; return *this; }
+		const move_iterator	&operator-= (const std::size_t dist) { _ptr -= dist; return *this; }
+		const move_iterator	operator+ (const std::size_t dist) { return (_ptr + dist); }
+		const move_iterator	operator- (const std::size_t dist) { return (_ptr - dist); }
+		ptrdiff_t			operator- (const move_iterator &it) { return (_ptr - it._ptr); }
 
 		friend move_iterator	operator+ (const std::size_t dist, const move_iterator &src)
 		{
@@ -82,12 +84,40 @@ namespace ft
 			return (it);
 		}
 
-		bool		operator== (const move_iterator &it) const { return this->base() == it.base(); }
-		bool		operator!= (const move_iterator &it) const { return this->base() != it.base(); }
-		bool		operator< (const move_iterator &it) const { return this->base() < it.base(); }
-		bool		operator<= (const move_iterator &it) const { return this->base() <= it.base(); }
-		bool		operator> (const move_iterator &it) const { return this->base() > it.base(); }
-		bool		operator>= (const move_iterator &it) const { return this->base() >= it.base(); }
+		friend bool	operator==(const move_iterator &lhs, const move_iterator &rhs)
+			{
+				return (lhs.base() == rhs.base());
+			}
+
+			friend bool	operator!=(const move_iterator &lhs, const move_iterator &rhs)
+			{
+				return (lhs.base() != rhs.base());
+			}
+
+			friend bool	operator>(const move_iterator &lhs, const move_iterator &rhs)
+			{
+				return (lhs.base() > rhs.base());
+			}
+
+			friend bool	operator<=(const move_iterator &lhs, const move_iterator &rhs)
+			{
+				return (lhs.base() <= rhs.base());
+			}
+
+			friend bool	operator<(const move_iterator &lhs, const move_iterator &rhs)
+			{
+				return (lhs.base() < rhs.base());
+			}
+
+			friend bool	operator>=(const move_iterator &lhs, const move_iterator &rhs)
+			{
+				return (lhs.base() >= rhs.base());
+			}
+
+			operator	const_iterator(void) const
+			{
+				return (const_iterator(_data));
+			}
 
 	protected:
 		pointer		_ptr;
