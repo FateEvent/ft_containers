@@ -136,7 +136,7 @@ namespace ft
 
 		reference	operator* () const { return ((--iterator_type(_current)).operator*()); }
 		pointer		operator-> () const { return (&(operator*())); }
-		reference	operator[] (difference_type index) { return (*operator+(index)); }
+		reference	operator[] (difference_type index) const { return (*operator+(index)); }
 
 		operator	reverse_iterator<const Iter>() const { return (reverse_iterator<const Iter>(operator->())); }
 		operator	wrapper_it<Iter>() const { return (_current); }
@@ -149,7 +149,6 @@ namespace ft
 		reverse_iterator	&operator-- () { ++_current; return (*this); }
 		reverse_iterator	operator-- (int) { reverse_iterator tmp = *this; ++_current; return (tmp); }
 		reverse_iterator	&operator-= (difference_type n) { _current += n; return (*this); }
-		ptrdiff_t			operator- (const reverse_iterator &it) { return (_current - it._current); }
 
 		friend reverse_iterator	operator+ (const size_type n, const reverse_iterator &src)
 		{

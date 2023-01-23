@@ -196,9 +196,9 @@ namespace ft
 		iterator	begin()	{
 			if (root())
 			{
-				iterator it(root());
+				Node	*temp(root());
 
-				it.base().leftmost();
+				iterator it(leftmost(temp));
 				return (it);
 			}
 			iterator it(protoroot());
@@ -208,9 +208,9 @@ namespace ft
 		const_iterator	begin() const {
 			if (root())
 			{
-				const_iterator it(root());
+				Node	*temp(root());
 
-				it.base().leftmost();
+				const_iterator it(leftmost(temp));
 				return (it);
 			}
 			const_iterator it(protoroot());
@@ -220,9 +220,9 @@ namespace ft
 		iterator	end() {
 			if (root())
 			{
-				iterator it(root());
-
-				it.base().rightmost();
+				Node	*temp(root());
+				
+				iterator it(rightmost(temp));
 				return (it);
 			}
 			iterator it(protoroot());
@@ -232,9 +232,9 @@ namespace ft
 		const_iterator	end() const {
 			if (root())
 			{
-				const_iterator it(root());
-
-				it.base().rightmost();
+				Node	*temp(root());
+				
+				const_iterator it(rightmost(temp));
 				return (it);
 			}
 			const_iterator it(protoroot());
@@ -352,6 +352,84 @@ namespace ft
 		**						Utility functions for AVL trees						**
 		**																			**
 		\****************************************************************************/
+
+		static Node	*local_Rb_tree_decrement(Node *_x) throw ()
+		{
+			if (_x->_left != 0)
+			{
+				_x = _x->_left;
+				while (_x->_right != 0)
+				_x = _x->_right;
+			}
+			else
+			{
+				Node *_y = _x->_parent;
+				while (_x == _y->_left)
+				{
+					_x = _y;
+					_y = _y->_parent;
+				}
+				if (_x->_left != _y)
+				_x = _y;
+			}
+			return _x;
+		}
+
+		Node *_Rb_tree_decrement(Node *_x) throw ()
+		{
+			return local_Rb_tree_decrement(_x);
+		}
+
+		const Node *_Rb_tree_decrement(const Node *_x) throw ()
+		{
+			return local_Rb_tree_decrement(const_cast<Node *>(_x));
+		}
+
+		static Node	*local_Rb_tree_increment(Node *_x) throw ()
+		{
+			if (_x->_right != 0)
+			{
+				_x = _x->_right;
+				while (_x->_left != 0)
+				_x = _x->_left;
+			}
+			else
+			{
+				Node *_y = _x->_parent;
+				while (_x == _y->_right)
+				{
+					_x = _y;
+					_y = _y->_parent;
+				}
+				if (_x->_right != _y)
+				_x = _y;
+			}
+			return _x;
+		}
+
+		Node *_Rb_tree_increment(Node *_x) throw ()
+		{
+			return local_Rb_tree_increment(_x);
+		}
+
+		const Node *_Rb_tree_increment(const Node *_x) throw ()
+		{
+			return local_Rb_tree_increment(const_cast<Node *>(_x));
+		}
+
+		Node	*leftmost(Node *_x) const
+		{
+			while (_x->left())
+				_x = _x->left();
+			return (_x);
+		}
+
+		Node	*rightmost(Node *_x) const
+		{
+			while (_x->right())
+				_x = _x->right();
+			return (_x);
+		}
 
 		Node	*_iterative_avl_tree_search(const key_type& k) const
 		{

@@ -55,20 +55,19 @@ namespace ft
 		const_reference	operator*() const { return (*_ptr); }
 		pointer			operator->() { return &(operator*()); }
 		const_pointer	operator->() const { return &(operator*()); }
-		reference		operator[] (const std::size_t index) { return (base()[index]); }
-//		const_reference	operator[] const (const std::size_t index) { return (base()[index]); }
+		reference		operator[] (difference_type index) { return (base()[index]); }
+		const_reference	operator[] (difference_type index) const { return (base()[index]); }
 
 		operator	move_iterator<const T>() const { return (move_iterator<const value_type>(_ptr)); }
 
-		const move_iterator	&operator++ () { _ptr++; return *this; }
-		const move_iterator	operator++ (int) { move_iterator tmp = *this; ++(*this); return tmp; }
-		const move_iterator	&operator-- () { _ptr--; return *this; }
-		const move_iterator	operator-- (int) { move_iterator tmp = *this; --(*this); return tmp; }		
-		const move_iterator	&operator+= (const std::size_t dist) { _ptr += dist; return *this; }
-		const move_iterator	&operator-= (const std::size_t dist) { _ptr -= dist; return *this; }
-		const move_iterator	operator+ (const std::size_t dist) { return (_ptr + dist); }
-		const move_iterator	operator- (const std::size_t dist) { return (_ptr - dist); }
-		ptrdiff_t			operator- (const move_iterator &it) { return (_ptr - it._ptr); }
+		const move_iterator	operator+ (const difference_type dist) const { return (_ptr + dist); }
+		const move_iterator	&operator++ () { ++_ptr; return (*this); }
+		const move_iterator	operator++ (int) { move_iterator tmp = *this; ++_ptr; return (tmp); }
+		const move_iterator	&operator+= (const difference_type dist) { _ptr += dist; return (*this); }
+		const move_iterator	operator- (const difference_type dist) const { return (_ptr - dist); }
+		const move_iterator	&operator-- () { --_ptr; return (*this); }
+		const move_iterator	operator-- (int) { move_iterator tmp = *this; --_ptr; return (tmp); }		
+		const move_iterator	&operator-= (const difference_type dist) { _ptr -= dist; return (*this); }
 
 		friend move_iterator	operator+ (const std::size_t dist, const move_iterator &src)
 		{
@@ -122,6 +121,18 @@ namespace ft
 	protected:
 		pointer		_ptr;
 	};
+
+	template<class T>
+	move_iterator<T>	operator+(typename move_iterator<T>::difference_type n, const move_iterator<T>& it)
+	{
+		return (it + n);
+	}
+
+	template<class Iter1, class Iter2>
+	typename move_iterator<Iter1>::difference_type	operator-(const move_iterator<Iter1> &lhs, const move_iterator<Iter2> &rhs)
+	{
+		return (lhs.base() - rhs.base());
+	}
 }
 
 #endif

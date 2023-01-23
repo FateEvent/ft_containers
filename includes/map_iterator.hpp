@@ -54,6 +54,7 @@ namespace ft
 
 		reference	operator* () const { return _ptr->data(); }
 		pointer		operator-> () const { return &(_ptr->data()); }
+		reference	operator[] (difference_type index) { return (base()[index]); }
 
 		operator	map_iterator<Key, T, Node, const value_type>() const { return (map_iterator<Key, T, Node, const value_type>(_ptr)); }
 
@@ -123,20 +124,6 @@ namespace ft
 			return local_Rb_tree_increment(const_cast<Node *>(_x));
 		}
 
-		Node	*leftmost()
-		{
-			while (_ptr->left())
-				_ptr = _ptr->left();
-			return (_ptr);
-		}
-
-		Node	*rightmost()
-		{
-			while (_ptr->right())
-				_ptr = _ptr->right();
-			return (_ptr);
-		}
-
 		const map_iterator	&operator++ () {
 			_ptr = _Rb_tree_increment(_ptr);
 			return (*this);
@@ -148,17 +135,14 @@ namespace ft
 		}
 		const map_iterator 	operator-- (int) { map_iterator tmp = *this; --(*this); return tmp; }
 
-		const map_iterator	&operator+= (std::size_t dist) { _ptr += dist; return (*this); }
-		const map_iterator	&operator-= (std::size_t dist) { _ptr -= dist; return (*this); }
-		const map_iterator	operator+ (std::size_t dist) { return (_ptr + dist); }
-		const map_iterator	operator- (std::size_t dist) { return (_ptr - dist); }
-		const map_iterator	&operator[] (std::size_t index) { return *(*this + index); }
+		const map_iterator	operator+ (const difference_type dist) const { return (_ptr + dist); }
+		const map_iterator	&operator+= (const difference_type dist) { _ptr += dist; return (*this); }
+		const map_iterator	operator- (const difference_type dist) const { return (_ptr - dist); }
+		const map_iterator	&operator-= (const difference_type dist) { _ptr -= dist; return (*this); }
 		ptrdiff_t			operator- (const map_iterator &it) { return (_ptr - it._ptr); }
 
 		bool		operator== (const map_iterator &it) { return this->base() == it.base(); }
 
-		bool		operator!= (const map_iterator &it) { return this->base() != it.base(); }
-		
 		template<typename T1, typename T2>
 		friend bool	operator!= (const map_iterator<Key, T, Node, T1>& lhs, const map_iterator<Key, T, Node, T2>& rhs)
 		{
