@@ -60,80 +60,55 @@ namespace ft
 
 		void		set_ptr(node_pointer ptr) { _ptr = ptr; }
 
-		static Node	*local_Rb_tree_decrement(Node *_x) throw ()
-		{
-			if (_x->_left != 0)
-			{
-				_x = _x->_left;
-				while (_x->_right != 0)
-				_x = _x->_right;
-			}
-			else
-			{
-				Node *_y = _x->_parent;
-				while (_x == _y->_left)
-				{
-					_x = _y;
-					_y = _y->_parent;
+		// pre-increment
+		map_iterator& operator++() {
+			if (_ptr->_right) {
+				_ptr = _ptr->_right;
+				while (_ptr->_left) {
+					_ptr = _ptr->_left;
 				}
-				if (_x->_left != _y)
-				_x = _y;
+			} else {
+				Node	*before;
+
+				do {
+					before = _ptr;
+					_ptr = _ptr->_parent;
+				} while (_ptr && before == _ptr->_right);
 			}
-			return _x;
+			return *this;
 		}
 
-		Node *_Rb_tree_decrement(Node *_x) throw ()
-		{
-			return local_Rb_tree_decrement(_x);
+		// post-increment
+		map_iterator operator++(int) {
+			map_iterator old(*this);
+			++(*this);
+			return old;
 		}
 
-		const Node *_Rb_tree_decrement(const Node *_x) throw ()
-		{
-			return local_Rb_tree_decrement(const_cast<Node *>(_x));
-		}
-
-		static Node	*local_Rb_tree_increment(Node *_x) throw ()
-		{
-			if (_x->_right != 0)
-			{
-				_x = _x->_right;
-				while (_x->_left != 0)
-				_x = _x->_left;
-			}
-			else
-			{
-				Node *_y = _x->_parent;
-				while (_x == _y->_right)
-				{
-					_x = _y;
-					_y = _y->_parent;
+		// pre-decrement
+		map_iterator& operator--() {
+			if (_ptr->_left) {
+				_ptr = _ptr->_left;
+				while (_ptr->_right) {
+					_ptr = _ptr->_right;
 				}
-				if (_x->_right != _y)
-				_x = _y;
+			} else {
+				Node	*before;
+
+				do {
+					before = _ptr;
+					_ptr = _ptr->_parent;
+				} while (_ptr && before == _ptr->_left);
 			}
-			return _x;
-		}
-
-		Node *_Rb_tree_increment(Node *_x) throw ()
-		{
-			return local_Rb_tree_increment(_x);
-		}
-
-		const Node *_Rb_tree_increment(const Node *_x) throw ()
-		{
-			return local_Rb_tree_increment(const_cast<Node *>(_x));
-		}
-
-		const map_iterator	&operator++ () {
-			_ptr = _Rb_tree_increment(_ptr);
 			return (*this);
 		}
-		const map_iterator 	operator++ (int) { map_iterator tmp = *this; ++(*this); return tmp; }
-		const map_iterator	&operator-- () {
-			_ptr = _Rb_tree_decrement(_ptr);
-			return (*this);
+
+		// post-decrement
+		map_iterator operator--(int) {
+			map_iterator old(*this);
+			--(*this);
+			return (old);
 		}
-		const map_iterator 	operator-- (int) { map_iterator tmp = *this; --(*this); return tmp; }
 
 		const map_iterator	operator+ (const difference_type dist) const { return (_ptr + dist); }
 		const map_iterator	&operator+= (const difference_type dist) { _ptr += dist; return (*this); }

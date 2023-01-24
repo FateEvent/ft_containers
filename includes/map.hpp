@@ -858,6 +858,15 @@ namespace ft
 
 		size_type	max_size() const { return std::min<size_type>(_alloc_node.max_size(),
 										std::numeric_limits<difference_type>::max()); }
+		
+		void	swap(map& other)
+		{
+			std::swap(_root, other._root);
+			std::swap(_size, other._size);
+			std::swap(_key_comp, other._key_comp);
+			std::swap(_alloc_node, other._alloc_node);
+			std::swap(_alloc_pair, other._alloc_pair);
+		}
 
 	private :
 		Node			*_root;
