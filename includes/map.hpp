@@ -223,7 +223,7 @@ namespace ft
 				Node	*temp(root());
 				
 				iterator it(rightmost(temp));
-				return (it);
+				return (++it);
 			}
 			iterator it(protoroot());
 			return (it);
@@ -235,7 +235,7 @@ namespace ft
 				Node	*temp(root());
 				
 				const_iterator it(rightmost(temp));
-				return (it);
+				return (++it);
 			}
 			const_iterator it(protoroot());
 			return (it);
