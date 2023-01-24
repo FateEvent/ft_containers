@@ -56,6 +56,7 @@ More specifically about AVL trees:
 * <http://www.cs.emory.edu/~cheung/Courses/253/Syllabus/Trees/AVL-delete.html>;
 * <https://stackoverflow.com/questions/28708526/maintaining-parent-nodes-during-avl-rotation-in-c>;
 * <https://www.geeksforgeeks.org/avl-trees-containing-a-parent-node-pointer>;
+* <https://www.codingninjas.com/codestudio/library/insertion-searching-and-deletion-in-avl-trees-containing-a-parent-node-pointer>;
 * <https://github.com/jgreitemann/avl-tree>.
 
 And red-black trees:

@@ -353,70 +353,6 @@ namespace ft
 		**																			**
 		\****************************************************************************/
 
-		static Node	*local_Rb_tree_decrement(Node *_x) throw ()
-		{
-			if (_x->_left != 0)
-			{
-				_x = _x->_left;
-				while (_x->_right != 0)
-				_x = _x->_right;
-			}
-			else
-			{
-				Node *_y = _x->_parent;
-				while (_x == _y->_left)
-				{
-					_x = _y;
-					_y = _y->_parent;
-				}
-				if (_x->_left != _y)
-				_x = _y;
-			}
-			return _x;
-		}
-
-		Node *_Rb_tree_decrement(Node *_x) throw ()
-		{
-			return local_Rb_tree_decrement(_x);
-		}
-
-		const Node *_Rb_tree_decrement(const Node *_x) throw ()
-		{
-			return local_Rb_tree_decrement(const_cast<Node *>(_x));
-		}
-
-		static Node	*local_Rb_tree_increment(Node *_x) throw ()
-		{
-			if (_x->_right != 0)
-			{
-				_x = _x->_right;
-				while (_x->_left != 0)
-				_x = _x->_left;
-			}
-			else
-			{
-				Node *_y = _x->_parent;
-				while (_x == _y->_right)
-				{
-					_x = _y;
-					_y = _y->_parent;
-				}
-				if (_x->_right != _y)
-				_x = _y;
-			}
-			return _x;
-		}
-
-		Node *_Rb_tree_increment(Node *_x) throw ()
-		{
-			return local_Rb_tree_increment(_x);
-		}
-
-		const Node *_Rb_tree_increment(const Node *_x) throw ()
-		{
-			return local_Rb_tree_increment(const_cast<Node *>(_x));
-		}
-
 		Node	*leftmost(Node *_x) const
 		{
 			while (_x->left())
@@ -727,6 +663,8 @@ namespace ft
 			if (!_x)
 			{
 				_x = newNode;
+				set_root(_x);
+				_x->set_parent(NULL);
 				++_size;
 				return (_x);
 			}
@@ -791,28 +729,57 @@ namespace ft
 
 		pair<iterator, bool>	insert(const value_type& val)
 		{
-			Node *temp = _avl_tree_insert(root(), val);
-			if (!root())
-			{
-				set_root(temp);
-				temp->set_parent(NULL);
-			}
-			iterator it(temp);
+			Node	*newNode = new_node(val);
+			Node	*_x(root());
+			Node	*_y;
 
-			if (it->second == val.second)
-				return (ft::make_pair(it, true));
-			return (ft::make_pair(it, false));
+			if (!_x)
+			{
+				_x = newNode;
+				set_root(_x);
+				_x->set_parent(NULL);
+				++_size;
+				return (ft::make_pair(iterator(_x), true));
+			}
+			while (_x != NULL) {
+				_y = _x;
+				if (_key_comp(val.first, _x->data().first))
+					_x = _x->left();
+				else if (val.first == _x->data().first)
+				{
+					delete_node(newNode);
+					return (ft::make_pair(iterator(_x), false));
+				}
+				else
+					_x = _x->right();
+			}
+			if (_y == NULL)
+			{
+				_y = newNode;
+				newNode->set_parent(_y->parent());
+			}
+			else if (_key_comp(val.first, _y->data().first))
+			{
+				_y->set_left(newNode);
+				newNode->set_parent(_y);
+			}
+			else
+			{
+				_y->set_right(newNode);
+				newNode->set_parent(_y);
+			}
+			++_size;
+			set_root(balance_tree(root()));
+			suffix_traversal(root(), recomp_height);
+			_y = _recursive_avl_tree_search(root(), val.first);
+			return (ft::make_pair(iterator(_y), true));
 		}
 
 		iterator	insert(iterator pos, const value_type& val)
 		{
 			(void)pos;
 			Node *temp = _avl_tree_insert(root(), val);
-			if (!root())
-			{
-				set_root(temp);
-				temp->set_parent(NULL);
-			}
+
 			return (iterator(temp));
 		}
 
@@ -826,11 +793,7 @@ namespace ft
 
 		mapped_type&	operator[] (const key_type& k)
 		{
-			Node *found = _recursive_avl_tree_search(root(), k);
-			if (found)
-				return (found->data().second);
-			iterator it(_avl_tree_insert(root(), ft::make_pair(k, mapped_type())));
-			return (it->second);
+			return ((*(insert(ft::make_pair(k, mapped_type())).first)).second);
 		}
 
 		mapped_type&	at(const key_type& k)
