@@ -555,17 +555,13 @@ namespace ft
 			if (!p)
 				return ;
 			--_size;
-			if (p->left() == NULL && p->right() == NULL)	// souci
+			if (p->left() == NULL && p->right() == NULL)
 			{
 				parent = p->parent();
 				if (parent->left() == p)
 					parent->set_left(NULL);
 				else
-				{
-					std::cout << "miao:" << p->data().first << std::endl;
 					parent->set_right(NULL);
-				}
-				std::cout << "miao:" << p->data().first << std::endl;
 				delete_node(p);
 				set_root(balance_tree(root()));
 				return ;
@@ -773,15 +769,11 @@ namespace ft
 			erase(pos->first);
 		}
 
-//		iterator erase( const_iterator pos );	//C++ 11
-
 		void erase( iterator first, iterator last )
 		{
 			for (; first != last; ++first)
 				erase(first);
 		}
-
-//		iterator erase( const_iterator first, const_iterator last );	//C++ 11
 
 		size_type	erase( const key_type& key )
 		{
@@ -873,15 +865,6 @@ namespace ft
 		allocator_type	_alloc_pair;
 		key_compare		_key_comp;
 		size_type		_size;
-
-		std::out_of_range	_out_of_range(size_type pos) const
-		{
-			std::stringstream ss;
-
-			ss << "map::_M_range_check: __n (which is " << pos << ")" <<	\
-			" >= this->size() (which is " << size() << ")";
-			return (std::out_of_range(ss.str()));
-		};
 	};
 
 	template <class Key, class T, class Compare, class Alloc>

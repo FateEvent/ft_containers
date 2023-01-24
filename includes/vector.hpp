@@ -171,34 +171,6 @@ namespace ft
 
 		void	reserve(size_type n)
 		{
-			if (n > capacity() && n < capacity() * 2 && n <= max_size())
-			{
-				pointer	temp = _alloc.allocate(capacity() * 2);
-				iterator p = temp;
-
-				std::copy(begin(), end(), p);
-				_alloc.deallocate(_v, capacity());
-				_capacity *= 2;
-				_v = temp;
-			}
-			else if (n > capacity() * 2 && n <= max_size())
-			{
-				pointer	temp = _alloc.allocate(n);
-				for (iterator p = temp, q = _v; p != temp + capacity(); ++p, ++q)
-				{
-					_alloc.construct(&*p, *q);
-					_alloc.destroy(&*q);
-				}
-				_alloc.deallocate(_v, capacity());
-				_capacity = n;
-				_v = temp;
-			}
-			else if (n > max_size())
-				throw (_out_of_range(n));
-		}
-/*
-		void	reserve(size_type n)
-		{
 			if (n > max_size())
 				throw std::length_error("length_error");
 			if (n != 0 && n > _capacity)
@@ -214,7 +186,7 @@ namespace ft
 				_v = tmp;
 			}
 		}
-*/
+
 		size_type	capacity() const { return _capacity; }
 
 		void	clear() {
@@ -405,18 +377,10 @@ namespace ft
 
 		void	swap(vector& other)
 		{
-			pointer tmp = other._v;
-			other._v = _v;
-			_v = tmp;
-			size_type temp = other._size;
-			other._size = _size;
-			_size = temp;
-			temp = other._capacity;
-			other._capacity = _capacity;
-			_capacity = temp;
-			allocator_type temporary_alloc = other._alloc;
-			other._alloc = _alloc;
-			_alloc = temporary_alloc;
+			std::swap(_v, other._v);
+			std::swap(_size, other._size);
+			std::swap(_capacity, other._capacity);
+			std::swap(_alloc, other._alloc);
 		}
 
 	private:
