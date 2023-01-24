@@ -31,7 +31,7 @@ namespace ft
 		typedef reference const															const_reference;
 		typedef typename iterator<std::random_access_iterator_tag, T>::pointer			pointer;
 		typedef pointer const															const_pointer;
-//		typedef move_iterator<const T>													const_iterator;
+		typedef move_iterator<const T>													const_iterator;
 
 		move_iterator() : _ptr() {}
 		move_iterator(const move_iterator &it) : _ptr(it._ptr) {}
@@ -58,8 +58,6 @@ namespace ft
 		reference		operator[] (difference_type index) { return (base()[index]); }
 		const_reference	operator[] (difference_type index) const { return (base()[index]); }
 
-		operator	move_iterator<const T>() const { return (move_iterator<const value_type>(_ptr)); }
-
 		const move_iterator	operator+ (const difference_type dist) const { return (_ptr + dist); }
 		const move_iterator	&operator++ () { ++_ptr; return (*this); }
 		const move_iterator	operator++ (int) { move_iterator tmp = *this; ++_ptr; return (tmp); }
@@ -71,14 +69,16 @@ namespace ft
 
 		friend move_iterator	operator+ (const std::size_t dist, const move_iterator &src)
 		{
-			move_iterator it(src._ptr);
+			move_iterator	it(src._ptr);
+
 			it += dist;
 			return (it);
 		}
 		
 		friend move_iterator	operator- (const std::size_t dist, const move_iterator &src)
 		{
-			move_iterator it(src._ptr);
+			move_iterator	it(src._ptr);
+
 			it -= dist;
 			return (it);
 		}
@@ -112,12 +112,10 @@ namespace ft
 		{
 			return (lhs.base() >= rhs.base());
 		}
-/*
-		operator	const_iterator(void) const
-		{
-			return (const_iterator(_data));
-		}
-*/
+
+//		operator	move_iterator<const value_type>() const { return (move_iterator<const value_type>(_ptr)); }
+		operator	const_iterator(void) const { return (const_iterator(_ptr)); }
+
 	protected:
 		pointer		_ptr;
 	};
@@ -133,6 +131,43 @@ namespace ft
 	{
 		return (lhs.base() - rhs.base());
 	}
+
+	template<class Iter1, class Iter2>
+	bool	operator==(const move_iterator<Iter1> &lhs, const move_iterator<Iter2> &rhs)
+	{
+		return (lhs.base() == rhs.base());
+	}
+
+	template<class Iter1, class Iter2>
+	bool	operator!=(const move_iterator<Iter1> &lhs, const move_iterator<Iter2> &rhs)
+	{
+		return (lhs.base() != rhs.base());
+	}
+
+	template<class Iter1, class Iter2>
+	bool	operator>(const move_iterator<Iter1> &lhs, const move_iterator<Iter2> &rhs)
+	{
+		return (lhs.base() > rhs.base());
+	}
+
+	template<class Iter1, class Iter2>
+	bool	operator<=(const move_iterator<Iter1> &lhs, const move_iterator<Iter2> &rhs)
+	{
+		return (lhs.base() <= rhs.base());
+	}
+	
+	template<class Iter1, class Iter2>
+	bool	operator<(const move_iterator<Iter1> &lhs, const move_iterator<Iter2> &rhs)
+	{
+		return (lhs.base() < rhs.base());
+	}
+
+	template<class Iter1, class Iter2>
+	bool	operator>=(const move_iterator<Iter1> &lhs, const move_iterator<Iter2> &rhs)
+	{
+		return (lhs.base() >= rhs.base());
+	}
+
 }
 
 #endif

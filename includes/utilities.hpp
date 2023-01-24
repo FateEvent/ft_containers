@@ -8,7 +8,7 @@ namespace ft {
 
 	/****************************************************************************\
 	** 																			**
-	**					lexicographical_compare utilities						**
+	**						lexicographical_compare utilities					**
 	** 																			**
 	\****************************************************************************/
 
@@ -39,16 +39,28 @@ namespace ft {
 
 	/****************************************************************************\
 	** 																			**
-	**							is_integral utilities							**
+	**						equal and equal_to utilities						**
 	** 																			**
 	\****************************************************************************/
-
 	
 	template<class T> struct equal_to
 		: public std::binary_function<T, T, bool>
 	{
 		bool	operator()(const T &lhs, const T &rhs) const {	return lhs == rhs; }
 	};
+
+	template <class InputIt1, class InputIt2>
+	bool	equal(InputIt1 lhs_begin, InputIt1 lhs_end, InputIt2 rhs_begin)
+	{
+		while (lhs_begin != lhs_end)
+		{
+			if (*lhs_begin != *rhs_begin)
+				return (false);
+			++lhs_begin;
+			++rhs_begin;
+		}
+		return (true);
+	}
 
 	/****************************************************************************\
 	** 																			**
