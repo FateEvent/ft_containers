@@ -76,6 +76,21 @@ namespace ft
 			Node		*right() { return _right; }
 			Node		*parent() { return _parent; }
 			int			&height() { return _height; }
+
+			void update_height() {
+	    		_height = 1 + std::max(left() ? left()->_height : 0,
+				    right() ? right()->_height : 0);
+			}
+/*
+			void update_n() {
+				n = 1 + (left() ? left()->n : 0)
+				+ (right() ? right()->n : 0);
+			}
+*/
+			short imbalance() {
+				return (right() ? right()->_height : 0)
+					- (left() ? left()->_height : 0);
+			}
 		};
 /*
 		std::ostream	&operator<< (std::ostream &o, const Node &node) {
@@ -481,6 +496,83 @@ namespace ft
 			}
 		}
 
+		iterator erase_node(iterator it) {
+			iterator itn(it);
+			++itn;
+			node *ptr = it.ptr;
+			node *q;
+			if (!ptr->left_child || !ptr->right_child) {
+				q = ptr;
+			} else {
+				q = itn.ptr;
+			}
+			node *s;
+			if (q->left_child) {
+				s = q->left_child;
+				q->left_child = nullptr;
+			} else {
+				s = q->right_child;
+				q->right_child = nullptr;
+			}
+			if (s) {
+				s->parent = q->parent;
+			}
+			if (q == q->parent->left_child) {
+				q->parent->left_child = s;
+			} else {
+				q->parent->right_child = s;
+			}
+			node *q_parent = q->parent;
+			if (q != ptr) {
+				q->parent = ptr->parent;
+				if (q->parent->left_child == ptr) {
+				q->parent->left_child = q;
+				} else {
+				q->parent->right_child = q;
+				}
+				q->left_child = ptr->left_child;
+				if (q->left_child)
+				q->left_child->parent = q;
+				q->right_child = ptr->right_child;
+				if (q->right_child)
+				q->right_child->parent = q;
+				q->n = ptr->n;
+				q->depth = ptr->depth;
+				ptr->left_child = nullptr;
+				ptr->right_child = nullptr;
+			}
+			if (q_parent == ptr) {
+				q_parent = q;
+			}
+			node *parent;
+			for (parent = q_parent; parent; parent = parent->parent) {
+				--parent->n;
+			}
+			for (parent = q_parent; parent; parent = parent->parent) {
+				parent->update_depth();
+				if (parent == root)
+				break;
+				if (parent->imbalance() < -1) {
+				// check for double-rotation case
+				if (parent->left_child->imbalance() > 0) {
+					rotate_left(parent->left_child);
+				}
+				rotate_right(parent);
+				break;
+				} else if (parent->imbalance() > 1) {
+				// check for double-rotation case
+				if (parent->right_child->imbalance() < 0) {
+					rotate_right(parent->right_child);
+				}
+				rotate_left(parent);
+				break;
+				}
+			}
+			alloc.destroy(ptr);
+			alloc.deallocate(ptr, 1);
+			return itn;
+			}
+
 		void	_avl_tree_node_deletion(const key_type& k)
 		{
 			Node	*p(NULL);
@@ -493,35 +585,47 @@ namespace ft
 			--_size;
 			if (p->left() == NULL && p->right() == NULL)
 			{
+				std::cout << "key " << k << std::endl;
 				parent = p->parent();
 				if (parent->left() == p)
 					parent->set_left(NULL);
 				else
 					parent->set_right(NULL);
 				delete_node(p);
+
 				set_root(balance_tree(root()));
+
+				suffix_traversal(root(), print_node);
 				return ;
 			}
 			if (p->left() == NULL)
 			{
+				std::cout << "key " << k << std::endl;
 				parent = p->parent();
 				if (parent->left() == p)
 					parent->set_left(p->right());
 				else
 					parent->set_right(p->right());
 				delete_node(p);
+
 				set_root(balance_tree(root()));
+
+				suffix_traversal(root(), print_node);
 				return ;
 			}
 			if (p->right() == NULL)
 			{
+				std::cout << "key " << k << std::endl;
 				parent = p->parent();
 				if (parent->left() == p)
 					parent->set_left(p->left());
 				else
 					parent->set_right(p->left());
-				delete_node(p);	
+				delete_node(p);
+
 				set_root(balance_tree(root()));
+
+				suffix_traversal(root(), print_node);
 				return ;
 			}
 			succ = _avl_tree_successor(p);
@@ -531,12 +635,16 @@ namespace ft
 				succ->set_right(p->right());
 				succ->right()->set_parent(succ);
 			}
+			std::cout << "key " << k << std::endl;
 			_avl_tree_transplant(p, succ);
 			succ->set_left(p->left());
 			succ->left()->set_parent(succ);
 			delete_node(p);
 			recomp_height(succ);
+
 			set_root(balance_tree(root()));
+
+			suffix_traversal(root(), print_node);
 			return ;
 		}
 
@@ -633,6 +741,7 @@ namespace ft
 				else
 					temp = _avl_tree_rr_rotation(temp);
 			}
+
 			return (temp);
 		}
 
@@ -718,7 +827,6 @@ namespace ft
 			Node *p = _recursive_avl_tree_search(root(), key);
 			if (!p)
 				return (0);
-			--_size;
 			_avl_tree_node_deletion(key);
 			return (1);
 		}
