@@ -49,7 +49,8 @@ namespace ft
 				typename ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::value* = 0 ) : _alloc(alloc), _v(NULL)
 		{
 			size_type	count(0);
-			for (; first != last; ++first)
+
+			for (InputIt p = first; p != last; ++p)
 				count++;
 			_size = _capacity = count;
 			_v = _alloc.allocate(capacity());
@@ -63,14 +64,13 @@ namespace ft
 			ptrdiff_t		dist = last - first;
 
 			_v = _alloc.allocate(_capacity);
-			for (iterator p = _v; p < _v + dist && first < last; ++p, ++first)
+			for (iterator p = _v; p < _v + dist && first != last; ++p, ++first)
 				_alloc.construct(&*p, *first);
 		};
 
 		~vector()
 		{
-			for (iterator p = _v; p < _v + size(); ++p)
-				_alloc.destroy(&*p);
+			clear();
 			_alloc.deallocate(_v, capacity());
 		}
 
@@ -78,8 +78,7 @@ namespace ft
 		{
 			if (this == &rhs)
 				return (*this);
-			for (iterator p = _v; p < _v + size(); ++p)
-				_alloc.destroy(&*p);
+			clear();
 			_alloc.deallocate(_v, capacity());
 
 			const_iterator	first = rhs.begin();
@@ -99,7 +98,6 @@ namespace ft
 			clear();
 			if (capacity() < count)
 				reserve(count);
-			std::cout << "OK!" << std::endl;
 			for (iterator p = _v; p < _v + count; ++p)
 				_alloc.construct(&*p, value);
 			_size = count;
@@ -108,28 +106,19 @@ namespace ft
 		template<class InputIt>
 		void	assign( InputIt first, InputIt last, typename ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::value* = 0 )
 		{
-			std::cout << "Bau?" << std::endl;
 			size_type	pos(0);
-			for (; first != last; ++first)
+
+			for (InputIt p = first; p != last; ++p)
 				pos++;
-			if (pos >= 0)
+			clear();
+			if (pos > capacity())
 			{
-				clear();
-				if (capacity() < pos)
-					reserve(pos);
-				_size = pos;
-				std::cout << "Bau!" << std::endl;
-				std::cout << ":" << pos << std::endl;
-				std::cout << "iter " << *first << std::endl;
-				std::cout << "iter " << *last << std::endl;
-				for (; first != last; ++first)
-				{
-					std::cout << "iter " << *first << std::endl;
-					_alloc.construct(&_v[_size++], *first);
-				}
+				_alloc.deallocate(_v, _capacity);
+				_capacity = pos;
+				_v = _alloc.allocate(pos);
 			}
-			else
-				throw(_out_of_range(pos));			
+			for (; first != last; first++)
+				_alloc.construct(&_v[_size++], *first);
 		}
 
 		allocator_type	get_allocator() const { return _alloc; }
@@ -236,85 +225,60 @@ namespace ft
 
 		// https://stackoverflow.com/questions/40767476/how-does-rhs-work
 
-		iterator	insert(iterator pos, const T& value)
+		iterator	insert(iterator position, const value_type &val)
 		{
-			if (pos >= begin() && pos <= end())
-			{
-				difference_type dist = pos - begin();
+    		difference_type	pos = position - begin();
 
-				if (capacity() == 0 || capacity() == size())
-					_extend();
-				iterator absolute_iterator = begin() + dist;
-				vector temp(absolute_iterator, end());
-
-				for (size_type i = 0; i < temp.size(); i++)
-					pop_back();
-				push_back(value);
-				iterator it = temp.begin();
-
-				for (size_type i = 0; i < temp.size(); i++, it++)
-					push_back(*it);
-				return (begin() + dist);
-			}
-			else
-				throw (_out_of_range(pos - begin()));
+			insert(position, 1, val);
+			return (iterator(begin() + pos));
 		};
 
 		void	insert(iterator pos, size_type count, const T& value)
 		{
-			if (pos >= begin() && pos <= end())
+			difference_type dist = pos - begin();
+
+			if (capacity() == 0)
+				_extend();
+			if (size() + count >= capacity())
+				reserve(size() + count);
+			vector temp(begin() + dist, end());
+
+			for (size_t i = 0; i < temp.size(); i++)
+				pop_back();
+			while (count > 0)
 			{
-				difference_type dist = pos - begin();
-
-				if (capacity() == 0)
-					_extend();
-				if (size() + count >= capacity())
-					reserve(size() + count);
-				vector temp(begin() + dist, end());
-
-				for (size_t i = 0; i < temp.size(); i++)
-					pop_back();
-				while (count > 0)
-				{
-					push_back(value);
-					count--;
-				}
-				for (iterator it = temp.begin(); it != temp.end(); it++)
-					push_back(*it);
+				push_back(value);
+				count--;
 			}
-			else
-				throw (_out_of_range(pos - begin()));
+			for (iterator it = temp.begin(); it != temp.end(); it++)
+				push_back(*it);
 		};
 
 		template <class InputIt>
 		iterator	insert(iterator pos, InputIt first, InputIt last, typename ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::value* = 0)
 		{
-			if (pos >= begin() && pos <= end())
+			size_type	count(0);
+
+			for (InputIt p = first; p != last; ++p)
+				count++;
+			difference_type		dist = pos - this->begin();
+
+			if (capacity() == 0)
+				_extend();
+			if (size() + count >= capacity())
+				reserve(size() + count);
+			vector		temp(this->begin() + dist, this->end());
+
+			for (size_t i = 0; i < temp.size(); i++)
+				this->pop_back();
+			while (first != last)
 			{
-				size_type	count(0);
-				for (; first != last; ++first)
-					count++;
-				difference_type		dist = pos - this->begin();
-
-				if (capacity() == 0)
-					_extend();
-				if (size() + count >= capacity())
-					reserve(size() + count);
-				vector		temp(this->begin() + dist, this->end());
-
-				for (size_t i = 0; i < temp.size(); i++)
-					this->pop_back();
-				while (first != last)
-				{
-					this->push_back(*first);
-					first++;
-				}
-				for (iterator it = temp.begin(); it != temp.end(); it++)
-					this->push_back(*it);
-				return (begin() + dist);
+				this->push_back(*first);
+				first++;
 			}
-			else
-				throw (_out_of_range(pos - begin()));
+			for (iterator it = temp.begin(); it != temp.end(); it++)
+				this->push_back(*it);
+			return (begin() + dist);
 		}
 
 		iterator	erase(iterator pos)
