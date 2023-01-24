@@ -496,6 +496,56 @@ namespace ft
 			}
 		}
 
+		void rotate_left(node *n) {
+	node *tmp = n->right_child->left_child;
+	if (n == n->parent->left_child) {
+	    n->parent->left_child = n->right_child;
+	} else {
+	    n->parent->right_child = n->right_child;
+	}
+	n->right_child->parent = n->parent;
+	n->right_child->left_child = n;
+	n->parent = n->right_child;
+	n->right_child = tmp;
+	if (tmp)
+	    tmp->parent = n;
+
+	// update ns
+	n->update_n();
+	n->parent->update_n();
+
+	// update depths
+	do {
+	    n->update_depth();
+	    n = n->parent;
+	} while (n);
+    }
+
+    void rotate_right(node *n) {
+	node *tmp = n->left_child->right_child;
+	if (n == n->parent->left_child) {
+	    n->parent->left_child = n->left_child;
+	} else {
+	    n->parent->right_child = n->left_child;
+	}
+	n->left_child->parent = n->parent;
+	n->left_child->right_child = n;
+	n->parent = n->left_child;
+	n->left_child = tmp;
+	if (tmp)
+	    tmp->parent = n;
+
+	// update ns
+	n->update_n();
+	n->parent->update_n();
+
+	// update depths
+	do {
+	    n->update_depth();
+	    n = n->parent;
+	} while (n);
+    }
+
 		iterator erase_node(iterator it) {
 			iterator itn(it);
 			++itn;
