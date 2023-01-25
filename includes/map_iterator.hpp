@@ -31,15 +31,15 @@ namespace ft
 		typedef Content*							pointer;
 		typedef Content&							reference;
 
-		map_iterator() : _ptr(NULL) {}
-		map_iterator(node_pointer ptr) : _ptr(ptr) {}
-		map_iterator(const map_iterator &other) : _ptr(other._ptr) {}
+		map_iterator() : _ptr(NULL), _last(NULL)  {}
+		map_iterator(node_pointer ptr) : _ptr(ptr), _last(ptr) {}
+		map_iterator(const map_iterator &other) : _ptr(other._ptr), _last(other._last) {}
 		template<typename U>
 		map_iterator(const map_iterator<Key, T, Node, U> &other,
 			typename ft::enable_if<!std::is_const<U>::value>::type* = 0)
-				: _ptr(other._ptr) {}
-		map_iterator(const wrapper_it<map_iterator> &other) : _ptr(other.base()._ptr) {}
-		map_iterator(const reverse_iterator<map_iterator> &other) : _ptr(other.base()._ptr) {}
+				: _ptr(other._ptr), _last(other._last) {}
+		map_iterator(const wrapper_it<map_iterator> &other) : _ptr(other.base()._ptr), _last(NULL) {}
+		map_iterator(const reverse_iterator<map_iterator> &other) : _ptr(other.base()._ptr), _last(NULL) {}
 		~map_iterator() {}
 
 		map_iterator&	operator=(const map_iterator &assign) 
@@ -64,9 +64,8 @@ namespace ft
 		map_iterator& operator++() {
 			if (_ptr->_right) {
 				_ptr = _ptr->_right;
-				while (_ptr->_left) {
+				while (_ptr->_left)
 					_ptr = _ptr->_left;
-				}
 			} else {
 				Node	*before;
 
@@ -75,23 +74,24 @@ namespace ft
 					_ptr = _ptr->_parent;
 				} while (_ptr && before == _ptr->_right);
 			}
-			return *this;
+			return (*this);
 		}
 
 		// post-increment
 		map_iterator operator++(int) {
 			map_iterator old(*this);
-			++(*this);
+			operator++();
 			return (old);
 		}
 
 		// pre-decrement
 		map_iterator& operator--() {
-			if (_ptr->_left) {
+			if (!_ptr)
+				_ptr = _last;
+			else if (_ptr->_left) {
 				_ptr = _ptr->_left;
-				while (_ptr->_right) {
+				while (_ptr->_right)
 					_ptr = _ptr->_right;
-				}
 			} else {
 				Node	*before;
 
@@ -106,7 +106,7 @@ namespace ft
 		// post-decrement
 		map_iterator operator--(int) {
 			map_iterator old(*this);
-			--(*this);
+			operator--();
 			return (old);
 		}
 
@@ -131,6 +131,7 @@ namespace ft
 
 	private:
 		Node	*_ptr;
+		Node	*_last;
 	};
 }
 
