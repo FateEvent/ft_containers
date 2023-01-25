@@ -62,17 +62,19 @@ namespace ft
 
 		// pre-increment
 		map_iterator& operator++() {
-			if (_ptr->_right) {
+			if (_ptr && _ptr->_right) {
 				_ptr = _ptr->_right;
 				while (_ptr->_left)
 					_ptr = _ptr->_left;
 			} else {
-				Node	*before;
+				Node	*tmp = _ptr;
 
-				do {
-					before = _ptr;
+				_ptr = _ptr->_parent;
+				while (_ptr && tmp == _ptr->_right)
+				{
+					tmp = _ptr;
 					_ptr = _ptr->_parent;
-				} while (_ptr && before == _ptr->_right);
+				};
 			}
 			return (*this);
 		}
@@ -88,17 +90,19 @@ namespace ft
 		map_iterator& operator--() {
 			if (!_ptr)
 				_ptr = _last;
-			else if (_ptr->_left) {
+			else if (_ptr && _ptr->_left) {
 				_ptr = _ptr->_left;
 				while (_ptr->_right)
 					_ptr = _ptr->_right;
 			} else {
-				Node	*before;
+				Node	*tmp = _ptr;
 
-				do {
-					before = _ptr;
+				_ptr = _ptr->_parent;
+				while (_ptr && tmp == _ptr->_left)
+				{
+					tmp = _ptr;
 					_ptr = _ptr->_parent;
-				} while (_ptr && before == _ptr->_left);
+				};
 			}
 			return (*this);
 		}

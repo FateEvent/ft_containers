@@ -60,13 +60,14 @@ namespace ft
 			Node		*_right;
 			Node		*_parent;
 			int			_height;
+			int			_n;
 
 		public:
-			Node() : _data(value_type()), _left(NULL), _right(NULL), _parent(NULL), _height(1) {}
-			Node(value_type pair) : _data(pair), _left(NULL), _right(NULL), _parent(NULL), _height(1) {}
+			Node() : _data(value_type()), _left(NULL), _right(NULL), _parent(NULL), _height(1), _n(0) {}
+			Node(value_type pair) : _data(pair), _left(NULL), _right(NULL), _parent(NULL), _height(1), _n(0) {}
 			~Node() {}
 
-			Node		&operator= (Node &other) { _left = other._left; _right = other._right; _parent = other._parent; _height = other._height; return (*this); }
+			Node		&operator= (Node &other) { _left = other._left; _right = other._right; _parent = other._parent; _height = other._height, _n = other._n; return (*this); }
 			void		set_data(value_type &data) { _data = data; }
 			void		set_left(Node *left) { _left = left; }
 			void		set_right(Node *right) { _right = right; }
@@ -76,22 +77,22 @@ namespace ft
 			Node		*right() { return _right; }
 			Node		*parent() { return _parent; }
 			int			&height() { return _height; }
-/*
+
 			void update_height() {
 	    		_height = 1 + std::max(left() ? left()->_height : 0,
 				    right() ? right()->_height : 0);
 			}
 
 			void update_n() {
-				n = 1 + (left() ? left()->n : 0)
-				+ (right() ? right()->n : 0);
+				_n = 1 + (left() ? left()->_n : 0)
+				+ (right() ? right()->_n : 0);
 			}
 
 			short imbalance() {
 				return (right() ? right()->_height : 0)
 					- (left() ? left()->_height : 0);
 			}
-*/
+
 		};
 /*
 		std::ostream	&operator<< (std::ostream &o, const Node &node) {
@@ -458,134 +459,135 @@ namespace ft
 			return (node->parent());
 		}
 
-/*
-		void rotate_left(node *n) {
-			node *tmp = n->right_child->left_child;
-			if (n == n->parent->left_child) {
-				n->parent->left_child = n->right_child;
+
+		void rotate_left(Node *n) {
+			Node *tmp = n->right()->left();
+			if (n == n->parent()->left()) {
+				n->parent()->set_left(n->right());
 			} else {
-				n->parent->right_child = n->right_child;
+				n->parent()->set_right(n->right());
 			}
-			n->right_child->parent = n->parent;
-			n->right_child->left_child = n;
-			n->parent = n->right_child;
-			n->right_child = tmp;
+			n->right()->set_parent(n->parent());
+			n->right()->set_left(n);
+			n->set_parent(n->right());
+			n->set_right(tmp);
 			if (tmp)
-				tmp->parent = n;
+				tmp->set_parent(n);
 
 			// update ns
 			n->update_n();
-			n->parent->update_n();
+			n->parent()->update_n();
 
 			// update depths
 			do {
-				n->update_depth();
-				n = n->parent;
+				n->update_height();
+				n = n->parent();
 			} while (n);
 		}
 
-		void rotate_right(node *n) {
-			node *tmp = n->left_child->right_child;
-			if (n == n->parent->left_child) {
-				n->parent->left_child = n->left_child;
+		void rotate_right(Node *n) {
+			Node *tmp = n->left()->right();
+			if (n == n->parent()->left()) {
+				n->parent()->set_left(n->left());
 			} else {
-				n->parent->right_child = n->left_child;
+				n->parent()->set_right(n->left());
 			}
-			n->left_child->parent = n->parent;
-			n->left_child->right_child = n;
-			n->parent = n->left_child;
-			n->left_child = tmp;
+			n->left()->set_parent(n->parent());
+			n->left()->set_right(n);
+			n->set_parent(n->left());
+			n->set_left(tmp);
 			if (tmp)
-				tmp->parent = n;
+				tmp->set_parent(n);
 
 			// update ns
 			n->update_n();
-			n->parent->update_n();
+			n->parent()->update_n();
 
 			// update depths
 			do {
-				n->update_depth();
-				n = n->parent;
+				n->update_height();
+				n = n->parent();
 			} while (n);
 		}
 
-		iterator erase_node(iterator it) {
+		iterator _avl_tree_node_deletion(iterator it) {
 			iterator itn(it);
 			++itn;
-			node *ptr = it.ptr;
-			node *q;
-			if (!ptr->left_child || !ptr->right_child) {
+			Node *ptr = it.base().node_base();
+			Node *q;
+			if (!ptr->left() || !ptr->right()) {
 				q = ptr;
 			} else {
-				q = itn.ptr;
+				q = itn.base().node_base();
 			}
-			node *s;
-			if (q->left_child) {
-				s = q->left_child;
-				q->left_child = nullptr;
+			Node *s;
+			if (q->left()) {
+				s = q->left();
+				q->set_left(NULL);
 			} else {
-				s = q->right_child;
-				q->right_child = nullptr;
+				s = q->right();
+				q->set_right(NULL);
 			}
 			if (s) {
-				s->parent = q->parent;
+				s->set_parent(q->parent());
 			}
-			if (q == q->parent->left_child) {
-				q->parent->left_child = s;
+			if (q == q->parent()->left()) {
+				q->parent()->set_left(s);
 			} else {
-				q->parent->right_child = s;
+				q->parent()->set_right(s);
 			}
-			node *q_parent = q->parent;
+			Node *q_parent = q->parent();
 			if (q != ptr) {
-				q->parent = ptr->parent;
-				if (q->parent->left_child == ptr) {
-				q->parent->left_child = q;
+				q->set_parent(ptr->parent());
+				if (q->parent()->left() == ptr) {
+				q->parent()->set_left(q);
 				} else {
-				q->parent->right_child = q;
+				q->parent()->set_right(q);
 				}
-				q->left_child = ptr->left_child;
-				if (q->left_child)
-				q->left_child->parent = q;
-				q->right_child = ptr->right_child;
-				if (q->right_child)
-				q->right_child->parent = q;
-				q->n = ptr->n;
-				q->depth = ptr->depth;
-				ptr->left_child = nullptr;
-				ptr->right_child = nullptr;
+				q->set_left(ptr->left());
+				if (q->left())
+				q->left()->set_parent(q);
+				q->set_right(ptr->right());
+				if (q->right())
+				q->right()->set_parent(q);
+				q->_n = ptr->_n;
+				q->_height = ptr->_height;
+				ptr->set_left(NULL);
+				ptr->set_right(NULL);
 			}
 			if (q_parent == ptr) {
 				q_parent = q;
 			}
-			node *parent;
-			for (parent = q_parent; parent; parent = parent->parent) {
-				--parent->n;
+			Node *parent;
+			for (parent = q_parent; parent; parent = parent->parent()) {
+				--parent->_n;
 			}
-			for (parent = q_parent; parent; parent = parent->parent) {
-				parent->update_depth();
-				if (parent == root)
+			for (parent = q_parent; parent; parent = parent->parent()) {
+				parent->update_height();
+				if (parent == root())
 				break;
 				if (parent->imbalance() < -1) {
 				// check for double-rotation case
-				if (parent->left_child->imbalance() > 0) {
-					rotate_left(parent->left_child);
+				if (parent->left()->imbalance() > 0) {
+					rotate_left(parent->left());
 				}
 				rotate_right(parent);
 				break;
 				} else if (parent->imbalance() > 1) {
 				// check for double-rotation case
-				if (parent->right_child->imbalance() < 0) {
-					rotate_right(parent->right_child);
+				if (parent->right()->imbalance() < 0) {
+					rotate_right(parent->right());
 				}
 				rotate_left(parent);
 				break;
 				}
 			}
-			alloc.destroy(ptr);
-			alloc.deallocate(ptr, 1);
+			_alloc_node.destroy(ptr);
+			_alloc_node.deallocate(ptr, 1);
 			return itn;
 			}
-*/
+
+/*
 		void	_avl_tree_node_deletion(const key_type& k)
 		{
 			Node	*p(NULL);
@@ -598,7 +600,7 @@ namespace ft
 			--_size;
 			if (p->left() == NULL && p->right() == NULL)
 			{
-//				std::cout << "key " << k << std::endl;
+				std::cout << "key " << k << std::endl;
 				parent = p->parent();
 				if (parent->left() == p)
 					parent->set_left(NULL);
@@ -609,12 +611,12 @@ namespace ft
 				recomp_height(parent);
 				set_root(balance_tree(root()));
 
-//				suffix_traversal(root(), print_node);
+				level_order_traversal(root(), print_node);
 				return ;
 			}
-			if (p->left() == NULL)
+			else if (p->left() == NULL)
 			{
-//				std::cout << "key destra " << k << std::endl;
+				std::cout << "key destra " << k << std::endl;
 				parent = p->parent();
 				if (parent->left() == p)
 					parent->set_left(p->right());
@@ -625,12 +627,12 @@ namespace ft
 				recomp_height(parent);
 				set_root(balance_tree(root()));
 
-//				suffix_traversal(root(), print_node);
+				level_order_traversal(root(), print_node);
 				return ;
 			}
-			if (p->right() == NULL)
+			else if (p->right() == NULL)
 			{
-//				std::cout << "key sinistra " << k << std::endl;
+				std::cout << "key sinistra " << k << std::endl;
 				parent = p->parent();
 				if (parent->left() == p)
 					parent->set_left(p->left());
@@ -641,7 +643,7 @@ namespace ft
 				recomp_height(parent);
 				set_root(balance_tree(root()));
 
-//				suffix_traversal(root(), print_node);
+				level_order_traversal(root(), print_node);
 				return ;
 			}
 			succ = _avl_tree_successor(p);
@@ -651,7 +653,7 @@ namespace ft
 				succ->set_right(p->right());
 				succ->right()->set_parent(succ);
 			}
-//			std::cout << "key sinistra et destra " << k << std::endl;
+			std::cout << "key sinistra et destra " << k << std::endl;
 			_avl_tree_transplant(p, succ);
 
 			succ->set_left(p->left());
@@ -661,10 +663,10 @@ namespace ft
 			recomp_height(succ);
 			set_root(balance_tree(root()));
 
-//			suffix_traversal(root(), print_node);
+			level_order_traversal(root(), print_node);
 			return ;
 		}
-
+*/
 		Node	*_avl_tree_rr_rotation(Node *root)
 		{
 			Node *temp = root->right();
@@ -828,23 +830,40 @@ namespace ft
 			return (_y);
 		}
 
-		void erase( iterator pos )
+		void	erase(iterator pos)
 		{
+			std::cout << "function 3" << std::endl;
 			erase(pos->first);
 		}
 
-		void erase( iterator first, iterator last )
+		void	erase(iterator first, iterator last)
 		{
+			std::cout << "function 2" << std::endl;
 			for (; first != last; ++first)
-				erase(first);
+				erase(first->first);
 		}
 
-		size_type	erase( const key_type& key )
+		void	erase(const_iterator first, const_iterator last)
 		{
-			Node *p = _recursive_avl_tree_search(root(), key);
+			std::cout << "function 2b" << std::endl;
+			for (; first != last; ++first)
+				erase(first->first);
+		}
+
+		size_type	erase(const key_type& key)
+		{
+			std::cout << "function 1" << std::endl;
+/*			Node *p = _recursive_avl_tree_search(root(), key);
 			if (!p)
 				return (0);
 			_avl_tree_node_deletion(key);
+			return (1);
+*/
+			Node *p = _recursive_avl_tree_search(root(), key);
+			if (!p)
+				return (0);
+			iterator	it(p);
+			_avl_tree_node_deletion(it);
 			return (1);
 		}
 
