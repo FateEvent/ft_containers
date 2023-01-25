@@ -60,14 +60,13 @@ namespace ft
 			Node		*_right;
 			Node		*_parent;
 			int			_height;
-			int			_n;
 
 		public:
-			Node() : _data(value_type()), _left(NULL), _right(NULL), _parent(NULL), _height(1), _n(0) {}
-			Node(value_type pair) : _data(pair), _left(NULL), _right(NULL), _parent(NULL), _height(1), _n(0) {}
+			Node() : _data(value_type()), _left(NULL), _right(NULL), _parent(NULL), _height(1) {}
+			Node(value_type pair) : _data(pair), _left(NULL), _right(NULL), _parent(NULL), _height(1) {}
 			~Node() {}
 
-			Node		&operator= (Node &other) { _left = other._left; _right = other._right; _parent = other._parent; _height = other._height, _n = other._n; return (*this); }
+			Node		&operator= (Node &other) { _left = other._left; _right = other._right; _parent = other._parent; _height = other._height; return (*this); }
 			void		set_data(value_type &data) { _data = data; }
 			void		set_left(Node *left) { _left = left; }
 			void		set_right(Node *right) { _right = right; }
@@ -77,21 +76,6 @@ namespace ft
 			Node		*right() { return _right; }
 			Node		*parent() { return _parent; }
 			int			&height() { return _height; }
-
-			void update_height() {
-	    		_height = 1 + std::max(left() ? left()->_height : 0,
-				    right() ? right()->_height : 0);
-			}
-
-			void update_n() {
-				_n = 1 + (left() ? left()->_n : 0)
-				+ (right() ? right()->_n : 0);
-			}
-
-			short imbalance() {
-				return (right() ? right()->_height : 0)
-					- (left() ? left()->_height : 0);
-			}
 
 		};
 /*
@@ -103,6 +87,11 @@ namespace ft
 		}
 */
 	public:
+
+		/************************************************************************\
+		**							Member functions							**
+		\************************************************************************/
+
 		explicit map(const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type())
 			: _root(NULL), _alloc_node(node_allocator()), _alloc_pair(alloc), _key_comp(comp), _size() {
 			_root = new_node();
@@ -129,6 +118,7 @@ namespace ft
 		}
 
 		~map() { delete_node(protoroot()); }
+
 		map&	operator= (map const& rhs) {
 			if (this == &rhs)
 				return (*this);
@@ -140,6 +130,8 @@ namespace ft
 				insert(*first);
 			return (*this);
 		}
+
+		allocator_type	get_allocator() const { return _alloc_pair; }
 
 		Node	*protoroot() const { return (_root); }
 		Node	*protoroot() { return (_root); }
@@ -211,6 +203,32 @@ namespace ft
 			std::cout << "-- That's the end of my tree. Thanx for watching. --" << std::endl;
 		}
 
+		/************************************************************************\
+		**								Element access							**
+		\************************************************************************/
+
+		mapped_type&	at(const key_type& k)
+		{
+			Node *found = _recursive_avl_tree_search(root(), k);
+			if (found)
+				return (found->data().second);
+			throw(std::out_of_range("map"));
+		}
+
+		const mapped_type&	at(const key_type& k) const
+		{
+			return (const_cast<mapped_type>(at((k))));
+		}
+
+		mapped_type&	operator[] (const key_type& k)
+		{
+			return ((*(insert(ft::make_pair(k, mapped_type())).first)).second);
+		}
+
+		/************************************************************************\
+		**								Iterators								**
+		\************************************************************************/
+
 		iterator	begin()	{
 			if (root())
 			{
@@ -265,7 +283,141 @@ namespace ft
 
 		reverse_iterator rend() { return (reverse_iterator(begin())); }
 		
-		const_reverse_iterator rend() const { return (const_iterator(begin())); } 
+		const_reverse_iterator rend() const { return (const_iterator(begin())); }
+
+		/************************************************************************\
+		**								Capacity								**
+		\************************************************************************/
+
+		bool empty() const { return (!size()); }
+
+		size_type	size() const { return _size; }
+
+		size_type	max_size() const { return std::min<size_type>(_alloc_node.max_size(),
+										std::numeric_limits<difference_type>::max()); }
+
+		/************************************************************************\
+		**								Modifiers								**
+		\************************************************************************/
+
+		void	clear() {
+			erase(begin(), end());
+		}
+
+		pair<iterator, bool>	insert(const value_type& val)
+		{
+			Node	*newNode = new_node(val);
+			Node	*_x(root());
+			Node	*_y;
+
+			if (!_x)
+			{
+				_x = newNode;
+				set_root(_x);
+				_x->set_parent(NULL);
+				++_size;
+				return (ft::make_pair(iterator(_x), true));
+			}
+			while (_x != NULL) {
+				_y = _x;
+				if (_key_comp(val.first, _x->data().first))
+					_x = _x->left();
+				else if (val.first == _x->data().first)
+				{
+					delete_node(newNode);
+					return (ft::make_pair(iterator(_x), false));
+				}
+				else
+					_x = _x->right();
+			}
+			if (_y == NULL)
+			{
+				_y = newNode;
+				newNode->set_parent(_y->parent());
+			}
+			else if (_key_comp(val.first, _y->data().first))
+			{
+				_y->set_left(newNode);
+				newNode->set_parent(_y);
+			}
+			else
+			{
+				_y->set_right(newNode);
+				newNode->set_parent(_y);
+			}
+			++_size;
+			set_root(balance_tree(root()));
+			suffix_traversal(root(), recomp_height);
+			_y = _recursive_avl_tree_search(root(), val.first);
+			return (ft::make_pair(iterator(_y), true));
+		}
+
+		iterator	insert(iterator pos, const value_type& val)
+		{
+			(void)pos;
+			Node *temp = _avl_tree_insert(root(), val);
+
+			return (iterator(temp));
+		}
+
+		template<class InputIt>
+		void	insert(InputIt first, InputIt last,
+			typename ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::value* = 0)
+		{
+			for (; first != last; ++first)
+				insert(*first);
+		}
+
+		void	erase(iterator pos)
+		{
+			std::cout << "function 3" << std::endl;
+			erase(pos->first);
+		}
+
+		void	erase(iterator first, iterator last)
+		{
+			std::cout << "function 2" << std::endl;
+			for (; first != last; ++first)
+				erase(first->first);
+		}
+
+		void	erase(const_iterator first, const_iterator last)
+		{
+			std::cout << "function 2b" << std::endl;
+			for (; first != last; ++first)
+				erase(first->first);
+		}
+
+		size_type	erase(const key_type& key)
+		{
+			std::cout << "function 1" << std::endl;
+			Node *p = _recursive_avl_tree_search(root(), key);
+			if (!p)
+				return (0);
+			_avl_tree_node_deletion(key);
+			return (1);
+		}
+
+		void	swap(map& other)
+		{
+			std::swap(_root, other._root);
+			std::swap(_size, other._size);
+			std::swap(_key_comp, other._key_comp);
+			std::swap(_alloc_node, other._alloc_node);
+			std::swap(_alloc_pair, other._alloc_pair);
+		}
+
+		/************************************************************************\
+		**								Lookup									**
+		\************************************************************************/
+
+		size_type	count( const key_type& key ) const {
+			Node	*found(_recursive_avl_tree_search(root(), key));
+
+			if (found)
+				return (1);
+			return (0);
+		}
 
 		iterator	find(const key_type& key) {
 			Node *found = _recursive_avl_tree_search(root(), key);
@@ -273,6 +425,7 @@ namespace ft
 				return (iterator(found));
 			return (end());
 		}
+
 		const_iterator	find (const key_type& key) const {
 			Node *found = _recursive_avl_tree_search(root(), key);
 			if (found)
@@ -280,28 +433,15 @@ namespace ft
 			return (end());
 		}
 
-		iterator		upper_bound(const key_type& key) {
-			iterator	it(begin()), ite(end());
-
-			while (it != ite)
-			{
-				if (_key_comp(key, it->first))
-					break ;
-				it++;
-			}
-			return (it);
+		ft::pair<iterator,iterator>	equal_range(const key_type& key) {
+			return (ft::make_pair(lower_bound(key), upper_bound(key)));
 		}
 
-		const_iterator	upper_bound(const key_type& key) const {
-			const_iterator	it(begin()), ite(end());
+		ft::pair<const_iterator,const_iterator>	equal_range(const key_type& key) const {
+			const_iterator	it1(lower_bound(key));
+			const_iterator	it2(upper_bound(key));
 
-			while (it != ite)
-			{
-				if (_key_comp(key, it->first))
-					break ;
-				it++;
-			}
-			return (it);
+			return (ft::make_pair(it1, it2));
 		}
 
 		iterator		lower_bound(const key_type& key) {
@@ -328,16 +468,35 @@ namespace ft
 			return (it);
 		}
 
-		ft::pair<iterator,iterator>	equal_range(const key_type& key) {
-			return (ft::make_pair(lower_bound(key), upper_bound(key)));
+		iterator		upper_bound(const key_type& key) {
+			iterator	it(begin()), ite(end());
+
+			while (it != ite)
+			{
+				if (_key_comp(key, it->first))
+					break ;
+				it++;
+			}
+			return (it);
 		}
 
-		ft::pair<const_iterator,const_iterator>	equal_range(const key_type& key) const {
-			const_iterator	it1(lower_bound(key));
-			const_iterator	it2(upper_bound(key));
+		const_iterator	upper_bound(const key_type& key) const {
+			const_iterator	it(begin()), ite(end());
 
-			return (ft::make_pair(it1, it2));
+			while (it != ite)
+			{
+				if (_key_comp(key, it->first))
+					break ;
+				it++;
+			}
+			return (it);
 		}
+
+		/****************************************************************************\
+		**																			**
+		**						Utility functions for AVL trees						**
+		**																			**
+		\****************************************************************************/
 
 		Node	*new_node(const value_type& pair = value_type(), Node *parent = NULL)
 		{
@@ -364,12 +523,6 @@ namespace ft
 			_alloc_node.destroy(node);
 			_alloc_node.deallocate(node, 1);
 		}
-
-		/****************************************************************************\
-		**																			**
-		**						Utility functions for AVL trees						**
-		**																			**
-		\****************************************************************************/
 
 		Node	*leftmost(Node *_x) const
 		{
@@ -443,7 +596,6 @@ namespace ft
 		{
 			if (!node || (!node->left() && !node->right()))
 				return (NULL);
-//			if (node->left() && node->right())
 			if (node->left())
 			{
 				node = node->right();
@@ -451,143 +603,11 @@ namespace ft
 					node = node->left();
 				return (node);
 			}
-//			if (node->right())
-//				return (node->left());
-//			return (node->right());
 			while (node->parent() && node->parent()->right() == node)
 				node = node->parent();
 			return (node->parent());
 		}
 
-
-		void rotate_left(Node *n) {
-			Node *tmp = n->right()->left();
-			if (n == n->parent()->left()) {
-				n->parent()->set_left(n->right());
-			} else {
-				n->parent()->set_right(n->right());
-			}
-			n->right()->set_parent(n->parent());
-			n->right()->set_left(n);
-			n->set_parent(n->right());
-			n->set_right(tmp);
-			if (tmp)
-				tmp->set_parent(n);
-
-			// update ns
-			n->update_n();
-			n->parent()->update_n();
-
-			// update depths
-			do {
-				n->update_height();
-				n = n->parent();
-			} while (n);
-		}
-
-		void rotate_right(Node *n) {
-			Node *tmp = n->left()->right();
-			if (n == n->parent()->left()) {
-				n->parent()->set_left(n->left());
-			} else {
-				n->parent()->set_right(n->left());
-			}
-			n->left()->set_parent(n->parent());
-			n->left()->set_right(n);
-			n->set_parent(n->left());
-			n->set_left(tmp);
-			if (tmp)
-				tmp->set_parent(n);
-
-			// update ns
-			n->update_n();
-			n->parent()->update_n();
-
-			// update depths
-			do {
-				n->update_height();
-				n = n->parent();
-			} while (n);
-		}
-
-		iterator _avl_tree_node_deletion(iterator it) {
-			iterator itn(it);
-			++itn;
-			Node *ptr = it.base().node_base();
-			Node *q;
-			if (!ptr->left() || !ptr->right()) {
-				q = ptr;
-			} else {
-				q = itn.base().node_base();
-			}
-			Node *s;
-			if (q->left()) {
-				s = q->left();
-				q->set_left(NULL);
-			} else {
-				s = q->right();
-				q->set_right(NULL);
-			}
-			if (s) {
-				s->set_parent(q->parent());
-			}
-			if (q == q->parent()->left()) {
-				q->parent()->set_left(s);
-			} else {
-				q->parent()->set_right(s);
-			}
-			Node *q_parent = q->parent();
-			if (q != ptr) {
-				q->set_parent(ptr->parent());
-				if (q->parent()->left() == ptr) {
-				q->parent()->set_left(q);
-				} else {
-				q->parent()->set_right(q);
-				}
-				q->set_left(ptr->left());
-				if (q->left())
-				q->left()->set_parent(q);
-				q->set_right(ptr->right());
-				if (q->right())
-				q->right()->set_parent(q);
-				q->_n = ptr->_n;
-				q->_height = ptr->_height;
-				ptr->set_left(NULL);
-				ptr->set_right(NULL);
-			}
-			if (q_parent == ptr) {
-				q_parent = q;
-			}
-			Node *parent;
-			for (parent = q_parent; parent; parent = parent->parent()) {
-				--parent->_n;
-			}
-			for (parent = q_parent; parent; parent = parent->parent()) {
-				parent->update_height();
-				if (parent == root())
-				break;
-				if (parent->imbalance() < -1) {
-				// check for double-rotation case
-				if (parent->left()->imbalance() > 0) {
-					rotate_left(parent->left());
-				}
-				rotate_right(parent);
-				break;
-				} else if (parent->imbalance() > 1) {
-				// check for double-rotation case
-				if (parent->right()->imbalance() < 0) {
-					rotate_right(parent->right());
-				}
-				rotate_left(parent);
-				break;
-				}
-			}
-			_alloc_node.destroy(ptr);
-			_alloc_node.deallocate(ptr, 1);
-			return itn;
-			}
-
-/*
 		void	_avl_tree_node_deletion(const key_type& k)
 		{
 			Node	*p(NULL);
@@ -666,7 +686,7 @@ namespace ft
 			level_order_traversal(root(), print_node);
 			return ;
 		}
-*/
+
 		Node	*_avl_tree_rr_rotation(Node *root)
 		{
 			Node *temp = root->right();
@@ -830,150 +850,14 @@ namespace ft
 			return (_y);
 		}
 
-		void	erase(iterator pos)
-		{
-			std::cout << "function 3" << std::endl;
-			erase(pos->first);
-		}
-
-		void	erase(iterator first, iterator last)
-		{
-			std::cout << "function 2" << std::endl;
-			for (; first != last; ++first)
-				erase(first->first);
-		}
-
-		void	erase(const_iterator first, const_iterator last)
-		{
-			std::cout << "function 2b" << std::endl;
-			for (; first != last; ++first)
-				erase(first->first);
-		}
-
-		size_type	erase(const key_type& key)
-		{
-			std::cout << "function 1" << std::endl;
-/*			Node *p = _recursive_avl_tree_search(root(), key);
-			if (!p)
-				return (0);
-			_avl_tree_node_deletion(key);
-			return (1);
-*/
-			Node *p = _recursive_avl_tree_search(root(), key);
-			if (!p)
-				return (0);
-			iterator	it(p);
-			_avl_tree_node_deletion(it);
-			return (1);
-		}
-
-		void	clear() {
-			erase(begin(), end());
-		}
-
-		pair<iterator, bool>	insert(const value_type& val)
-		{
-			Node	*newNode = new_node(val);
-			Node	*_x(root());
-			Node	*_y;
-
-			if (!_x)
-			{
-				_x = newNode;
-				set_root(_x);
-				_x->set_parent(NULL);
-				++_size;
-				return (ft::make_pair(iterator(_x), true));
-			}
-			while (_x != NULL) {
-				_y = _x;
-				if (_key_comp(val.first, _x->data().first))
-					_x = _x->left();
-				else if (val.first == _x->data().first)
-				{
-					delete_node(newNode);
-					return (ft::make_pair(iterator(_x), false));
-				}
-				else
-					_x = _x->right();
-			}
-			if (_y == NULL)
-			{
-				_y = newNode;
-				newNode->set_parent(_y->parent());
-			}
-			else if (_key_comp(val.first, _y->data().first))
-			{
-				_y->set_left(newNode);
-				newNode->set_parent(_y);
-			}
-			else
-			{
-				_y->set_right(newNode);
-				newNode->set_parent(_y);
-			}
-			++_size;
-			set_root(balance_tree(root()));
-			suffix_traversal(root(), recomp_height);
-			_y = _recursive_avl_tree_search(root(), val.first);
-			return (ft::make_pair(iterator(_y), true));
-		}
-
-		iterator	insert(iterator pos, const value_type& val)
-		{
-			(void)pos;
-			Node *temp = _avl_tree_insert(root(), val);
-
-			return (iterator(temp));
-		}
-
-		template<class InputIt>
-		void	insert(InputIt first, InputIt last,
-			typename ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::value* = 0)
-		{
-			for (; first != last; ++first)
-				insert(*first);
-		}
-
-		mapped_type&	operator[] (const key_type& k)
-		{
-			return ((*(insert(ft::make_pair(k, mapped_type())).first)).second);
-		}
-
-		mapped_type&	at(const key_type& k)
-		{
-			Node *found = _recursive_avl_tree_search(root(), k);
-			if (found)
-				return (found->data().second);
-			throw(std::out_of_range("map"));
-		}
-
-		const mapped_type&	at(const key_type& k) const
-		{
-			return (const_cast<mapped_type>(at((k))));
-		}
-
-		allocator_type	get_allocator() const { return _alloc_pair; }
+		/************************************************************************\
+		**								observers								**
+		\************************************************************************/
 
 		key_compare	key_comp() const { return _key_comp; };
 
 		value_compare	value_comp() const { return value_compare(_key_comp); }
 
-		bool empty() const { return !size(); }
-
-		size_type	size() const { return _size; }
-
-		size_type	max_size() const { return std::min<size_type>(_alloc_node.max_size(),
-										std::numeric_limits<difference_type>::max()); }
-		
-		void	swap(map& other)
-		{
-			std::swap(_root, other._root);
-			std::swap(_size, other._size);
-			std::swap(_key_comp, other._key_comp);
-			std::swap(_alloc_node, other._alloc_node);
-			std::swap(_alloc_pair, other._alloc_pair);
-		}
 
 	private :
 		Node			*_root;
