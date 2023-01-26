@@ -35,8 +35,8 @@ namespace ft
 			return (*this); 
 		}
 
-		reference	operator* () const { return (_ptr->_data); }
-		pointer		operator-> () const { return (&(_ptr->_data)); }
+		reference	operator* () const { return (*_ptr); }
+		pointer		operator-> () const { return (_ptr->_data); }
 
 		// pre-increment
 		map_iterator& operator++() {
@@ -83,7 +83,7 @@ namespace ft
 		bool		operator>= (const map_iterator &it) { return this->_ptr >= it._ptr; }
 
 	protected:
-		T	*_ptr;
+		pointer	_ptr;
 	};
 
 	template<class T, class U, class Iter, class Category = std::bidirectional_iterator_tag,
@@ -117,7 +117,7 @@ namespace ft
 
 		// pre-increment
 		map_const_iterator& operator++() {
-			_ptr = std::next(_ptr);
+			_ptr = _ptr->next();
 			return (*this);
 		}
 
@@ -130,7 +130,7 @@ namespace ft
 
 		// pre-decrement
 		map_const_iterator& operator--() {
-			_ptr = std::prev(_ptr);
+			_ptr = _ptr->prev();
 			return (*this);
 		}
 
@@ -160,7 +160,7 @@ namespace ft
 		bool		operator>= (const map_const_iterator &it) { return this->_ptr >= it._ptr; }
 
 	protected:
-		T	*_ptr;
+		pointer	_ptr;
 	};
 }
 
