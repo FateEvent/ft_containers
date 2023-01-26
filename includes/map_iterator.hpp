@@ -8,12 +8,6 @@
 # include "pair.hpp"
 # include "iterator_traits.hpp"
 
-class map;
-template <class Iter>
-class wrapper_it;
-template <class Iter>
-class reverse_iterator;
-
 namespace ft
 {
 	template<class T, class U, class Category = std::bidirectional_iterator_tag,
@@ -41,12 +35,12 @@ namespace ft
 			return (*this); 
 		}
 
-		reference	operator* () const { return (_ptr->value); }
-		iterator	operator-> () const { return (&_ptr->value); }
+		reference	operator* () const { return (_ptr->_data); }
+		pointer		operator-> () const { return (&(_ptr->_data)); }
 
 		// pre-increment
 		map_iterator& operator++() {
-			_ptr = _ptr->next();
+			_ptr = std::next(_ptr);
 			return (*this);
 		}
 
@@ -59,7 +53,7 @@ namespace ft
 
 		// pre-decrement
 		map_iterator& operator--() {
-			_ptr = _ptr->prev();
+			_ptr = std::prev(_ptr);
 			return (*this);
 		}
 
@@ -78,8 +72,7 @@ namespace ft
 
 		bool		operator== (const map_iterator &it) { return this->_ptr == it._ptr; }
 
-		template<typename T1, typename T2>
-		friend bool	operator!= (const map_iterator<T1, Node>& lhs, const map_iterator<T2, Node>& rhs)
+		friend bool	operator!= (const map_iterator& lhs, const map_iterator& rhs)
 		{
 			return (lhs._ptr != rhs._ptr);
 		}
@@ -93,29 +86,23 @@ namespace ft
 		T	*_ptr;
 	};
 
-	template<class T, class Node, class Iter>
-	class map_const_iterator : public iterator<std::bidirectional_iterator_tag, T>
+	template<class T, class U, class Iter, class Category = std::bidirectional_iterator_tag,
+			class Distance = ptrdiff_t, class Pointer = U*, class Reference = U&>
+	class map_const_iterator
 	{
 	public :
-		typedef	std::bidirectional_iterator_tag	iterator_category;
-		typedef T								value_type;
-		typedef std::size_t						size_type;
-		typedef std::ptrdiff_t					difference_type;
-		typedef Node*							node_pointer;
-		typedef Node&							node_reference;
-		typedef T*								pointer;
-		typedef T&								reference;
+		typedef	Category	iterator_category;
+		typedef T			value_type;
+		typedef Distance	difference_type;
+		typedef Pointer		pointer;
+		typedef Reference	reference;
 
 		map_const_iterator() : _ptr(NULL)  {}
-		map_const_iterator(node_pointer ptr) : _ptr(ptr) {}
 		map_const_iterator(const map_const_iterator &other) : _ptr(other._ptr) {}
-		template<typename U>
-		map_const_iterator(const map_const_iterator<U, Node, Iter> &other,
-			typename ft::enable_if<!std::is_const<U>::value>::type* = 0)
-				: _ptr(other._ptr){}
-		map_const_iterator(const wrapper_it<map_const_iterator> &other) : _ptr(other.base()._ptr) {}
-		map_const_iterator(const reverse_iterator<map_const_iterator> &other) : _ptr(other.base()._ptr) {}
+		map_const_iterator(T *ptr) : _ptr(ptr) {}
 		~map_const_iterator() {}
+
+		T	*get_ptr() const { return (_ptr); }
 
 		map_const_iterator&	operator=(const map_const_iterator &assign) 
 		{
@@ -124,19 +111,14 @@ namespace ft
 			return (*this); 
 		}
 
-		pointer		base() const { return (_ptr); }
-
-		reference	operator* () const { return (_ptr); }
-		iterator	operator-> () const { return (_ptr); }
-		reference	operator[] (difference_type index) { return (base()[index]); }
-
-		operator	map_const_iterator<T, Node, Iter>() const { return (map_const_iterator<const T, Node, Iter>(_ptr)); }
-
-		void		set_ptr(node_pointer ptr) { _ptr = ptr; }
+		reference	operator* () const { return (_ptr->_data); }
+		pointer		operator-> () const { return (&(_ptr->_data)); }
+		operator	map_const_iterator<T, U, Iter>() const { return (map_const_iterator<T, U, Iter>(_ptr)); }
 
 		// pre-increment
 		map_const_iterator& operator++() {
-			_ptr = _ptr->next();
+			_ptr = std::next(_ptr);
+			return (*this);
 		}
 
 		// post-increment
@@ -148,7 +130,8 @@ namespace ft
 
 		// pre-decrement
 		map_const_iterator& operator--() {
-			_ptr = _ptr->prev();
+			_ptr = std::prev(_ptr);
+			return (*this);
 		}
 
 		// post-decrement
@@ -164,21 +147,20 @@ namespace ft
 		const map_const_iterator	&operator-= (const difference_type dist) { _ptr -= dist; return (*this); }
 		ptrdiff_t					operator- (const map_const_iterator &it) { return (_ptr - it._ptr); }
 
-		bool	operator== (const map_const_iterator &it) { return this->base() == it.base(); }
+		bool		operator== (const map_const_iterator &it) { return this->_ptr == it._ptr; }
 
-		template<typename T1, typename T2>
-		friend bool	operator!= (const map_const_iterator<T1, Node>& lhs, const map_const_iterator<T2, Node>& rhs)
+		friend bool	operator!= (const map_const_iterator& lhs, const map_const_iterator& rhs)
 		{
 			return (lhs._ptr != rhs._ptr);
 		}
 
-		bool	operator< (const map_const_iterator &it) { return this->base() < it.base(); }
-		bool	operator<= (const map_const_iterator &it) { return this->base() <= it.base(); }
-		bool	operator> (const map_const_iterator &it) { return this->base() > it.base(); }
-		bool	operator>= (const map_const_iterator &it) { return this->base() >= it.base(); }
+		bool		operator< (const map_const_iterator &it) { return this->_ptr < it._ptr; }
+		bool		operator<= (const map_const_iterator &it) { return this->_ptr <= it._ptr; }
+		bool		operator> (const map_const_iterator &it) { return this->_ptr > it._ptr; }
+		bool		operator>= (const map_const_iterator &it) { return this->_ptr >= it._ptr; }
 
-	private:
-		pointer	*_ptr;
+	protected:
+		T	*_ptr;
 	};
 }
 

@@ -7,10 +7,10 @@ template<class Pair>
 struct Node {
 public:
 	Pair	_data;
-	Node		*_left;
-	Node		*_right;
-	Node		*_parent;
-	int			_height;
+	Node	*_left;
+	Node	*_right;
+	Node	*_parent;
+	int		_height;
 
 public:
 	Node() : _data(Pair()), _left(NULL), _right(NULL), _parent(NULL), _height(1) {}
