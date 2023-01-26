@@ -10,6 +10,8 @@
 # include "vector.hpp"
 # include "map_iterator.hpp"
 # include "iterator.hpp"
+# include "_tree_node.hpp"
+# include <map>
 
 class map_iterator;
 
@@ -18,25 +20,25 @@ namespace ft
 	template<class Key, class T, class Compare = std::less<Key>,
 	class Allocator = std::allocator<ft::pair<const Key, T> > >
 	class map {
-		struct Node;
 	public:
-		typedef Key																					key_type;
-		typedef T																					mapped_type;
-		typedef pair<const key_type, mapped_type>													value_type;
-		typedef Compare																				key_compare;
-		typedef Allocator																			allocator_type;
-		typedef typename allocator_type::reference													reference;
-		typedef typename allocator_type::const_reference											const_reference;
-		typedef typename allocator_type::pointer													pointer;
-		typedef typename allocator_type::const_pointer												const_pointer;
-		typedef typename allocator_type::size_type													size_type;
-		typedef typename allocator_type::difference_type											difference_type;
-		typedef typename Allocator:: template rebind<Node>::other									node_allocator;
-		typedef typename node_allocator::pointer													node_pointer;
-		typedef ft::wrapper_it<ft::map_iterator<key_type, mapped_type, Node, value_type> >			iterator;
-		typedef ft::wrapper_it<ft::map_iterator<key_type, mapped_type, Node, const value_type> >	const_iterator;
-		typedef ft::reverse_iterator<iterator>														reverse_iterator;
-		typedef ft::reverse_iterator<const_iterator>												const_reverse_iterator;
+		typedef Key																key_type;
+		typedef T																mapped_type;
+		typedef pair<const key_type, mapped_type>								value_type;
+		typedef Compare															key_compare;
+		typedef Allocator														allocator_type;
+		typedef	Node<value_type>												tree_node;
+		typedef typename allocator_type::reference								reference;
+		typedef typename allocator_type::const_reference						const_reference;
+		typedef typename allocator_type::pointer								pointer;
+		typedef typename allocator_type::const_pointer							const_pointer;
+		typedef typename allocator_type::size_type								size_type;
+		typedef typename allocator_type::difference_type						difference_type;
+		typedef typename Allocator:: template rebind<tree_node>::other			node_allocator;
+		typedef typename node_allocator::pointer								node_pointer;
+		typedef ft::wrapper_it<ft::map_iterator<key_type, mapped_type, tree_node, value_type> >		iterator;
+		typedef ft::wrapper_it<ft::map_iterator<key_type, mapped_type, tree_node, const value_type> >	const_iterator;
+		typedef ft::reverse_iterator<iterator>									reverse_iterator;
+		typedef ft::reverse_iterator<const_iterator>							const_reverse_iterator;
 
 		class value_compare
 			: public std::binary_function<value_type, value_type, bool>
@@ -50,33 +52,6 @@ namespace ft
 
 		public:
 			bool operator()(const value_type& lhs, const value_type& rhs) const { return comp(lhs.first, rhs.first); }
-		};
-
-	private:
-		struct Node {
-		public:
-			value_type	_data;
-			Node		*_left;
-			Node		*_right;
-			Node		*_parent;
-			int			_height;
-
-		public:
-			Node() : _data(value_type()), _left(NULL), _right(NULL), _parent(NULL), _height(1) {}
-			Node(value_type pair) : _data(pair), _left(NULL), _right(NULL), _parent(NULL), _height(1) {}
-			~Node() {}
-
-			Node		&operator= (Node &other) { _left = other._left; _right = other._right; _parent = other._parent; _height = other._height; return (*this); }
-			void		set_data(value_type &data) { _data = data; }
-			void		set_left(Node *left) { _left = left; }
-			void		set_right(Node *right) { _right = right; }
-			void		set_parent(Node *parent) { _parent = parent; }
-			value_type	&data() { return _data; }
-			Node		*left() { return _left; }
-			Node		*right() { return _right; }
-			Node		*parent() { return _parent; }
-			int			&height() { return _height; }
-
 		};
 /*
 		std::ostream	&operator<< (std::ostream &o, const Node &node) {
@@ -114,7 +89,7 @@ namespace ft
 			const_iterator	last = x.end();
 
 			for (; first != last; ++first)
-				insert(*first);
+				insert(first.first);
 		}
 
 		~map() { delete_node(protoroot()); }
@@ -133,15 +108,15 @@ namespace ft
 
 		allocator_type	get_allocator() const { return _alloc_pair; }
 
-		Node	*protoroot() const { return (_root); }
-		Node	*protoroot() { return (_root); }
-		Node	*dummy() const { return (protoroot()); }
-		Node	*dummy() { return (protoroot()); }
-		Node	*root() const { return (_root->right()); }
-		Node	*root() { return (_root->right()); }
-		void	set_root(Node *current) { _root->set_right(current); }
+		tree_node	*protoroot() const { return (_root); }
+		tree_node	*protoroot() { return (_root); }
+		tree_node	*dummy() const { return (protoroot()); }
+		tree_node	*dummy() { return (protoroot()); }
+		tree_node	*root() const { return (_root->right()); }
+		tree_node	*root() { return (_root->right()); }
+		void	set_root(tree_node *current) { _root->set_right(current); }
 
-		void	prefix_traversal(Node *current, char sep) {
+		void	prefix_traversal(tree_node *current, char sep) {
 			if (current)
 			{
 				current->treat(sep);
@@ -150,7 +125,7 @@ namespace ft
 			}
 		}
 
-		void	infix_traversal(Node *current, char sep) {
+		void	infix_traversal(tree_node *current, char sep) {
 			if (current)
 			{
 				infix_traversal(current->left(), sep);
@@ -159,7 +134,7 @@ namespace ft
 			}
 		}
 
-		void	suffix_traversal(Node *current, void (*f)(Node *)) {
+		void	suffix_traversal(tree_node *current, void (*f)(tree_node *)) {
 			if (current)
 			{
 				suffix_traversal(current->left(), f);
@@ -168,8 +143,8 @@ namespace ft
 			}
 		}
 
-		void	level_order_traversal(Node *current, void (*f)(Node *)) {
-			vector<Node *>	deck;
+		void	level_order_traversal(tree_node *current, void (*f)(tree_node *)) {
+			vector<tree_node *>	deck;
 
 			deck.push_back(current);
 			while (!deck.empty())
@@ -184,7 +159,7 @@ namespace ft
 			}
 		}
 
-		static void	print_node(Node *node)
+		static void	print_node(tree_node *node)
 		{
 			if (node)
 			{
@@ -209,7 +184,7 @@ namespace ft
 
 		mapped_type&	at(const key_type& k)
 		{
-			Node *found = _recursive_avl_tree_search(root(), k);
+			tree_node *found = _recursive_avl_tree_search(root(), k);
 			if (found)
 				return (found->data().second);
 			throw(std::out_of_range("map"));
@@ -232,7 +207,7 @@ namespace ft
 		iterator	begin()	{
 			if (root())
 			{
-				Node	*temp(root());
+				tree_node	*temp(root());
 
 				iterator it(leftmost(temp));
 				return (it);
@@ -244,7 +219,7 @@ namespace ft
 		const_iterator	begin() const {
 			if (root())
 			{
-				Node	*temp(root());
+				tree_node	*temp(root());
 
 				const_iterator it(leftmost(temp));
 				return (it);
@@ -256,7 +231,7 @@ namespace ft
 		iterator	end() {
 			if (root())
 			{
-				Node	*temp(root());
+				tree_node	*temp(root());
 				
 				iterator it(rightmost(temp));
 				return (++it);
@@ -268,7 +243,7 @@ namespace ft
 		const_iterator	end() const {
 			if (root())
 			{
-				Node	*temp(root());
+				tree_node	*temp(root());
 				
 				const_iterator it(rightmost(temp));
 				return (++it);
@@ -294,7 +269,7 @@ namespace ft
 		size_type	size() const { return _size; }
 
 		size_type	max_size() const { return std::min<size_type>(_alloc_node.max_size(),
-										std::numeric_limits<difference_type>::max()); }
+									std::numeric_limits<difference_type>::max()); }
 
 		/************************************************************************\
 		**								Modifiers								**
@@ -306,9 +281,9 @@ namespace ft
 
 		pair<iterator, bool>	insert(const value_type& val)
 		{
-			Node	*newNode = new_node(val);
-			Node	*_x(root());
-			Node	*_y;
+			tree_node	*newNode = new_node(val);
+			tree_node	*_x(root());
+			tree_node	*_y;
 
 			if (!_x)
 			{
@@ -355,7 +330,7 @@ namespace ft
 		iterator	insert(iterator pos, const value_type& val)
 		{
 			(void)pos;
-			Node *temp = _avl_tree_insert(root(), val);
+			tree_node *temp = _avl_tree_insert(root(), val);
 
 			return (iterator(temp));
 		}
@@ -391,7 +366,7 @@ namespace ft
 		size_type	erase(const key_type& key)
 		{
 			std::cout << "function 1" << std::endl;
-			Node *p = _recursive_avl_tree_search(root(), key);
+			tree_node *p = _recursive_avl_tree_search(root(), key);
 			if (!p)
 				return (0);
 			_avl_tree_node_deletion(key);
@@ -412,7 +387,7 @@ namespace ft
 		\************************************************************************/
 
 		size_type	count( const key_type& key ) const {
-			Node	*found(_recursive_avl_tree_search(root(), key));
+			tree_node	*found(_recursive_avl_tree_search(root(), key));
 
 			if (found)
 				return (1);
@@ -420,14 +395,14 @@ namespace ft
 		}
 
 		iterator	find(const key_type& key) {
-			Node *found = _recursive_avl_tree_search(root(), key);
+			tree_node *found = _recursive_avl_tree_search(root(), key);
 			if (found)
 				return (iterator(found));
 			return (end());
 		}
 
 		const_iterator	find (const key_type& key) const {
-			Node *found = _recursive_avl_tree_search(root(), key);
+			tree_node *found = _recursive_avl_tree_search(root(), key);
 			if (found)
 				return (const_iterator(found));
 			return (end());
@@ -498,9 +473,9 @@ namespace ft
 		**																			**
 		\****************************************************************************/
 
-		Node	*new_node(const value_type& pair = value_type(), Node *parent = NULL)
+		tree_node	*new_node(const value_type& pair = value_type(), tree_node *parent = NULL)
 		{
-			Node *ptr = _alloc_node.allocate(1);
+			tree_node *ptr = _alloc_node.allocate(1);
 //			_alloc_node.construct(ptr);
 			try
 			{
@@ -518,30 +493,30 @@ namespace ft
 			return (ptr);
 		}
 
-		void	delete_node(Node *node)
+		void	delete_node(tree_node *node)
 		{
 			_alloc_node.destroy(node);
 			_alloc_node.deallocate(node, 1);
 		}
 
-		Node	*leftmost(Node *_x) const
+		tree_node	*leftmost(tree_node *_x) const
 		{
 			while (_x->left())
 				_x = _x->left();
 			return (_x);
 		}
 
-		Node	*rightmost(Node *_x) const
+		tree_node	*rightmost(tree_node *_x) const
 		{
 			while (_x->right())
 				_x = _x->right();
 			return (_x);
 		}
 
-		Node	*_iterative_avl_tree_search(const key_type& k) const
+		tree_node	*_iterative_avl_tree_search(const key_type& k) const
 		{
-			Node	*current(root());
-			Node	*prev(root());
+			tree_node	*current(root());
+			tree_node	*prev(root());
 
 			while (current)
 			{
@@ -561,7 +536,7 @@ namespace ft
 			return (prev);
 		}
 
-		Node	*_recursive_avl_tree_search(Node *node, const key_type& k) const
+		tree_node	*_recursive_avl_tree_search(tree_node *node, const key_type& k) const
 		{
 			if (node == NULL)
 				return (NULL);
@@ -569,17 +544,17 @@ namespace ft
 				return (node);
 			else if (_key_comp(k, node->data().first))
 			{
-				Node *temp = _recursive_avl_tree_search(node->left(), k);
+				tree_node *temp = _recursive_avl_tree_search(node->left(), k);
 				return (temp);
 			}
 			else
 			{
-				Node *temp = _recursive_avl_tree_search(node->right(), k);
+				tree_node *temp = _recursive_avl_tree_search(node->right(), k);
 				return (temp);
 			}
 		}
 
-		void	_avl_tree_transplant(Node *u, Node *v)
+		void	_avl_tree_transplant(tree_node *u, tree_node *v)
 		{
 			if (u == NULL)
 				return ;
@@ -592,7 +567,7 @@ namespace ft
 			v->set_parent(u->parent());
 		}
 
-		Node	*_avl_tree_successor(Node *node)
+		tree_node	*_avl_tree_successor(tree_node *node)
 		{
 			if (!node || (!node->left() && !node->right()))
 				return (NULL);
@@ -610,9 +585,9 @@ namespace ft
 
 		void	_avl_tree_node_deletion(const key_type& k)
 		{
-			Node	*p(NULL);
-			Node	*parent(NULL);
-			Node	*succ(NULL);
+			tree_node	*p(NULL);
+			tree_node	*parent(NULL);
+			tree_node	*succ(NULL);
 
 			p = _recursive_avl_tree_search(root(), k);
 			if (!p)
@@ -687,9 +662,9 @@ namespace ft
 			return ;
 		}
 
-		Node	*_avl_tree_rr_rotation(Node *root)
+		tree_node	*_avl_tree_rr_rotation(tree_node *root)
 		{
-			Node *temp = root->right();
+			tree_node *temp = root->right();
 			root->set_right(temp->left());
 			if (temp->left() != NULL)
 				temp->left()->set_parent(root);
@@ -710,21 +685,21 @@ namespace ft
 			return (root);
 		}
 		
-		Node	*_avl_tree_rl_rotation(Node *root)
+		tree_node	*_avl_tree_rl_rotation(tree_node *root)
 		{
 			root->set_right(_avl_tree_ll_rotation(root->right()));
 			return (_avl_tree_rr_rotation(root));
 		}
 
-		Node	*_avl_tree_lr_rotation(Node *root)
+		tree_node	*_avl_tree_lr_rotation(tree_node *root)
 		{
 			root->set_left(_avl_tree_rr_rotation(root->left()));
 			return (_avl_tree_ll_rotation(root));
 		}
 
-		Node	*_avl_tree_ll_rotation(Node *root)
+		tree_node	*_avl_tree_ll_rotation(tree_node *root)
 		{
-			Node *temp = root->left();
+			tree_node *temp = root->left();
 			root->set_left(temp->right());
 			if (temp->right() != NULL)
 				temp->right()->set_parent(root);
@@ -745,7 +720,7 @@ namespace ft
 			return (root);
 		}
 
-		static int	calculate_height(Node *temp)
+		static int	calculate_height(tree_node *temp)
 		{
 			int h = 0;
 			if (temp != NULL) {
@@ -757,7 +732,7 @@ namespace ft
 			return h;
 		}
 
-		int	diff(Node *temp)
+		int	diff(tree_node *temp)
 		{
 			int l_height = calculate_height(temp->left());
 			int r_height = calculate_height(temp->right());
@@ -765,7 +740,7 @@ namespace ft
 			return (b_factor);
 		}
 
-		Node	*balance(Node *temp)
+		tree_node	*balance(tree_node *temp)
 		{
 			int bal_factor = diff(temp);
 			if (bal_factor > 1) {
@@ -784,7 +759,7 @@ namespace ft
 			return (temp);
 		}
 
-		Node	*balance_tree(Node *root)
+		tree_node	*balance_tree(tree_node *root)
 		{
 			if (root == NULL)
 				return (NULL);
@@ -794,7 +769,7 @@ namespace ft
 			return (root);
 		}
 
-		static void	recomp_height(Node *_x)
+		static void	recomp_height(tree_node *_x)
 		{
 			while (_x != NULL)
 			{
@@ -803,10 +778,10 @@ namespace ft
 			}
 		}
 
-		Node	*_avl_tree_insert(Node *_x, const value_type& val)
+		tree_node	*_avl_tree_insert(tree_node *_x, const value_type& val)
 		{
-			Node	*newNode = new_node(val);
-			Node	*_y;
+			tree_node	*newNode = new_node(val);
+			tree_node	*_y;
 
 			if (!_x)
 			{
@@ -860,7 +835,7 @@ namespace ft
 
 
 	private :
-		Node			*_root;
+		tree_node		*_root;
 		node_allocator	_alloc_node;
 		allocator_type	_alloc_pair;
 		key_compare		_key_comp;

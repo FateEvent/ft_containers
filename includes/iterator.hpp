@@ -4,21 +4,11 @@
 # include <iostream>
 # include <memory>
 # include <cstddef>
-# include <iterator>
+# include "iterator_traits.hpp"
 # include "utilities.hpp"
 
 namespace ft
 {
-	template <class Cat, class T, class Dist = ptrdiff_t, class Ptr = T*, class Ref = T&>
-	struct iterator
-	{
-		typedef Cat		iterator_category;
-		typedef T		value_type;
-		typedef Dist	difference_type;
-		typedef Ptr		pointer;
-		typedef Ref		reference;
-	};
-
 	template <class T>
 	class move_iterator
 		: public iterator<std::random_access_iterator_tag, T>
