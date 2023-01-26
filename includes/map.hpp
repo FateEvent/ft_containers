@@ -353,14 +353,14 @@ namespace ft
 		{
 			std::cout << "function 2" << std::endl;
 			for (; first != last; ++first)
-				erase(first->first);
+				erase(*first);
 		}
 
 		void	erase(const_iterator first, const_iterator last)
 		{
 			std::cout << "function 2b" << std::endl;
 			for (; first != last; ++first)
-				erase(first->first);
+				erase(*first);
 		}
 
 		size_type	erase(const key_type& key)
@@ -413,10 +413,7 @@ namespace ft
 		}
 
 		ft::pair<const_iterator,const_iterator>	equal_range(const key_type& key) const {
-			const_iterator	it1(lower_bound(key));
-			const_iterator	it2(upper_bound(key));
-
-			return (ft::make_pair(it1, it2));
+			return (ft::make_pair(lower_bound(key), upper_bound(key)));
 		}
 
 		iterator		lower_bound(const key_type& key) {
