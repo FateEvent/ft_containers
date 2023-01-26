@@ -13,8 +13,6 @@
 # include "_tree_node.hpp"
 # include <map>
 
-class map_iterator;
-
 namespace ft
 {
 	template<class Key, class T, class Compare = std::less<Key>,
@@ -35,8 +33,8 @@ namespace ft
 		typedef typename allocator_type::difference_type						difference_type;
 		typedef typename Allocator:: template rebind<tree_node>::other			node_allocator;
 		typedef typename node_allocator::pointer								node_pointer;
-		typedef ft::wrapper_it<ft::map_iterator<key_type, mapped_type, tree_node, value_type> >		iterator;
-		typedef ft::wrapper_it<ft::map_iterator<key_type, mapped_type, tree_node, const value_type> >	const_iterator;
+		typedef ft::wrapper_it<ft::map_iterator<tree_node, value_type> >		iterator;
+		typedef ft::wrapper_it<ft::map_iterator<tree_node, const value_type> >	const_iterator;
 		typedef ft::reverse_iterator<iterator>									reverse_iterator;
 		typedef ft::reverse_iterator<const_iterator>							const_reverse_iterator;
 
@@ -353,14 +351,14 @@ namespace ft
 		{
 			std::cout << "function 2" << std::endl;
 			for (; first != last; ++first)
-				erase(*first);
+				erase(first->first);
 		}
 
 		void	erase(const_iterator first, const_iterator last)
 		{
 			std::cout << "function 2b" << std::endl;
 			for (; first != last; ++first)
-				erase(*first);
+				erase(first->first);
 		}
 
 		size_type	erase(const key_type& key)

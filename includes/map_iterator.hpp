@@ -16,26 +16,24 @@ class reverse_iterator;
 
 namespace ft
 {
-	template <class Key, class T, class Node, class Content>
+	template<class Node, class T>
 	class map_iterator
 	{
 	public :
-		typedef	std::bidirectional_iterator_tag		iterator_category;
-		typedef Key									key_type;
-		typedef T									mapped_type;
-		typedef Content								value_type;
-		typedef std::size_t							size_type;
-		typedef std::ptrdiff_t						difference_type;
-		typedef Node*								node_pointer;
-		typedef Node&								node_reference;
-		typedef Content*							pointer;
-		typedef Content&							reference;
+		typedef	std::bidirectional_iterator_tag	iterator_category;
+		typedef T								value_type;
+		typedef std::size_t						size_type;
+		typedef std::ptrdiff_t					difference_type;
+		typedef Node*							node_pointer;
+		typedef Node&							node_reference;
+		typedef T*								pointer;
+		typedef T&								reference;
 
 		map_iterator() : _ptr(NULL), _last(NULL)  {}
 		map_iterator(node_pointer ptr) : _ptr(ptr), _last(ptr) {}
 		map_iterator(const map_iterator &other) : _ptr(other._ptr), _last(other._last) {}
 		template<typename U>
-		map_iterator(const map_iterator<Key, T, Node, U> &other,
+		map_iterator(const map_iterator<Node, U> &other,
 			typename ft::enable_if<!std::is_const<U>::value>::type* = 0)
 				: _ptr(other._ptr), _last(other._last) {}
 		map_iterator(const wrapper_it<map_iterator> &other) : _ptr(other.base()._ptr), _last(NULL) {}
@@ -56,7 +54,7 @@ namespace ft
 		pointer		operator-> () const { return &(_ptr->data()); }
 		reference	operator[] (difference_type index) { return (base()[index]); }
 
-		operator	map_iterator<Key, T, Node, const value_type>() const { return (map_iterator<Key, T, Node, const value_type>(_ptr)); }
+		operator	map_iterator<Node, const value_type>() const { return (map_iterator<Node, const value_type>(_ptr)); }
 
 		void		set_ptr(node_pointer ptr) { _ptr = ptr; }
 
@@ -123,7 +121,7 @@ namespace ft
 		bool		operator== (const map_iterator &it) { return this->base() == it.base(); }
 
 		template<typename T1, typename T2>
-		friend bool	operator!= (const map_iterator<Key, T, Node, T1>& lhs, const map_iterator<Key, T, Node, T2>& rhs)
+		friend bool	operator!= (const map_iterator<Node, T1>& lhs, const map_iterator<Node, T2>& rhs)
 		{
 			return (lhs._ptr != rhs._ptr);
 		}
