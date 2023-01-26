@@ -10,6 +10,7 @@
 # include "vector.hpp"
 # include "map_iterator.hpp"
 # include "iterator.hpp"
+# include "_tree_node.hpp"
 
 class map_iterator;
 
@@ -18,25 +19,24 @@ namespace ft
 	template<class Key, class T, class Compare = std::less<Key>,
 	class Allocator = std::allocator<ft::pair<const Key, T> > >
 	class map {
-		struct Node;
 	public:
-		typedef Key															key_type;
-		typedef T															mapped_type;
-		typedef pair<const key_type, mapped_type>							value_type;
-		typedef Compare														key_compare;
-		typedef Allocator													allocator_type;
-		typedef typename allocator_type::reference							reference;
-		typedef typename allocator_type::const_reference					const_reference;
-		typedef typename allocator_type::pointer							pointer;
-		typedef typename allocator_type::const_pointer						const_pointer;
-		typedef typename allocator_type::size_type							size_type;
-		typedef typename allocator_type::difference_type					difference_type;
-		typedef typename Allocator:: template rebind<Node>::other			node_allocator;
-		typedef typename node_allocator::pointer							node_pointer;
-		typedef ft::wrapper_it<ft::map_iterator<value_type, Node> >			iterator;
-		typedef ft::wrapper_it<ft::map_iterator<const value_type, Node> >	const_iterator;
-		typedef ft::reverse_iterator<iterator>								reverse_iterator;
-		typedef ft::reverse_iterator<const_iterator>						const_reverse_iterator;
+		typedef Key																key_type;
+		typedef T																mapped_type;
+		typedef pair<const key_type, mapped_type>								value_type;
+		typedef Compare															key_compare;
+		typedef Allocator														allocator_type;
+		typedef typename allocator_type::reference								reference;
+		typedef typename allocator_type::const_reference						const_reference;
+		typedef typename allocator_type::pointer								pointer;
+		typedef typename allocator_type::const_pointer							const_pointer;
+		typedef typename allocator_type::size_type								size_type;
+		typedef typename allocator_type::difference_type						difference_type;
+		typedef typename Allocator:: template rebind<Node<value_type> >::other	node_allocator;
+		typedef typename node_allocator::pointer								node_pointer;
+		typedef ft::map_iterator<Node<value_type>, value_type>					iterator;
+		typedef ft::map_iterator<Node<value_type>, value_type, iterator>		const_iterator;
+		typedef ft::reverse_iterator<iterator>									reverse_iterator;
+		typedef ft::reverse_iterator<const_iterator>							const_reverse_iterator;
 
 		class value_compare
 			: public std::binary_function<value_type, value_type, bool>
@@ -50,33 +50,6 @@ namespace ft
 
 		public:
 			bool operator()(const value_type& lhs, const value_type& rhs) const { return comp(lhs.first, rhs.first); }
-		};
-
-	private:
-		struct Node {
-		public:
-			value_type	_data;
-			Node		*_left;
-			Node		*_right;
-			Node		*_parent;
-			int			_height;
-
-		public:
-			Node() : _data(value_type()), _left(NULL), _right(NULL), _parent(NULL), _height(1) {}
-			Node(value_type pair) : _data(pair), _left(NULL), _right(NULL), _parent(NULL), _height(1) {}
-			~Node() {}
-
-			Node		&operator= (Node &other) { _left = other._left; _right = other._right; _parent = other._parent; _height = other._height; return (*this); }
-			void		set_data(value_type &data) { _data = data; }
-			void		set_left(Node *left) { _left = left; }
-			void		set_right(Node *right) { _right = right; }
-			void		set_parent(Node *parent) { _parent = parent; }
-			value_type	&data() { return _data; }
-			Node		*left() { return _left; }
-			Node		*right() { return _right; }
-			Node		*parent() { return _parent; }
-			int			&height() { return _height; }
-
 		};
 /*
 		std::ostream	&operator<< (std::ostream &o, const Node &node) {
