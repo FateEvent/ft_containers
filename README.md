@@ -66,5 +66,3 @@ And red-black trees:
 * <https://www.geeksforgeeks.org/insertion-in-red-black-tree>;
 * <https://www.cs.auckland.ac.nz/software/AlgAnim/red_black.html>;
 * <https://www.geeksforgeeks.org/deletion-in-red-black-tree>.
-
-* <https://github.com/lobbyra/ft_containers>.
