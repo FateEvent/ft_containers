@@ -1,9 +1,10 @@
-#ifndef RB_TREE_H
-# define RB_TREE_H
+#ifndef _RB_TREE_H
+# define _RB_TREE_H
 
 # include "utilities.hpp"
 # include "pair.hpp"
-# include "rb_iterator.hpp"
+# include "_Rb_tree_node.hpp"
+# include "_Rb_iterator.hpp"
 # include "iterator.hpp"
 
 namespace ft
@@ -25,17 +26,9 @@ namespace ft
 			typedef RBIterator<const value_type>							const_iterator;
 			typedef ft::reverse_iterator<iterator>							reverse_iterator;
 			typedef ft::reverse_iterator<const_iterator>					const_reverse_iterator;
-			typedef node<value_type>										node_tree;
-			typedef typename Allocator::template rebind<node_tree>::other	node_allocator;
+			typedef Node<value_type>										tree_node;
+			typedef typename Allocator::template rebind<tree_node>::other	node_allocator;
 		
-		private:
-			value_compare	_comp;
-			node_tree		*_node_ptr;
-			node_tree		*_root;
-			node_allocator	_node_allocator;
-			allocator_type	_allocator_type;
-			size_type		_size;
-
 		public:
 			explicit RBTree(const value_compare &comp, const allocator_type &alloc) : _comp(comp), _node_ptr(newNullNode()), _allocator_type(alloc), _size(0)
 			{
@@ -70,7 +63,7 @@ namespace ft
 			// iterators
 			iterator	begin(void)
 			{
-				node_tree	*node;
+				tree_node	*node;
 
 				if (_root == _node_ptr)
 					return (iterator(_node_ptr));
@@ -82,7 +75,7 @@ namespace ft
 
 			const_iterator	begin(void) const
 			{
-				node_tree	*node;
+				tree_node	*node;
 
 				if (_root == _node_ptr)
 					return (iterator(_node_ptr));
@@ -139,7 +132,7 @@ namespace ft
 			}
 
 			// modifiers
-			void	clear(node_tree *node)
+			void	clear(tree_node *node)
 			{
 				if (node && node->leaf)
 				{
@@ -152,8 +145,8 @@ namespace ft
 			
 			ft::pair<iterator, bool>	insert(const value_type &data)
 			{
-				node_tree	*node = _root;
-				node_tree	*parent = _node_ptr;
+				tree_node	*node = _root;
+				tree_node	*parent = _node_ptr;
 
 				if (_root == _node_ptr)
 				{
@@ -213,11 +206,11 @@ namespace ft
 					erase(*first++);
 			}
 
-			void	erase(node_tree *node)
+			void	erase(tree_node *node)
 			{
-				node_tree	*search = node;
-				node_tree	*tmp;
-				int			color = node->color;
+				tree_node	*search = node;
+				tree_node	*tmp;
+				std::string	color = node->color;
 
 				if (node->left == _node_ptr)
 				{
@@ -254,7 +247,7 @@ namespace ft
 
 			size_type	erase(const value_type &data)
 			{
-				node_tree *tmp = search(_root, data);
+				tree_node *tmp = search(_root, data);
 				if (tmp)
 				{
 					erase(tmp);
@@ -276,7 +269,7 @@ namespace ft
 			// lookup
 			iterator	find(const value_type &data)
 			{
-				node_tree	*result = search(_root, data);
+				tree_node	*result = search(_root, data);
 				if (result)
 					return (iterator(result));
 				return (iterator(getMax(_root)));
@@ -284,16 +277,16 @@ namespace ft
 
 			iterator	find(const value_type &data) const
 			{
-				node_tree	*result = search(_root, data);
+				tree_node	*result = search(_root, data);
 				if (result)
 					return (iterator(result));
 				return (iterator(getMax(_root)));
 			}
 
-			node_tree	*lower_bound(const value_type &data)
+			tree_node	*lower_bound(const value_type &data)
 			{
-				node_tree	*node = _root;
-				node_tree	*tmp = _node_ptr;
+				tree_node	*node = _root;
+				tree_node	*tmp = _node_ptr;
 
 				while (node != _node_ptr)
 				{
@@ -308,10 +301,10 @@ namespace ft
 				return (tmp);
 			}
 
-			node_tree	*lower_bound(const value_type &data) const
+			tree_node	*lower_bound(const value_type &data) const
 			{
-				node_tree	*node = _root;
-				node_tree	*tmp = _node_ptr;
+				tree_node	*node = _root;
+				tree_node	*tmp = _node_ptr;
 
 				while (node != tmp)
 				{
@@ -326,10 +319,10 @@ namespace ft
 				return (tmp);
 			}
 
-			node_tree	*upper_bound(const value_type &data)
+			tree_node	*upper_bound(const value_type &data)
 			{
-				node_tree	*node = _root;
-				node_tree	*tmp = _node_ptr;
+				tree_node	*node = _root;
+				tree_node	*tmp = _node_ptr;
 
 				while (node != tmp)
 				{
@@ -344,10 +337,10 @@ namespace ft
 				return (tmp);
 			}
 
-			node_tree	*upper_bound(const value_type &data) const
+			tree_node	*upper_bound(const value_type &data) const
 			{
-				node_tree	*node = _root;
-				node_tree	*tmp = _node_ptr;
+				tree_node	*node = _root;
+				tree_node	*tmp = _node_ptr;
 
 				while (node != tmp)
 				{
@@ -370,9 +363,9 @@ namespace ft
 
 		private:
 			// node
-			node_tree	*newNullNode(void)
+			tree_node	*newNullNode(void)
 			{
-				node_tree	*tmp = _node_allocator.allocate(1);
+				tree_node	*tmp = _node_allocator.allocate(1);
 				tmp->color = "black";
 				tmp->leaf = 0;
 				tmp->parent = NULL;
@@ -381,9 +374,9 @@ namespace ft
 				return (tmp);
 			}
 
-			node_tree	*newTreeNode(const value_type &data, node_tree *parent, int leaf)
+			tree_node	*newTreeNode(const value_type &data, tree_node *parent, int leaf)
 			{
-				node_tree	*tmp = _node_allocator.allocate(1);
+				tree_node	*tmp = _node_allocator.allocate(1);
 				_allocator_type.construct(&(tmp->data), data);
 				tmp->color = "red";
 				tmp->leaf = leaf;
@@ -394,21 +387,21 @@ namespace ft
 				return (tmp);
 			}
 
-			void	deleteTreeNode(node_tree *node)
+			void	deleteTreeNode(tree_node *node)
 			{
 				_allocator_type.destroy(&(node->data));
 				_node_allocator.deallocate(node, 1);
 				--_size;
 			}
 
-			void	deleteNullNode(node_tree *node)
+			void	deleteNullNode(tree_node *node)
 			{
 				_node_allocator.deallocate(node, 1);
 				--_size;
 			}
 
 		public:
-			node_tree	*search(node_tree *search, const value_type &data) const
+			tree_node	*search(tree_node *search, const value_type &data) const
 			{
 				while (search != _node_ptr)
 				{
@@ -423,23 +416,23 @@ namespace ft
 			}
 
 		private:
-			node_tree	*getMin(node_tree *node) const
+			tree_node	*getMin(tree_node *node) const
 			{
 				while (node->left != _node_ptr)
 					node = node->left;
 				return (node);
 			}
 
-			node_tree	*getMax(node_tree *node) const
+			tree_node	*getMax(tree_node *node) const
 			{
 				while (node && node->leaf)
 					node = node->right;
 				return (node);
 			}
 
-			void	rotateTreeLeft(node_tree *node)
+			void	rotateTreeLeft(tree_node *node)
 			{
-				node_tree	*tmp = node->right;
+				tree_node	*tmp = node->right;
 				node->right = tmp->left;
 				if (tmp->left != _node_ptr)
 					tmp->left->parent = node;
@@ -454,9 +447,9 @@ namespace ft
 				node->parent = tmp;
 			}
 
-			void	rotateTreeRight(node_tree *node)
+			void	rotateTreeRight(tree_node *node)
 			{
-				node_tree	*tmp = node->left;
+				tree_node	*tmp = node->left;
 				node->left = tmp->right;
 				if (tmp->right != _node_ptr)
 					tmp->right->parent = node;
@@ -471,7 +464,7 @@ namespace ft
 				node->parent = tmp;
 			}
 
-			void	swapNodeColor(node_tree *node)
+			void	swapNodeColor(tree_node *node)
 			{
 				if (node->color == "red")
 					node->color = "black";
@@ -479,7 +472,7 @@ namespace ft
 					node->color = "red";
 			}
 
-			void	insertNode(node_tree *new_node, node_tree *node)
+			void	insertNode(tree_node *new_node, tree_node *node)
 			{
 				if (new_node->parent == _node_ptr)
 					_root = node;
@@ -490,13 +483,13 @@ namespace ft
 				node->parent = new_node->parent;
 			}
 
-			node_tree	*replaceNode(node_tree *node)
+			tree_node	*replaceNode(tree_node *node)
 			{
 				if (!node || (!node->left && !node->right))
 					return (NULL);
 				if (node->left && node->right)
 				{
-					node_tree	*tmp = node->right;
+					tree_node	*tmp = node->right;
 					while (tmp->left != NULL)
 						tmp = tmp->left;
 					return (tmp);
@@ -506,14 +499,14 @@ namespace ft
 				return (node->right);
 			}
 
-			void    rebalanceTree(node_tree *node)
+			void    rebalanceTree(tree_node *node)
         	{
             	while (node != _root && node->parent->color == "red")
             	{
-            	    node_tree    *node_grandma = node->parent->parent;
+            	    tree_node    *node_grandma = node->parent->parent;
             	    if (node->parent == node_grandma->right)
             	    {
-            	        node_tree    *uncleNode = node_grandma->left;
+            	        tree_node    *uncleNode = node_grandma->left;
             	        if (uncleNode->color == "red")
             	        {
             	            uncleNode->color = "black";
@@ -535,7 +528,7 @@ namespace ft
             	    }
             	    else
             	    {
-            	        node_tree    *node_uncle = node_grandma->right;
+            	        tree_node    *node_uncle = node_grandma->right;
             	        if (node_uncle->color == "red")
             	        {
             	            node_uncle->color = "black";
@@ -559,13 +552,13 @@ namespace ft
             	_root->color = "black";
 			}
 
-        	void    recolorTree(node_tree *node)
+        	void    recolorTree(tree_node *node)
         	{
         	    while (node != _root && node->color == "black")
         	    {
         	        if( node == node->parent->left)
         	        {
-        	            node_tree *sibling = node->parent->right;
+        	            tree_node *sibling = node->parent->right;
         	            if (sibling->color == "red")
         	            {
         	                swapNodeColor(sibling);
@@ -596,7 +589,7 @@ namespace ft
         	        }
         	        else
         	        {
-        	            node_tree *sibling = node->parent->left;
+        	            tree_node *sibling = node->parent->left;
         	            if (sibling->color == "red")
         	            {
         	                swapNodeColor(sibling);
@@ -631,10 +624,18 @@ namespace ft
 
 		public:
 			// utils
-			node_tree	*get_root(void) const
+			tree_node	*get_root(void) const
 			{
 				return (_root);
 			}
+
+		private:
+			value_compare	_comp;
+			tree_node		*_node_ptr;
+			tree_node		*_root;
+			node_allocator	_node_allocator;
+			allocator_type	_allocator_type;
+			size_type		_size;
 	};
 }
 

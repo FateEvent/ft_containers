@@ -8,35 +8,35 @@
 # include <limits>
 # include "pair.hpp"
 # include "vector.hpp"
-# include "map_iterator.hpp"
-# include "iterator.hpp"
-# include "_tree_node.hpp"
+# include "_Rb_tree_node.hpp"
+# include "_Rb_tree.hpp"
+# include "_Rb_iterator.hpp"
 # include <map>
 
 namespace ft
 {
-	template<class Key, class T, class Compare = std::less<Key>,
-	class Allocator = std::allocator<ft::pair<const Key, T> > >
+	template<class Key, class T, class Compare = std::less<Key>, class Allocator = std::allocator<ft::pair<const Key, T> > >
 	class map {
 	public:
-		typedef Key																key_type;
-		typedef T																mapped_type;
-		typedef pair<const key_type, mapped_type>								value_type;
-		typedef Compare															key_compare;
-		typedef Allocator														allocator_type;
-		typedef	Node<value_type>												tree_node;
-		typedef typename allocator_type::reference								reference;
-		typedef typename allocator_type::const_reference						const_reference;
-		typedef typename allocator_type::pointer								pointer;
-		typedef typename allocator_type::const_pointer							const_pointer;
-		typedef typename allocator_type::size_type								size_type;
-		typedef typename allocator_type::difference_type						difference_type;
-		typedef typename Allocator:: template rebind<tree_node>::other			node_allocator;
-		typedef typename node_allocator::pointer								node_pointer;
-		typedef ft::wrapper_it<ft::map_iterator<tree_node, value_type> >		iterator;
-		typedef ft::wrapper_it<ft::map_iterator<tree_node, const value_type> >	const_iterator;
-		typedef ft::reverse_iterator<iterator>									reverse_iterator;
-		typedef ft::reverse_iterator<const_iterator>							const_reverse_iterator;
+		class value_compare;
+		typedef Key													key_type;
+		typedef T													mapped_type;
+		typedef pair<const key_type, mapped_type>					value_type;
+		typedef Compare												key_compare;
+		typedef Allocator											allocator_type;
+		typedef typename allocator_type::reference					reference;
+		typedef typename allocator_type::const_reference			const_reference;
+		typedef typename allocator_type::pointer					pointer;
+		typedef typename allocator_type::const_pointer				const_pointer;
+		typedef typename allocator_type::size_type					size_type;
+		typedef typename allocator_type::difference_type			difference_type;
+
+		typedef	Node<value_type>									tree_node;
+		typedef RBTree<value_type, value_compare, allocator_type>	rb_tree;
+		typedef typename rb_tree::iterator							iterator;
+		typedef typename rb_tree::const_iterator					const_iterator;
+		typedef typename rb_tree::reverse_iterator					reverse_iterator;
+		typedef typename rb_tree::const_reverse_iterator			const_reverse_iterator;
 
 		class value_compare
 			: public std::binary_function<value_type, value_type, bool>
@@ -52,131 +52,38 @@ namespace ft
 			bool operator()(const value_type& lhs, const value_type& rhs) const { return comp(lhs.first, rhs.first); }
 		};
 
-		friend std::ostream	&operator<< (std::ostream &o, const tree_node &node) {
-			o << "key: " << node._data.first;
-			o << ", value: " << node._data.second;
-			o << ", height: " << node._height << std::endl;
-			return (o);
-		}
-
 	public:
-
 		/************************************************************************\
 		**							Member functions							**
 		\************************************************************************/
 
 		explicit map(const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type())
-			: _root(NULL), _alloc_node(node_allocator()), _alloc_pair(alloc), _key_comp(comp), _size() {
-			_root = new_node();
-			_end = _alloc_node.allocate(1);
-		}
+			: _tree(comp, alloc), _alloc_pair(alloc), _key_comp(comp) {}
 
 		template <class InputIterator>
 		map(InputIterator first, InputIterator last, const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type())
-			: _root(NULL), _alloc_node(node_allocator()), _alloc_pair(alloc), _key_comp(comp), _size() {
-			_root = new_node();
-			_end = _alloc_node.allocate(1);
-	
-			for (; first != last; ++first)
-				insert(*first);
+			: _tree(comp, alloc), _alloc_pair(alloc), _key_comp(comp) {
+			
+			_tree.insert(first, last);
 		}
 
-		map(const map& x)
-			: _root(NULL), _alloc_node(x._alloc_node), _alloc_pair(x._alloc_pair), _key_comp(x._key_comp), _size(x._size) {
-			_root = new_node();
-			_end = _alloc_node.allocate(1);
-			const_iterator	first = x.begin();
-			const_iterator	last = x.end();
+		map(const map& other)
+			: _tree(other._tree), _alloc_pair(other._alloc_pair), _key_comp(other._key_comp) {}
 
-			for (; first != last; ++first)
-				insert(*first);
-		}
+		~map() {}
 
-		~map() { delete_node(protoroot()); }
-
-		map&	operator= (map const& rhs) {
-			if (this == &rhs)
-				return (*this);
-			clear();
-			const_iterator	first = rhs.begin();
-			const_iterator	last = rhs.end();
-
-			for (; first != last; ++first)
-				insert(*first);
+		map	&operator=(const map &other)
+		{
+			if (this != &other)
+			{
+				_tree = other._tree;
+				_key_comp = other._key_compare;
+				_alloc_pair = other._alloc_pair;
+			}
 			return (*this);
 		}
 
 		allocator_type	get_allocator() const { return _alloc_pair; }
-
-		tree_node	*protoroot() const { return (_root); }
-		tree_node	*protoroot() { return (_root); }
-		tree_node	*dummy() const { return (protoroot()); }
-		tree_node	*dummy() { return (protoroot()); }
-		tree_node	*root() const { return (_root->_right); }
-		tree_node	*root() { return (_root->_right); }
-		void		set_root(tree_node *current) { _root->_right = current; }
-
-		void	prefix_traversal(tree_node *current, char sep) {
-			if (current)
-			{
-				current->treat(sep);
-				prefix_traversal(current->_left, sep);
-				prefix_traversal(current->_right, sep);
-			}
-		}
-
-		void	infix_traversal(tree_node *current, char sep) {
-			if (current)
-			{
-				infix_traversal(current->_left, sep);
-				current->treat(sep);
-				infix_traversal(current->_right, sep);
-			}
-		}
-
-		void	suffix_traversal(tree_node *current, void (*f)(tree_node *)) {
-			if (current)
-			{
-				suffix_traversal(current->_left, f);
-				suffix_traversal(current->_right, f);
-				f(current);
-			}
-		}
-
-		void	level_order_traversal(tree_node *current, void (*f)(tree_node *)) {
-			vector<tree_node *>	deck;
-
-			deck.push_back(current);
-			while (!deck.empty())
-			{
-				current = deck.front();
-				deck.pop_front();
-				f(current);
-				if (current->_left)
-					deck.push_back(current->_left);
-				if (current->_right)
-					deck.push_back(current->_right);
-			}
-		}
-
-		static void	print_node(tree_node *node)
-		{
-			if (node)
-			{
-				std::cout << "key: " << node->_data.first;
-				std::cout << ", value: " << node->_data.second;
-				std::cout << ", height: " << node->_height << std::endl;
-			}
-			else
-				std::cout << "NULL pointer" << std::endl;
-		}
-
-		void	print_tree()
-		{
-			std::cout << "-- Here's my AVL tree: --" << std::endl;
-			level_order_traversal(root(), print_node);
-			std::cout << "-- That's the end of my tree. Thanx for watching. --" << std::endl;
-		}
 
 		/************************************************************************\
 		**								Element access							**
@@ -834,13 +741,9 @@ namespace ft
 
 
 	private :
-		tree_node		*_root;
-		tree_node		*_end;
-		tree_node		*_rend;
-		node_allocator	_alloc_node;
+		rb_tree			_tree;
 		allocator_type	_alloc_pair;
 		key_compare		_key_comp;
-		size_type		_size;
 	};
 
 	template <class Key, class T, class Compare, class Alloc>

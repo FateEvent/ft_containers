@@ -6,32 +6,23 @@
 namespace ft {
 
 	template <class T>
-	struct node
+	struct Node
 	{
 		typedef T	value_type;
 		value_type	data;
-		bool		color;
+		std::string	color;
 		int			leaf;
-		node		*parent;
-		node		*left;
-		node		*right;
+		Node		*parent;
+		Node		*left;
+		Node		*right;
 
-		node(void) : data(NULL), parent(NULL), left(NULL), right(NULL), color(0)
-		{
+		Node(void) : data(NULL), parent(NULL), left(NULL), right(NULL), color("red") {}
 
-		}
+		Node(T const &data, Node *parent, int leaf) : data(data), parent(parent), left(NULL), right(NULL), color("red"), leaf(leaf) {}
 
-		node(T const &data, node *parent, int leaf) : data(data), parent(parent), left(NULL), right(NULL), color(0), leaf(leaf)
-		{
+		Node(Node const &other) : data(other.data), parent(other.parent), left(other.left), right(other.right), color(other.color), leaf(other.leaf) {}
 
-		}
-
-		node(node const &other) : data(other.data), parent(other.parent), left(other.left), right(other.right), color(other.color), leaf(other.leaf)
-		{
-
-		}
-
-		node &operator=(node const &other)
+		Node &operator=(Node const &other)
 		{
 			if (this != &other)
 			{
@@ -45,9 +36,13 @@ namespace ft {
 			return (*this);
 		}
 
-		~node(void)
-		{
+		~Node(void) {}
 
+		friend std::ostream	&operator<< (std::ostream &o, const Node &node) {
+			o << "key: " << node.data.first;
+			o << ", value: " << node.data.second;
+			o << ", color: " << node.color << std::endl;
+			return (o);
 		}
 	};
 }

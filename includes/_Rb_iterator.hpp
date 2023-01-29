@@ -12,8 +12,8 @@ namespace ft
 	public:
 		typedef I								value_type;
 		typedef std::bidirectional_iterator_tag	iterator_category;
-		typedef node<value_type>				tree_node;
-		typedef node<const value_type>			const_tree_node;
+		typedef Node<value_type>				tree_node;
+		typedef Node<const value_type>			const_tree_node;
 		typedef ptrdiff_t						difference_type;
 		typedef I&								reference;
 		typedef const I&						const_reference;
