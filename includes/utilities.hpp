@@ -92,6 +92,31 @@ namespace ft {
 
 	template<bool, class T = void> struct enable_if {};
 	template<class T> struct enable_if<true, T> { typedef T value; };
+
+	/****************************************************************************\
+	** 																			**
+	**									utils									**
+	** 																			**
+	\****************************************************************************/
+
+	template <class T>
+	void	swap_elements(T &lhs, T &rhs)
+	{
+		T	tmp = lhs;
+
+		lhs = rhs;
+		rhs = tmp;
+	};
+
+	template <class InputIt>
+	size_t	InputIt_get_len(InputIt first, InputIt last)
+	{
+		size_t	i = 0;
+
+		for (; first != last; first++)
+			++i;
+		return (i);
+	}
 };
 
 #endif

@@ -68,12 +68,14 @@ namespace ft
 		explicit map(const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type())
 			: _root(NULL), _alloc_node(node_allocator()), _alloc_pair(alloc), _key_comp(comp), _size() {
 			_root = new_node();
+			_end = _alloc_node.allocate(1);
 		}
 
 		template <class InputIterator>
 		map(InputIterator first, InputIterator last, const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type())
 			: _root(NULL), _alloc_node(node_allocator()), _alloc_pair(alloc), _key_comp(comp), _size() {
 			_root = new_node();
+			_end = _alloc_node.allocate(1);
 	
 			for (; first != last; ++first)
 				insert(*first);
@@ -82,11 +84,12 @@ namespace ft
 		map(const map& x)
 			: _root(NULL), _alloc_node(x._alloc_node), _alloc_pair(x._alloc_pair), _key_comp(x._key_comp), _size(x._size) {
 			_root = new_node();
+			_end = _alloc_node.allocate(1);
 			const_iterator	first = x.begin();
 			const_iterator	last = x.end();
 
 			for (; first != last; ++first)
-				insert(first.first);
+				insert(*first);
 		}
 
 		~map() { delete_node(protoroot()); }
@@ -229,9 +232,11 @@ namespace ft
 			if (root())
 			{
 				tree_node	*temp(root());
-				
-				iterator it(rightmost(temp));
-				return (++it);
+
+				temp = rightmost(temp);
+				temp->_right = _end;
+				iterator it(temp->_right);
+				return (it);
 			}
 			iterator it(protoroot());
 			return (it);
@@ -241,9 +246,11 @@ namespace ft
 			if (root())
 			{
 				tree_node	*temp(root());
-				
-				const_iterator it(rightmost(temp));
-				return (++it);
+
+				temp = rightmost(temp);
+				temp->_right = _end;
+				const_iterator it(temp->_right);
+				return (it);
 			}
 			const_iterator it(protoroot());
 			return (it);
