@@ -54,7 +54,7 @@ namespace ft
 
 	public:
 		/****************************************************************************\
-		**							Member functions							**
+		**								Member functions							**
 		\****************************************************************************/
 
 		explicit map(const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type())
@@ -77,7 +77,7 @@ namespace ft
 			if (this != &other)
 			{
 				_tree = other._tree;
-				_key_comp = other._key_compare;
+				_key_comp = other._key_comp;
 				_alloc_pair = other._alloc_pair;
 			}
 			return (*this);
@@ -91,7 +91,7 @@ namespace ft
 
 		mapped_type&	at(const key_type& k)
 		{
-			tree_node	*found = _tree.search(_tree.get_root(), k);
+			tree_node	*found = _tree.search(_tree.root(), k);
 			if (found)
 				return (found->data().second);
 			throw(std::out_of_range("map"));
@@ -142,7 +142,7 @@ namespace ft
 		\****************************************************************************/
 
 		void	clear() {
-			_tree.clear(_tree.get_root());
+			_tree.clear(_tree.root());
 		}
 
 		pair<iterator, bool>	insert(const value_type& val)
@@ -184,9 +184,7 @@ namespace ft
 
 		void	swap(map& other)
 		{
-			std::swap(_tree, other._tree);
-			std::swap(_key_comp, other._key_comp);
-			std::swap(_alloc_pair, other._alloc_pair);
+			_tree.swap(other._tree);
 		}
 
 		/****************************************************************************\
@@ -194,7 +192,7 @@ namespace ft
 		\****************************************************************************/
 
 		size_type	count( const key_type& key ) const {
-			tree_node	*found(_tree.search(_tree.get_root(), ft::make_pair(key, mapped_type())));
+			tree_node	*found(_tree.search(_tree.root(), ft::make_pair(key, mapped_type())));
 
 			if (found)
 				return (1);
@@ -202,19 +200,11 @@ namespace ft
 		}
 
 		iterator	find(const key_type& key) {
-			tree_node	*found(_tree.search(_tree.get_root(), ft::make_pair(key, mapped_type())));
-
-			if (found)
-				return (iterator(found));
-			return (end());
+			return (_tree.find(ft::make_pair(key, mapped_type())));
 		}
 
 		const_iterator	find (const key_type& key) const {
-			tree_node	*found(_tree.search(_tree.get_root(), ft::make_pair(key, mapped_type())));
-
-			if (found)
-				return (const_iterator(found));
-			return (end());
+			return (_tree.find(ft::make_pair(key, mapped_type())));
 		}
 
 		ft::pair<iterator,iterator>	equal_range(const key_type& key) {

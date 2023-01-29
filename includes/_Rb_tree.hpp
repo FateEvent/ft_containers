@@ -30,6 +30,10 @@ namespace ft
 			typedef typename Allocator::template rebind<tree_node>::other	node_allocator;
 		
 		public:
+			/****************************************************************************\
+			**								Member functions							**
+			\****************************************************************************/
+
 			explicit RBTree(const value_compare &comp, const allocator_type &alloc) : _comp(comp), _node_ptr(newNullNode()), _alloc_pair(alloc), _size(0)
 			{
 				_root = _node_ptr;
@@ -54,14 +58,22 @@ namespace ft
 				return (*this);
 			}
 
-			~RBTree(void)
+			~RBTree()
 			{
 				clear(_root);
-				deleteNullNode(_node_ptr);
+				delete_null_node(_node_ptr);
 			}
 
-			// iterators
-			iterator	begin(void)
+			allocator_type	get_allocator() const
+			{
+				return (_alloc_pair);
+			}
+
+			/****************************************************************************\
+			**									Iterators								**
+			\****************************************************************************/
+
+			iterator	begin()
 			{
 				tree_node	*node;
 
@@ -73,7 +85,7 @@ namespace ft
 				return (iterator(node));			
 			}
 
-			const_iterator	begin(void) const
+			const_iterator	begin() const
 			{
 				tree_node	*node;
 
@@ -85,43 +97,46 @@ namespace ft
 				return (iterator(node));			
 			}
 
-			iterator	end(void)
+			iterator	end()
 			{
-				return (iterator(getMax(_root)));
+				return (iterator(get_max(_root)));
 			}
 
-			const_iterator	end(void) const
+			const_iterator	end() const
 			{
-				return (iterator(getMax(_root)));
+				return (iterator(get_max(_root)));
 			}
 
-			reverse_iterator	rbegin(void)
-			{
-				return (reverse_iterator(end()));
-			}
-
-			const_reverse_iterator	rbegin(void) const
+			reverse_iterator	rbegin()
 			{
 				return (reverse_iterator(end()));
 			}
 
-			reverse_iterator	rend(void)
+			const_reverse_iterator	rbegin() const
+			{
+				return (reverse_iterator(end()));
+			}
+
+			reverse_iterator	rend()
 			{
 				return (reverse_iterator(begin()));
 			}
 
-			const_reverse_iterator	rend(void) const
+			const_reverse_iterator	rend() const
 			{
 				return (reverse_iterator(begin()));
 			}
 
-			// capacity
-			bool	empty(void) const
+			/****************************************************************************\
+			**									Capacity								**
+			\****************************************************************************/
+
+			bool	empty() const
 			{
 				return (!size());
 			}
 
-			size_type	size(void) const
+			size_type	size() const
 			{
 				return (_size);
 			}
@@ -129,14 +144,17 @@ namespace ft
 			size_type	max_size() const { return std::min<size_type>(_alloc_node.max_size(),
 									std::numeric_limits<difference_type>::max()); }
 
-			// modifiers
+			/****************************************************************************\
+			**									Modifiers								**
+			\****************************************************************************/
+
 			void	clear(tree_node *node)
 			{
 				if (node && node->leaf)
 				{
 					clear(node->left);
 					clear(node->right);
-					deleteTreeNode(node);
+					delete_node(node);
 				}
 				_root = _node_ptr;
 			}
@@ -148,7 +166,7 @@ namespace ft
 
 				if (_root == _node_ptr)
 				{
-					_root = newTreeNode(data, _node_ptr, 2);
+					_root = new_node(data, _node_ptr, 2);
 					_root->color = "black";
 					return (ft::make_pair(iterator(_root), true));
 				}
@@ -162,14 +180,14 @@ namespace ft
 					else
 						return (ft::make_pair(iterator(node), false));
 				}
-				node = newTreeNode(data, parent, 1);
+				node = new_node(data, parent, 1);
 				if (_comp(data, parent->data))
 					parent->left = node;
 				else
 					parent->right = node;
 				node->left->parent = node;
 				node->right->parent = node;
-				rebalanceTree(node);
+				rebalance_tree(node);
 				return (ft::make_pair(iterator(node), true));
 			}
 
@@ -214,34 +232,34 @@ namespace ft
 				if (node->left == _node_ptr)
 				{
 					tmp = node->right;
-					insertNode(node, node->right);
+					insert_node(node, node->right);
 				}
 				else if (node->right == _node_ptr)
 				{
 					tmp = node->left;
-					insertNode(node, node->left);
+					insert_node(node, node->left);
 				}
 				else
 				{
-					search = getMin(node->right);
+					search = get_min(node->right);
 					color = search->color;
 					tmp = search->right;
 					if (search->parent == node)
 						tmp->parent = search;
 					else
 					{
-						insertNode(search, search->right);
+						insert_node(search, search->right);
 						search->right = node->right;
 						search->right->parent = search;
 					}
-					insertNode(node, search);
+					insert_node(node, search);
 					search->left = node->left;
 					search->left->parent = search;
 					search->color = node->color;
 				}
 				if (color == "black")
-					recolorTree(tmp);
-				deleteTreeNode(node);
+					recolour_tree(tmp);
+				delete_node(node);
 			}
 
 			size_type	erase(const value_type &data)
@@ -265,13 +283,16 @@ namespace ft
 				ft::swap_elements(_size, x._size);
 			}
 
-			// lookup
+			/****************************************************************************\
+			**									Lookup									**
+			\****************************************************************************/
+
 			iterator	find(const value_type &data)
 			{
 				tree_node	*result = search(_root, data);
 				if (result)
 					return (iterator(result));
-				return (iterator(getMax(_root)));
+				return (iterator(get_max(_root)));
 			}
 
 			iterator	find(const value_type &data) const
@@ -279,7 +300,7 @@ namespace ft
 				tree_node	*result = search(_root, data);
 				if (result)
 					return (iterator(result));
-				return (iterator(getMax(_root)));
+				return (iterator(get_max(_root)));
 			}
 
 			tree_node	*lower_bound(const value_type &data)
@@ -354,15 +375,12 @@ namespace ft
 				return (tmp);
 			}
 
-			// allocator
-			allocator_type	get_allocator(void) const
-			{
-				return (_alloc_pair);
-			}
-
 		private:
-			// node
-			tree_node	*newNullNode(void)
+			/****************************************************************************\
+			**										Node								**
+			\****************************************************************************/
+
+			tree_node	*newNullNode()
 			{
 				tree_node	*tmp = _alloc_node.allocate(1);
 				tmp->color = "black";
@@ -373,7 +391,7 @@ namespace ft
 				return (tmp);
 			}
 
-			tree_node	*newTreeNode(const value_type &data, tree_node *parent, int leaf)
+			tree_node	*new_node(const value_type &data, tree_node *parent, int leaf)
 			{
 				tree_node	*tmp = _alloc_node.allocate(1);
 				_alloc_pair.construct(&(tmp->data), data);
@@ -386,14 +404,14 @@ namespace ft
 				return (tmp);
 			}
 
-			void	deleteTreeNode(tree_node *node)
+			void	delete_node(tree_node *node)
 			{
 				_alloc_pair.destroy(&(node->data));
 				_alloc_node.deallocate(node, 1);
 				--_size;
 			}
 
-			void	deleteNullNode(tree_node *node)
+			void	delete_null_node(tree_node *node)
 			{
 				_alloc_node.deallocate(node, 1);
 				--_size;
@@ -421,14 +439,14 @@ namespace ft
 			**																			**
 			\****************************************************************************/
 
-			tree_node	*getMin(tree_node *node) const
+			tree_node	*get_min(tree_node *node) const
 			{
 				while (node->left != _node_ptr)
 					node = node->left;
 				return (node);
 			}
 
-			tree_node	*getMax(tree_node *node) const
+			tree_node	*get_max(tree_node *node) const
 			{
 				while (node && node->leaf)
 					node = node->right;
@@ -477,7 +495,7 @@ namespace ft
 					node->color = "red";
 			}
 
-			void	insertNode(tree_node *new_node, tree_node *node)
+			void	insert_node(tree_node *new_node, tree_node *node)
 			{
 				if (new_node->parent == _node_ptr)
 					_root = node;
@@ -504,7 +522,7 @@ namespace ft
 				return (node->right);
 			}
 
-			void    rebalanceTree(tree_node *node)
+			void    rebalance_tree(tree_node *node)
         	{
             	while (node != _root && node->parent->color == "red")
             	{
@@ -557,7 +575,7 @@ namespace ft
             	_root->color = "black";
 			}
 
-        	void    recolorTree(tree_node *node)
+        	void    recolour_tree(tree_node *node)
         	{
         	    while (node != _root && node->color == "black")
         	    {
@@ -628,8 +646,11 @@ namespace ft
         	}
 
 		public:
-			// utils
-			tree_node	*get_root(void) const
+			/****************************************************************************\
+			**									Modifiers								**
+			\****************************************************************************/
+
+			tree_node	*root() const
 			{
 				return (_root);
 			}

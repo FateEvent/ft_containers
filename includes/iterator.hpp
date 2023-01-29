@@ -13,29 +13,31 @@ namespace ft
 	class move_iterator
 		: public iterator<std::random_access_iterator_tag, T>
 	{
+	protected:
+		typedef iterator_traits<T>				traits_type;
 	public:
-		typedef T																		value_type;
-		typedef std::random_access_iterator_tag											iterator_category;
-		typedef typename iterator<std::random_access_iterator_tag, T>::difference_type	difference_type;
-		typedef typename iterator<std::random_access_iterator_tag, T>::reference		reference;
-		typedef reference const															const_reference;
-		typedef typename iterator<std::random_access_iterator_tag, T>::pointer			pointer;
-		typedef pointer const															const_pointer;
-		typedef move_iterator<const T>													const_iterator;
+		typedef T								value_type;
+		typedef std::random_access_iterator_tag	iterator_category;
+		typedef ptrdiff_t						difference_type;
+		typedef T&								reference;
+		typedef const T&						const_reference;
+		typedef T*								pointer;
+		typedef const T*						const_pointer;
+		typedef move_iterator<const T>			const_iterator;
 
 		move_iterator() : _ptr() {}
-		move_iterator(const move_iterator &it) : _ptr(it._ptr) {}
+		move_iterator(pointer ptr) : _ptr(ptr) {}
+		move_iterator(const move_iterator &other) : _ptr(other._ptr) {}
 		template<typename U>
 		move_iterator(const move_iterator<U> &other,
 			typename ft::enable_if<!std::is_const<U>::value>::type* = 0)
 				: _ptr(other._ptr) {}
-		move_iterator(const pointer &ptr) : _ptr(ptr) {}
 		~move_iterator() {}
 
 		move_iterator&	operator=(const move_iterator &assign) 
 		{
 			if (this != &assign)
-				_ptr = assign._ptr;
+				_ptr = assign.base();
 			return (*this); 
 		}
 
@@ -48,30 +50,14 @@ namespace ft
 		reference		operator[] (difference_type index) { return (base()[index]); }
 		const_reference	operator[] (difference_type index) const { return (base()[index]); }
 
-		const move_iterator	operator+ (const difference_type dist) const { return (_ptr + dist); }
-		const move_iterator	&operator++ () { ++_ptr; return (*this); }
-		const move_iterator	operator++ (int) { move_iterator tmp = *this; ++_ptr; return (tmp); }
-		const move_iterator	&operator+= (const difference_type dist) { _ptr += dist; return (*this); }
-		const move_iterator	operator- (const difference_type dist) const { return (_ptr - dist); }
-		const move_iterator	&operator-- () { --_ptr; return (*this); }
-		const move_iterator	operator-- (int) { move_iterator tmp = *this; --_ptr; return (tmp); }		
-		const move_iterator	&operator-= (const difference_type dist) { _ptr -= dist; return (*this); }
-
-		friend move_iterator	operator+ (const std::size_t dist, const move_iterator &src)
-		{
-			move_iterator	it(src._ptr);
-
-			it += dist;
-			return (it);
-		}
-		
-		friend move_iterator	operator- (const std::size_t dist, const move_iterator &src)
-		{
-			move_iterator	it(src._ptr);
-
-			it -= dist;
-			return (it);
-		}
+		move_iterator	operator+ (difference_type dist) const { return (move_iterator(base() + dist)); }
+		move_iterator	&operator++ () { ++_ptr; return (*this); }
+		move_iterator	operator++ (int) { move_iterator(tmp) = *this; ++_ptr; return (tmp); }
+		move_iterator	&operator+= (difference_type dist) { _ptr += dist; return (*this); }
+		move_iterator	operator- (difference_type dist) const { return (move_iterator(base() - dist)); }
+		move_iterator	&operator-- () { --_ptr; return (*this); }
+		move_iterator	operator-- (int) { move_iterator(tmp) = *this; --_ptr; return (tmp); }		
+		move_iterator	&operator-= (difference_type dist) { _ptr -= dist; return (*this); }
 
 		friend bool	operator==(const move_iterator &lhs, const move_iterator &rhs)
 		{
@@ -103,8 +89,7 @@ namespace ft
 			return (lhs.base() >= rhs.base());
 		}
 
-//		operator	move_iterator<const value_type>() const { return (move_iterator<const value_type>(_ptr)); }
-		operator	const_iterator(void) const { return (const_iterator(_ptr)); }
+		operator	const_iterator() const { return (const_iterator(_ptr)); }
 
 	protected:
 		pointer		_ptr;
@@ -121,43 +106,6 @@ namespace ft
 	{
 		return (lhs.base() - rhs.base());
 	}
-
-	template<class Iter1, class Iter2>
-	bool	operator==(const move_iterator<Iter1> &lhs, const move_iterator<Iter2> &rhs)
-	{
-		return (lhs.base() == rhs.base());
-	}
-
-	template<class Iter1, class Iter2>
-	bool	operator!=(const move_iterator<Iter1> &lhs, const move_iterator<Iter2> &rhs)
-	{
-		return (lhs.base() != rhs.base());
-	}
-
-	template<class Iter1, class Iter2>
-	bool	operator>(const move_iterator<Iter1> &lhs, const move_iterator<Iter2> &rhs)
-	{
-		return (lhs.base() > rhs.base());
-	}
-
-	template<class Iter1, class Iter2>
-	bool	operator<=(const move_iterator<Iter1> &lhs, const move_iterator<Iter2> &rhs)
-	{
-		return (lhs.base() <= rhs.base());
-	}
-	
-	template<class Iter1, class Iter2>
-	bool	operator<(const move_iterator<Iter1> &lhs, const move_iterator<Iter2> &rhs)
-	{
-		return (lhs.base() < rhs.base());
-	}
-
-	template<class Iter1, class Iter2>
-	bool	operator>=(const move_iterator<Iter1> &lhs, const move_iterator<Iter2> &rhs)
-	{
-		return (lhs.base() >= rhs.base());
-	}
-
 }
 
 #endif

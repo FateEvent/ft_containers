@@ -55,65 +55,6 @@ namespace ft
 	};
 
 	template <class Iter>
-	class wrapper_it
-	{
-	protected:
-		Iter											_current;
-		typedef ft::iterator_traits<Iter>				traits_type;
-
-	public:
-		typedef Iter									iterator_type;
-		typedef typename traits_type::value_type		value_type;
-		typedef typename traits_type::difference_type	difference_type;
-		typedef typename traits_type::reference			reference;
-		typedef typename traits_type::pointer			pointer;
-		typedef std::size_t								size_type;
-
-		wrapper_it() : _current(Iter()) {}
-		wrapper_it(const iterator_type &it) : _current(it) {}
-		template<class U>
-		wrapper_it(const wrapper_it<U>& other): _current(other.base()) {}
-		~wrapper_it() {}
-
-		wrapper_it	&operator= (wrapper_it const& other) {
-			_current = other.base();
-			return (*this);
-		}
-
-		iterator_type	base() const { return _current; }
-
-		reference	operator* () const { return (*_current); }
-		pointer		operator-> () const { return &(operator*()); }
-
-		operator	wrapper_it<const Iter>() const { return (wrapper_it<const Iter>(operator->())); }
-		operator	reverse_iterator<Iter>() const { return (_current); }
-
-		wrapper_it	&operator++ () { _current++; return *this; }
-		wrapper_it	operator++ (int) { wrapper_it tmp = *this; ++(*this); return tmp; }
-		wrapper_it	&operator-- () { _current--; return *this; }
-		wrapper_it	operator-- (int) { wrapper_it tmp = *this; --(*this); return tmp; }		
-		wrapper_it	&operator+= (size_type n) { _current += n; return *this; }
-		wrapper_it	&operator-= (size_type n) { _current -= n; return *this; }
-		wrapper_it	operator+ (size_type n) const { return (_current + n); }
-		wrapper_it	operator- (size_type n) const { return (_current - n); }
-		reference	operator[] (size_type index) { return (_current[index]); }
-		ptrdiff_t	operator- (const wrapper_it &it) { return (_current - it._current); }
-	};
-
-	template<class It1, class It2>
-	bool operator== (const ft::wrapper_it<It1> &lhs, const ft::wrapper_it<It2> &rhs) { return lhs.base() == rhs.base(); }
-	template<class It1, class It2>
-	bool operator!= (const ft::wrapper_it<It1> &lhs, const ft::wrapper_it<It2> &rhs) { return lhs.base() != rhs.base(); }
-	template<class It1, class It2>
-	bool operator< (const ft::wrapper_it<It1> &lhs, const ft::wrapper_it<It2> &rhs) { return lhs.base() < rhs.base(); }
-	template<class It1, class It2>
-	bool operator<= (const ft::wrapper_it<It1> &lhs, const ft::wrapper_it<It2> &rhs) { return lhs.base() <= rhs.base(); }
-	template<class It1, class It2>
-	bool operator> (const ft::wrapper_it<It1> &lhs, const ft::wrapper_it<It2> &rhs) { return lhs.base() > rhs.base(); }
-	template<class It1, class It2>
-	bool operator>= (const ft::wrapper_it<It1> &lhs, const ft::wrapper_it<It2> &rhs) { return lhs.base() >= rhs.base(); }
-
-	template <class Iter>
 	class reverse_iterator
 	{
 	protected:
@@ -123,24 +64,19 @@ namespace ft
 	public:
 		typedef Iter									iterator_type;
 		typedef typename traits_type::value_type		value_type;
+		typedef typename traits_type::iterator_category	iterator_category;
 		typedef typename traits_type::difference_type	difference_type;
 		typedef typename traits_type::reference			reference;
 		typedef typename traits_type::pointer			pointer;
 		typedef std::size_t								size_type;
 
 		reverse_iterator() : _current() {}
-		reverse_iterator(const iterator_type &it) : _current(it) {}
+		reverse_iterator(iterator_type other) : _current(other) {}
 		template<class U>
 		reverse_iterator(const reverse_iterator<U>& other): _current(other.base()) {}
 		~reverse_iterator() {}
 
 		reverse_iterator	&operator= (reverse_iterator const& other) {
-			_current = other.base();
-			return (*this);
-		}
-
-		template<class U>
-		reverse_iterator	&operator= (reverse_iterator<U> const& other) {
 			_current = other.base();
 			return (*this);
 		}
@@ -161,21 +97,7 @@ namespace ft
 		reverse_iterator	operator- (difference_type n) const { return reverse_iterator(_current + n); }
 		reverse_iterator	&operator-- () { ++_current; return (*this); }
 		reverse_iterator	operator-- (int) { reverse_iterator tmp = *this; ++_current; return (tmp); }
-		reverse_iterator	&operator-= (difference_type n) { _current += n; return (*this); }
-
-		friend reverse_iterator	operator+ (const size_type n, const reverse_iterator &src)
-		{
-			reverse_iterator it(src._current);
-			it -= n;
-			return (it);
-		}
-		
-		friend reverse_iterator	operator- (const size_type n, const reverse_iterator &src)
-		{
-			reverse_iterator it(src._current);
-			it += n;
-			return (it);
-		}
+		reverse_iterator	&operator-= (difference_type n) { _current += n; return (*this); } // &?
 	};
 
 	template<class Iter1, class Iter2>

@@ -24,8 +24,6 @@ namespace ft
 		typedef const value_type&										const_reference;
 		typedef typename Allocator::pointer								pointer;
 		typedef typename Allocator::const_pointer						const_pointer;		
-//		typedef ft::wrapper_it<ft::move_iterator<value_type> >			iterator;
-//		typedef ft::wrapper_it<ft::move_iterator<const value_type> >	const_iterator;
 		typedef ft::move_iterator<value_type>							iterator;
 		typedef ft::move_iterator<const value_type>						const_iterator;
 		typedef ft::reverse_iterator<iterator>							reverse_iterator;
@@ -159,8 +157,8 @@ namespace ft
 
 		reverse_iterator		rbegin() { return (reverse_iterator(&_v[_size])); }
 		const_reverse_iterator	rbegin() const { return (const_reverse_iterator(&_v[_size])); }
-		reverse_iterator		rend() { return (reverse_iterator(_v)); }
-		const_reverse_iterator	rend() const { return (const_reverse_iterator(_v)); }
+		reverse_iterator		rend() { return (reverse_iterator(begin())); }
+		const_reverse_iterator	rend() const { return (const_reverse_iterator(begin())); }
 		
 		bool empty() const { return (!size()); }
 
