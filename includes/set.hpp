@@ -9,7 +9,8 @@
 # include <limits>
 # include "pair.hpp"
 # include "vector.hpp"
-# include "set_iterator.hpp"
+# include "map_iterator.hpp"
+# include "_Rbtree_node.hpp"
 #include <set>
 
 class set_iterator;
@@ -19,26 +20,26 @@ namespace ft
 	template <class Key, class T, class Compare = std::less<Key>,
 	class Allocator = std::allocator<ft::pair<const Key, T> > >
 	class set {
-		struct Node;
 	public:
-		typedef Key													key_type;
-		typedef T													mapped_type;
-		typedef pair<const key_type, mapped_type>					value_type;
-		typedef Compare												key_compare;
-		typedef Allocator											allocator_type;
-		typedef typename allocator_type::reference					reference;
-		typedef typename allocator_type::const_reference			const_reference;
-		typedef typename allocator_type::pointer					pointer;
-		typedef typename allocator_type::const_pointer				const_pointer;
-		typedef typename allocator_type::size_type					size_type;
-		typedef typename allocator_type::difference_type			difference_type;
-		typedef typename Allocator:: template rebind<Node>::other	node_allocator;
-		typedef typename node_allocator::pointer					node_pointer;
+		typedef Key																key_type;
+		typedef T																mapped_type;
+		typedef pair<const key_type, mapped_type>								value_type;
+		typedef Compare															key_compare;
+		typedef Allocator														allocator_type;
+		typedef	Node<value_type>												tree_node;
+		typedef typename allocator_type::reference								reference;
+		typedef typename allocator_type::const_reference						const_reference;
+		typedef typename allocator_type::pointer								pointer;
+		typedef typename allocator_type::const_pointer							const_pointer;
+		typedef typename allocator_type::size_type								size_type;
+		typedef typename allocator_type::difference_type						difference_type;
+		typedef typename Allocator:: template rebind<Node>::other				node_allocator;
+		typedef typename node_allocator::pointer								node_pointer;
 
-		typedef ft::set_iterator<key_type, mapped_type, Node, value_type>		iterator;
-		typedef ft::set_iterator<key_type, mapped_type, Node, const value_type>	const_iterator;
-//		typedef std::reverse_iterator<iterator>						reverse_iterator;
-//		typedef std::reverse_iterator<const_iterator>				const_reverse_iterator;
+		typedef ft::wrapper_it<ft::map_iterator<tree_node, value_type> >		iterator;
+		typedef ft::wrapper_it<ft::map_iterator<tree_node, const value_type> >	const_iterator;
+		typedef ft::reverse_iterator<iterator>									reverse_iterator;
+		typedef ft::reverse_iterator<const_iterator>							const_reverse_iterator;
 
 		class value_compare
 			: public std::binary_function<value_type, value_type, bool>
@@ -54,82 +55,13 @@ namespace ft
 			bool operator()(const value_type& x, const value_type& y) const { return x == y; }
 		};
 
-	private:
-		struct Node {
-		public:
-			value_type	_data;
-			Node		*_left;
-			Node		*_right;
-			Node		*_parent;
-			int			_height;
-			std::string	_colour;
-
-		public:
-			Node() : _data(value_type()), _left(NULL), _right(NULL), _parent(NULL), _height(1), _colour("black") {}
-			Node(value_type pair) : _data(pair), _left(NULL), _right(NULL), _parent(NULL), _height(1), _colour("black") {}
-			~Node() {}
-
-			Node		&operator= (Node &other) { _left = other._left; _right = other._right; _parent = other._parent; _colour = other._colour; return (*this); }
-			void		set_data(value_type &data) { _data = data; }
-			void		set_left(Node *left) { _left = left; }
-			void		set_right(Node *right) { _right = right; }
-			void		set_parent(Node *parent) { _parent = parent; }
-			void		set_height(int height) { _height = height; }
-			void		set_colour(std::string colour) { _colour = colour; }
-			value_type	&data() { return _data; }
-			Node		*left() { return _left; }
-			Node		*right() { return _right; }
-			Node		*parent() { return _parent; }
-			int			&height() { return _height; }
-			std::string	&colour() { return _colour; }
-
-			bool		is_left_child() { return this == this->parent()->left(); }
-
-			void		move_down(Node *parent) {
-				if (this->parent() != NULL) {
-					if (this->is_left_child()) {
-						this->parent()->set_left(parent);
-					} else {
-						this->parent()->set_right(parent);
-					}
-				}
-				parent->set_parent(this->parent());
-				this->set_parent(parent);
-			}
-
-			bool		has_red_child() {
-			return (this->left() != NULL and this->left()->colour() == "red") or
-			(this->right() != NULL and this->right()->colour() == "red");
-			}
-
-			Node	*get_sibling() {
-				if (this->parent() == NULL)
-						return (NULL);
-				if (this->is_left_child())
-						return this->parent()->right();
-				return (this->parent()->left());
-			}
-
-			Node	*get_uncle_node()
-			{
-				if (this->parent() && this->parent()->parent())
-				{
-					if (this->parent() == this->parent()->parent()->left())
-						return (this->parent()->parent()->right());
-					else
-						return (this->parent()->parent()->left());
-				}
-				return (NULL);
-			}
-		};
-/*
-		std::ostream	&operator<< (std::ostream &o, const Node &node) {
+		friend std::ostream	&operator<< (std::ostream &o, const Node &node) {
 			o << "key: " << node.data().first;
 			o << ", value: " << node.data().second;
 			o << ", height: " << node.height() << std::endl;
 			return (o);
 		}
-*/
+
 	public:
 		explicit set(const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type())
 			: _root(NULL), _alloc_node(node_allocator()), _alloc_pair(alloc), _key_comp(comp), _size(), _black_height() {
@@ -142,12 +74,12 @@ namespace ft
 
 		~set() { delete_node(protoroot()); }
 		set&	operator= (set const& base);
-		Node	*protoroot() { return (_root); }
-		Node	*dummy() { return (protoroot()); }
-		Node	*root() { return (_root->right()); }
-		void	set_root(Node *current) { _root->set_right(current); }
+		tree_node	*protoroot() { return (_root); }
+		tree_node	*dummy() { return (protoroot()); }
+		tree_node	*root() { return (_root->right()); }
+		void	set_root(tree_node *current) { _root->set_right(current); }
 
-		void	prefix_traversal(Node *current, char sep) {
+		void	prefix_traversal(tree_node *current, char sep) {
 			if (current)
 			{
 				current->treat(sep);
@@ -156,7 +88,7 @@ namespace ft
 			}
 		}
 
-		void	infix_traversal(Node *current, char sep) {
+		void	infix_traversal(tree_node *current, char sep) {
 			if (current)
 			{
 				infix_traversal(current->left(), sep);
@@ -165,7 +97,7 @@ namespace ft
 			}
 		}
 
-		void	suffix_traversal(Node *current, void (*f)(Node *)) {
+		void	suffix_traversal(tree_node *current, void (*f)(tree_node *)) {
 			if (current)
 			{
 				suffix_traversal(current->left(), f);
@@ -174,8 +106,8 @@ namespace ft
 			}
 		}
 
-		void	level_order_traversal(Node *current, void (*f)(Node *)){
-			vector<Node *>	deck;
+		void	level_order_traversal(tree_node *current, void (*f)(tree_node *)){
+			vector<tree_node *>	deck;
 
 			deck.push_back(current);
 			while (!deck.empty())
@@ -190,7 +122,7 @@ namespace ft
 			}
 		}
 
-		static void	print_node(Node *node)
+		static void	print_node(tree_node *node)
 		{
 			if (node)
 			{
@@ -260,16 +192,16 @@ namespace ft
 
 		iterator	find(const key_type& k)
 		{
-			Node *found = _recursive_Rb_tree_search(root(), k);
+			tree_node *found = _recursive_Rb_tree_search(root(), k);
 			if (found)
 				return (iterator(found));
 			return (end());
 		}
 //		const_iterator	find (const key_type& k) const;
 
-		Node	*new_node(const value_type& pair = value_type(), Node *parent = NULL)
+		tree_node	*new_node(const value_type& pair = value_type(), tree_node *parent = NULL)
 		{
-			Node *ptr = _alloc_node.allocate(1);
+			tree_node *ptr = _alloc_node.allocate(1);
 //			_alloc_node.construct(ptr);
 			try
 			{
@@ -288,7 +220,7 @@ namespace ft
 			return (ptr);
 		}
 
-		void	delete_node(Node *node)
+		void	delete_node(tree_node *node)
 		{
 			_alloc_node.destroy(node);
 			_alloc_node.deallocate(node, 1);
@@ -300,10 +232,10 @@ namespace ft
 		** 																			**
 		\****************************************************************************/
 
-		Node	*_iterative_Rb_tree_search(const key_type& k)
+		tree_node	*_iterative_Rb_tree_search(const key_type& k)
 		{
-			Node	*current(root());
-			Node	*prev(root());
+			tree_node	*current(root());
+			tree_node	*prev(root());
 
 			while (current)
 			{
@@ -323,7 +255,7 @@ namespace ft
 			return (prev);
 		}
 
-		Node	*_recursive_Rb_tree_search(Node *node, const key_type& k)
+		tree_node	*_recursive_Rb_tree_search(tree_node *node, const key_type& k)
 		{
 			if (node == NULL)
 				return (NULL);
@@ -331,21 +263,19 @@ namespace ft
 				return (node);
 			else if (_key_comp(k, node->data().first))
 			{
-				Node *temp = _recursive_Rb_tree_search(node->left(), k);
+				tree_node *temp = _recursive_Rb_tree_search(node->left(), k);
 				return (temp);
 			}
 			else
 			{
-				Node *temp = _recursive_Rb_tree_search(node->right(), k);
+				tree_node *temp = _recursive_Rb_tree_search(node->right(), k);
 				return (temp);
 			}
 		}
 
-		void	_Rb_tree_transplant(Node *u, Node *v)
+		void	_Rb_tree_transplant(tree_node *u, tree_node *v)
 		{
-			if (u == NULL)
-				return ;
-			else if (u->parent() == NULL)
+			if (u->parent() == NULL)
 				set_root(v);
 			else if (u->parent()->left() == u)
 				u->parent()->set_left(v);
@@ -355,7 +285,7 @@ namespace ft
 				v->set_parent(u->parent());
 		}
 
-		Node	*_Rb_tree_successor(Node *node)
+		tree_node	*_Rb_tree_successor(tree_node *node)
 		{
 			if (node->right() != NULL)
 			{
@@ -372,10 +302,10 @@ namespace ft
 			}
 		}
 
-		void fix_double_black_conflicts(Node *x) {
+		void fix_double_black_conflicts(tree_node *x) {
 			if (x == root())
 				return ;
-			Node *sibling = x->get_sibling(), *parent = x->parent();
+			tree_node *sibling = x->get_sibling(), *parent = x->parent();
 			if (sibling == NULL) {
 				fix_double_black_conflicts(parent);
 			} else {
@@ -423,7 +353,7 @@ namespace ft
 			}
 		}
 
-		Node	*BST_replace_node(Node *x) {
+		tree_node	*BST_replace_node(tree_node *x) {
 			if (x->left() != NULL && x->right() != NULL)
 				return _Rb_tree_successor(x);
 			if (x->left() == NULL && x->right() == NULL)
@@ -434,12 +364,12 @@ namespace ft
 				return (x->right());
 		}
 
-		void	_Rb_tree_node_deletion(Node *v)
+		void	_Rb_tree_node_deletion(tree_node *v)
 		{
-			Node *u = BST_replace_node(v);
+			tree_node *u = BST_replace_node(v);
 
 			bool uvBlack = ((u == NULL || u->colour() == "black") && (v->colour() == "black"));
-			Node *parent = v->parent();
+			tree_node *parent = v->parent();
 
 			if (u == NULL) {
 				if (v == root()) {
@@ -484,14 +414,14 @@ namespace ft
 			_Rb_tree_node_deletion(u);
 		}
 
-		void	swap_colours(Node *_x, Node *_y) {
+		void	swap_colours(tree_node *_x, tree_node *_y) {
 			std::string temp = _x->colour();
 			_x->set_colour(_y->colour());
 			_y->set_colour(temp);
 		}
 
-		void	_Rb_tree_left_rotation(Node *_x) {
-			Node *nParent = _x->right();
+		void	_Rb_tree_left_rotation(tree_node *_x) {
+			tree_node *nParent = _x->right();
 			if (_x == root())
 				set_root(nParent);
 			_x->move_down(nParent);
@@ -501,8 +431,8 @@ namespace ft
 			nParent->set_left(_x);
 		}
 
-		void	_Rb_tree_right_rotation(Node *_x) {
-			Node *nParent = _x->left();
+		void	_Rb_tree_right_rotation(tree_node *_x) {
+			tree_node *nParent = _x->left();
 			if (_x == root())
 				set_root(nParent);
 			_x->move_down(nParent);
@@ -512,12 +442,12 @@ namespace ft
 			nParent->set_right(_x);
 		}
 
-		void	fix_red_red_violations(Node *_x) {
+		void	fix_red_red_violations(tree_node *_x) {
 			if (_x == root()) {
 				_x->set_colour("black");
 				return ;
 			}
-			Node *parent = _x->parent(), *grandparent = parent->parent(), *uncle = _x->get_uncle_node();
+			tree_node *parent = _x->parent(), *grandparent = parent->parent(), *uncle = _x->get_uncle_node();
 			if (parent->colour() != "black") {
 				if (uncle != NULL && uncle->colour() == "red") {
 					parent->set_colour("black");
@@ -546,7 +476,7 @@ namespace ft
 			}
 		}
 
-		static int	calculate_height(Node *temp)
+		static int	calculate_height(tree_node *temp)
 		{
 			int h = 0;
 			if (temp != NULL) {
@@ -558,7 +488,7 @@ namespace ft
 			return h;
 		}
 
-		static void	recomp_height(Node *_x)
+		static void	recomp_height(tree_node *_x)
 		{
 			while (_x != NULL)
 			{
@@ -567,9 +497,9 @@ namespace ft
 			}
 		}
 
-		Node	*_Rb_tree_insert(Node *_x, const value_type& val)
+		tree_node	*_Rb_tree_insert(tree_node *_x, const value_type& val)
 		{
-			Node	*_y = new_node(val);
+			tree_node	*_y = new_node(val);
 
 			if (!_x)
 			{
@@ -579,7 +509,7 @@ namespace ft
 				++_black_height;
 				return (_x);
 			}
-			Node *temp = _iterative_Rb_tree_search(val.first);
+			tree_node *temp = _iterative_Rb_tree_search(val.first);
 			if (temp->data().first == val.first)
 			{
 				delete_node(_y);
@@ -604,7 +534,7 @@ namespace ft
 
 		size_type	erase( const key_type& key )
 		{
-			Node *p = _recursive_Rb_tree_search(root(), key);
+			tree_node *p = _recursive_Rb_tree_search(root(), key);
 			if (!p)
 				return (0);
 			--_size;
@@ -619,7 +549,7 @@ namespace ft
 */
 		pair<iterator, bool>	insert(const value_type& val)
 		{
-			Node *temp = _Rb_tree_insert(root(), val);
+			tree_node *temp = _Rb_tree_insert(root(), val);
 			if (!root())
 			{
 				set_root(temp);
@@ -635,7 +565,7 @@ namespace ft
 		iterator	insert(iterator pos, const value_type& val)
 		{
 			(void)pos;
-			Node *temp = _Rb_tree_insert(pos.base(), val);
+			tree_node *temp = _Rb_tree_insert(pos.base(), val);
 			if (!root())
 			{
 				set_root(temp);
@@ -652,7 +582,7 @@ namespace ft
 
 		mapped_type&	operator[] (const key_type& k)
 		{
-			Node *found = _recursive_Rb_tree_search(root(), k);
+			tree_node *found = _recursive_Rb_tree_search(root(), k);
 			if (found)
 				return (found->data().second);
 			iterator it = insert(root(), ft::make_pair(k, mapped_type()));
@@ -661,7 +591,7 @@ namespace ft
 
 		mapped_type&	at(const key_type& k)
 		{
-			Node *found = _recursive_Rb_tree_search(root(), k);
+			tree_node *found = _recursive_Rb_tree_search(root(), k);
 			if (found)
 				return (found->data().second);
 			throw(std::out_of_range("set"));
@@ -673,7 +603,7 @@ namespace ft
 		}
 
 	private :
-		Node			*_root;
+		tree_node		*_root;
 		node_allocator	_alloc_node;
 		allocator_type	_alloc_pair;
 		key_compare		_key_comp;

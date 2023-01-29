@@ -115,16 +115,16 @@ namespace ft
 			return (_ptr);
 		}
 
-		const set_iterator	&operator++ () {
+		set_iterator	&operator++ () {
 			_ptr = _Rb_tree_increment(_ptr);
 			return (*this);
 		}
-		const set_iterator 	operator++ (int) { set_iterator tmp = *this; ++(*this); return tmp; }
-		const set_iterator	&operator-- () {
+		set_iterator 	operator++ (int) { set_iterator tmp = *this; ++(*this); return tmp; }
+		set_iterator	&operator-- () {
 			_ptr = _Rb_tree_decrement(_ptr);
 			return (*this);
 		}
-		const set_iterator 	operator-- (int) { set_iterator tmp = *this; --(*this); return tmp; }
+		set_iterator 	operator-- (int) { set_iterator tmp = *this; --(*this); return tmp; }
 
 		const set_iterator	&operator+= (std::size_t dist) { _ptr += dist; return (*this); }
 		const set_iterator	&operator-= (std::size_t dist) { _ptr -= dist; return (*this); }

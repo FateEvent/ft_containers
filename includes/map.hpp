@@ -550,9 +550,7 @@ namespace ft
 
 		void	_avl_tree_transplant(tree_node *u, tree_node *v)
 		{
-			if (u == NULL)
-				return ;
-			else if (u->_parent == NULL)
+			if (u->_parent == NULL)
 				set_root(v);
 			else if (u->_parent->_left == u)
 				u->_parent->_left = v;
