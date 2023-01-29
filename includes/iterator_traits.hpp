@@ -43,17 +43,6 @@ namespace ft
 		typedef const T&						reference;
 	};
 
-	template<class Category, class T, class Distance = ptrdiff_t,
-			class Pointer = T*, class Reference = T&>
-	struct iterator
-	{
-		typedef T			value_type;
-		typedef Distance	difference_type;
-		typedef Pointer		pointer;
-		typedef Reference	reference;
-		typedef Category	iterator_category;
-	};
-
 	template <class Iter>
 	class reverse_iterator
 	{
@@ -86,9 +75,6 @@ namespace ft
 		reference	operator* () const { return ((--iterator_type(_current)).operator*()); }
 		pointer		operator-> () const { return (&(operator*())); }
 		reference	operator[] (difference_type index) const { return (*operator+(index)); }
-
-		operator	reverse_iterator<const Iter>() const { return (reverse_iterator<const Iter>(operator->())); }
-		operator	wrapper_it<Iter>() const { return (_current); }
 
 		reverse_iterator	operator+ (difference_type n) const { return reverse_iterator(_current - n); }
 		reverse_iterator	&operator++ () { --_current; return (*this); }

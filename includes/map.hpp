@@ -171,11 +171,6 @@ namespace ft
 			_tree.erase(first, last);
 		}
 
-		void	erase(const_iterator first, const_iterator last)
-		{
-			_tree.erase(first, last);
-		}
-
 		size_type	erase(const key_type& key)
 		{
 			return (_tree.erase(ft::make_pair(key, mapped_type())));
@@ -271,6 +266,11 @@ namespace ft
 		value_compare	value_comp() const { return value_compare(_key_comp); }
 
 	private :
+		value_type	get_value_type(const Key &key) const
+		{
+			return (ft::make_pair(key, mapped_type()));
+		}
+
 		rb_tree			_tree;
 		allocator_type	_alloc_pair;
 		key_compare		_key_comp;
