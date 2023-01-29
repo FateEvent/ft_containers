@@ -27,7 +27,7 @@ namespace ft
 		tree_node	*node;
 		
 	public:
-		RBIterator(void) : node(NULL) {}
+		RBIterator() : node(NULL) {}
 
 		RBIterator(tree_node *current) : node(current) {}
 
@@ -40,32 +40,32 @@ namespace ft
 			return (*this);
 		}
 
-		operator	const_iterator(void) const
+		operator	const_iterator() const
 		{
 			return (const_iterator(reinterpret_cast<const_tree_node *>(node)));
 		}
 
-		tree_node	*base(void) const
+		tree_node	*base() const
 		{
 			return (node);
 		}
 
-		reference	operator*(void)
+		reference	operator*()
 		{
 			return (node->data);
 		}
 
-		const_reference	operator*(void) const
+		const_reference	operator*() const
 		{
 			return (node->data);
 		}
 
-		pointer	operator->(void) const
+		pointer	operator->() const
 		{
 			return &(node->data);
 		}
 
-		RBIterator	&operator++(void)
+		RBIterator	&operator++()
 		{
 			if (!node->leaf)
 				return (*this);
@@ -95,7 +95,7 @@ namespace ft
 			return (tmp);
 		}
 
-		RBIterator	&operator--(void)
+		RBIterator	&operator--()
 		{
 			if (!node->leaf)
 			{

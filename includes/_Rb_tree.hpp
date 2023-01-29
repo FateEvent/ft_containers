@@ -5,7 +5,7 @@
 # include "pair.hpp"
 # include "_Rb_tree_node.hpp"
 # include "_Rb_iterator.hpp"
-# include "iterator.hpp"
+# include "iterator_traits.hpp"
 
 namespace ft
 {
@@ -30,13 +30,13 @@ namespace ft
 			typedef typename Allocator::template rebind<tree_node>::other	node_allocator;
 		
 		public:
-			explicit RBTree(const value_compare &comp, const allocator_type &alloc) : _comp(comp), _node_ptr(newNullNode()), _allocator_type(alloc), _size(0)
+			explicit RBTree(const value_compare &comp, const allocator_type &alloc) : _comp(comp), _node_ptr(newNullNode()), _alloc_pair(alloc), _size(0)
 			{
 				_root = _node_ptr;
 				_node_ptr->color = "black";
 			}
 
-			RBTree(const RBTree &other) : _comp(other._comp), _node_ptr(newNullNode()), _root(_node_ptr), _allocator_type(other._allocator_type), _size(0)
+			RBTree(const RBTree &other) : _comp(other._comp), _node_ptr(newNullNode()), _root(_node_ptr), _alloc_pair(other._alloc_pair), _size(0)
 			{
 				*this = other;
 			}
@@ -48,7 +48,7 @@ namespace ft
 					clear(_root);
 					insert(other.begin(), other.end());
 					_comp = other._comp;
-					_allocator_type = other._allocator_type;
+					_alloc_pair = other._alloc_pair;
 					_size = other._size;
 				}
 				return (*this);
@@ -118,7 +118,7 @@ namespace ft
 			// capacity
 			bool	empty(void) const
 			{
-				return (_size == 0);
+				return (!size());
 			}
 
 			size_type	size(void) const
@@ -126,10 +126,8 @@ namespace ft
 				return (_size);
 			}
 
-			size_type	max_size(void) const
-			{
-				return (_node_allocator.max_size());
-			}
+			size_type	max_size() const { return std::min<size_type>(_alloc_node.max_size(),
+									std::numeric_limits<difference_type>::max()); }
 
 			// modifiers
 			void	clear(tree_node *node)
@@ -187,8 +185,9 @@ namespace ft
 				return (insert(data).first);
 			}
 
-			template <class InputIterator>
-			void	insert(InputIterator first, InputIterator last)
+			template <class InputIt>
+			void	insert(InputIt first, InputIt last,
+				typename ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::value* = 0)
 			{
 				while (first != last)
 					insert(*first++);
@@ -247,10 +246,10 @@ namespace ft
 
 			size_type	erase(const value_type &data)
 			{
-				tree_node *tmp = search(_root, data);
-				if (tmp)
+				tree_node *found = search(_root, data);
+				if (found)
 				{
-					erase(tmp);
+					erase(found);
 					return (1);
 				}
 				return (0);
@@ -261,8 +260,8 @@ namespace ft
 				ft::swap_elements(_comp, x._comp);
 				ft::swap_elements(_node_ptr, x._node_ptr);
 				ft::swap_elements(_root, x._root);
-				ft::swap_elements(_node_allocator, x._node_allocator);
-				ft::swap_elements(_allocator_type, x._allocator_type);
+				ft::swap_elements(_alloc_node, x._alloc_node);
+				ft::swap_elements(_alloc_pair, x._alloc_pair);
 				ft::swap_elements(_size, x._size);
 			}
 
@@ -358,14 +357,14 @@ namespace ft
 			// allocator
 			allocator_type	get_allocator(void) const
 			{
-				return (_allocator_type);
+				return (_alloc_pair);
 			}
 
 		private:
 			// node
 			tree_node	*newNullNode(void)
 			{
-				tree_node	*tmp = _node_allocator.allocate(1);
+				tree_node	*tmp = _alloc_node.allocate(1);
 				tmp->color = "black";
 				tmp->leaf = 0;
 				tmp->parent = NULL;
@@ -376,8 +375,8 @@ namespace ft
 
 			tree_node	*newTreeNode(const value_type &data, tree_node *parent, int leaf)
 			{
-				tree_node	*tmp = _node_allocator.allocate(1);
-				_allocator_type.construct(&(tmp->data), data);
+				tree_node	*tmp = _alloc_node.allocate(1);
+				_alloc_pair.construct(&(tmp->data), data);
 				tmp->color = "red";
 				tmp->leaf = leaf;
 				tmp->parent = parent;
@@ -389,14 +388,14 @@ namespace ft
 
 			void	deleteTreeNode(tree_node *node)
 			{
-				_allocator_type.destroy(&(node->data));
-				_node_allocator.deallocate(node, 1);
+				_alloc_pair.destroy(&(node->data));
+				_alloc_node.deallocate(node, 1);
 				--_size;
 			}
 
 			void	deleteNullNode(tree_node *node)
 			{
-				_node_allocator.deallocate(node, 1);
+				_alloc_node.deallocate(node, 1);
 				--_size;
 			}
 
@@ -416,6 +415,12 @@ namespace ft
 			}
 
 		private:
+			/****************************************************************************\
+			**																			**
+			**						Red-Black trees utility functions					**
+			**																			**
+			\****************************************************************************/
+
 			tree_node	*getMin(tree_node *node) const
 			{
 				while (node->left != _node_ptr)
@@ -633,8 +638,8 @@ namespace ft
 			value_compare	_comp;
 			tree_node		*_node_ptr;
 			tree_node		*_root;
-			node_allocator	_node_allocator;
-			allocator_type	_allocator_type;
+			node_allocator	_alloc_node;
+			allocator_type	_alloc_pair;
 			size_type		_size;
 	};
 }
