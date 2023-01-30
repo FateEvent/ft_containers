@@ -31,11 +31,11 @@ namespace ft
 		typedef typename allocator_type::difference_type			difference_type;
 
 		typedef	Node<value_type>									tree_node;
-		typedef RBTree<value_type, value_compare, allocator_type>	rb_tree;
-		typedef typename rb_tree::iterator							iterator;
-		typedef typename rb_tree::const_iterator					const_iterator;
-		typedef typename rb_tree::reverse_iterator					reverse_iterator;
-		typedef typename rb_tree::const_reverse_iterator			const_reverse_iterator;
+		typedef RBTree<value_type, value_compare, allocator_type>	Rb_tree;
+		typedef typename Rb_tree::iterator							iterator;
+		typedef typename Rb_tree::const_iterator					const_iterator;
+		typedef typename Rb_tree::reverse_iterator					reverse_iterator;
+		typedef typename Rb_tree::const_reverse_iterator			const_reverse_iterator;
 
 		class value_compare
 			: public std::binary_function<value_type, value_type, bool>
@@ -271,7 +271,7 @@ namespace ft
 			return (ft::make_pair(key, mapped_type()));
 		}
 
-		rb_tree			_tree;
+		Rb_tree		_tree;
 		allocator_type	_alloc_pair;
 		key_compare		_key_comp;
 	};

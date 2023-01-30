@@ -6,11 +6,6 @@
 # include <cstddef>
 # include <iterator>
 
-template <class Iter>
-class wrapper_it;
-template <class Iter>
-class reverse_iterator;
-
 namespace ft
 {
 	template<class Iterator>

@@ -232,12 +232,12 @@ namespace ft
 				if (node->left == _node_ptr)
 				{
 					tmp = node->right;
-					_Rb_tree_insert_node(node, node->right);
+					_Rb_tree_node_insertion(node, node->right);
 				}
 				else if (node->right == _node_ptr)
 				{
 					tmp = node->left;
-					_Rb_tree_insert_node(node, node->left);
+					_Rb_tree_node_insertion(node, node->left);
 				}
 				else
 				{
@@ -248,11 +248,11 @@ namespace ft
 						tmp->parent = search;
 					else
 					{
-						_Rb_tree_insert_node(search, search->right);
+						_Rb_tree_node_insertion(search, search->right);
 						search->right = node->right;
 						search->right->parent = search;
 					}
-					_Rb_tree_insert_node(node, search);
+					_Rb_tree_node_insertion(node, search);
 					search->left = node->left;
 					search->left->parent = search;
 					search->color = node->color;
@@ -495,7 +495,7 @@ namespace ft
 					node->color = "red";
 			}
 
-			void	_Rb_tree_insert_node(tree_node *new_node, tree_node *node)
+			void	_Rb_tree_node_insertion(tree_node *new_node, tree_node *node)
 			{
 				if (new_node->parent == _node_ptr)
 					_root = node;
