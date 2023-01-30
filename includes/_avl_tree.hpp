@@ -1,16 +1,16 @@
-#ifndef _RB_TREE_H
-# define _RB_TREE_H
+#ifndef _AVL_TREE_H
+# define _AVL_TREE_H
 
 # include "utilities.hpp"
 # include "pair.hpp"
-# include "_Rb_tree_node.hpp"
+# include "_avl_tree_node.hpp"
 # include "_Rb_iterator.hpp"
 # include "iterator_traits.hpp"
 
 namespace ft
 {
 	template <class T, class Compare = std::less<T>, class Allocator = std::allocator<T> >
-	class RBTree
+	class AVLTree
 	{
 		public:
 			typedef T														value_type;
@@ -34,18 +34,18 @@ namespace ft
 			**								Member functions							**
 			\****************************************************************************/
 
-			explicit RBTree(const value_compare &comp, const allocator_type &alloc) : _comp(comp), _node_ptr(newNullNode()), _alloc_pair(alloc), _size(0)
+			explicit AVLTree(const value_compare &comp, const allocator_type &alloc) : _comp(comp), _node_ptr(newNullNode()), _alloc_pair(alloc), _size(0)
 			{
 				_root = _node_ptr;
 				_node_ptr->color = "black";
 			}
 
-			RBTree(const RBTree &other) : _comp(other._comp), _node_ptr(newNullNode()), _root(_node_ptr), _alloc_pair(other._alloc_pair), _size(0)
+			AVLTree(const AVLTree &other) : _comp(other._comp), _node_ptr(newNullNode()), _root(_node_ptr), _alloc_pair(other._alloc_pair), _size(0)
 			{
 				*this = other;
 			}
 
-			RBTree &operator=(const RBTree &other)
+			AVLTree &operator=(const AVLTree &other)
 			{
 				if (this != &other)
 				{
@@ -58,7 +58,7 @@ namespace ft
 				return (*this);
 			}
 
-			~RBTree()
+			~AVLTree()
 			{
 				clear(_root);
 				delete_null_node(_node_ptr);
@@ -187,7 +187,7 @@ namespace ft
 					parent->right = node;
 				node->left->parent = node;
 				node->right->parent = node;
-				_Rb_tree_rebalancing(node);
+				_avl_tree_rebalancing(node);
 				return (ft::make_pair(iterator(node), true));
 			}
 
@@ -232,12 +232,12 @@ namespace ft
 				if (node->left == _node_ptr)
 				{
 					tmp = node->right;
-					_Rb_tree_insert_node(node, node->right);
+					_avl_tree_node_insertion(node, node->right);
 				}
 				else if (node->right == _node_ptr)
 				{
 					tmp = node->left;
-					_Rb_tree_insert_node(node, node->left);
+					_avl_tree_node_insertion(node, node->left);
 				}
 				else
 				{
@@ -248,17 +248,17 @@ namespace ft
 						tmp->parent = search;
 					else
 					{
-						_Rb_tree_insert_node(search, search->right);
+						_avl_tree_node_insertion(search, search->right);
 						search->right = node->right;
 						search->right->parent = search;
 					}
-					_Rb_tree_insert_node(node, search);
+					_avl_tree_node_insertion(node, search);
 					search->left = node->left;
 					search->left->parent = search;
 					search->color = node->color;
 				}
 				if (color == "black")
-					_Rb_tree_recolouring(tmp);
+					_avl_tree_recolouring(tmp);
 				delete_node(node);
 			}
 
@@ -273,7 +273,7 @@ namespace ft
 				return (0);
 			}
 
-			void	swap(RBTree &x)
+			void	swap(AVLTree &x)
 			{
 				ft::swap_elements(_comp, x._comp);
 				ft::swap_elements(_node_ptr, x._node_ptr);
@@ -453,7 +453,7 @@ namespace ft
 				return (node);
 			}
 
-			void	_Rb_tree_left_rotation(tree_node *node)
+			void	_avl_tree_left_rotation(tree_node *node)
 			{
 				tree_node	*tmp = node->right;
 				node->right = tmp->left;
@@ -470,7 +470,7 @@ namespace ft
 				node->parent = tmp;
 			}
 
-			void	_Rb_tree_right_rotation(tree_node *node)
+			void	_avl_tree_right_rotation(tree_node *node)
 			{
 				tree_node	*tmp = node->left;
 				node->left = tmp->right;
@@ -487,7 +487,7 @@ namespace ft
 				node->parent = tmp;
 			}
 
-			void	_Rb_tree_swap_node_colour(tree_node *node)
+			void	_avl_tree_swap_node_colour(tree_node *node)
 			{
 				if (node->color == "red")
 					node->color = "black";
@@ -495,7 +495,7 @@ namespace ft
 					node->color = "red";
 			}
 
-			void	_Rb_tree_insert_node(tree_node *new_node, tree_node *node)
+			void	_avl_tree_node_insertion(tree_node *new_node, tree_node *node)
 			{
 				if (new_node->parent == _node_ptr)
 					_root = node;
@@ -522,7 +522,7 @@ namespace ft
 				return (node->right);
 			}
 
-			void    _Rb_tree_rebalancing(tree_node *node)
+			void    _avl_tree_rebalancing(tree_node *node)
         	{
             	while (node != _root && node->parent->color == "red")
             	{
@@ -542,11 +542,11 @@ namespace ft
             	            if (node == node->parent->left)
             	            {
             	                node = node->parent;
-            	                _Rb_tree_right_rotation(node);
+            	                _avl_tree_right_rotation(node);
             	            }
             	            node->parent->color = "black";
             	            node_grandma->color = "red";
-            	            _Rb_tree_left_rotation(node_grandma);
+            	            _avl_tree_left_rotation(node_grandma);
             	        }
             	    }
             	    else
@@ -564,18 +564,18 @@ namespace ft
             	            if (node == node->parent->right)
             	            {
             	                node = node->parent;
-            	                _Rb_tree_left_rotation(node);
+            	                _avl_tree_left_rotation(node);
             	            }
             	            node->parent->color = "black";
             	            node_grandma->color = "red";
-            	            _Rb_tree_right_rotation(node_grandma);
+            	            _avl_tree_right_rotation(node_grandma);
             	        }
             	    }                
             	}
             	_root->color = "black";
 			}
 
-        	void    _Rb_tree_recolouring(tree_node *node)
+        	void    _avl_tree_recolouring(tree_node *node)
         	{
         	    while (node != _root && node->color == "black")
         	    {
@@ -584,9 +584,9 @@ namespace ft
         	            tree_node *sibling = node->parent->right;
         	            if (sibling->color == "red")
         	            {
-        	                _Rb_tree_swap_node_colour(sibling);
+        	                _avl_tree_swap_node_colour(sibling);
         	                node->parent->color = "red"; 
-        	                _Rb_tree_left_rotation(node->parent);
+        	                _avl_tree_left_rotation(node->parent);
         	                sibling = node->parent->right;
         	            }
         	            if (sibling->left->color == "black" && sibling->right->color == "black")
@@ -600,13 +600,13 @@ namespace ft
         	                {
         	                    sibling->left->color = "black";
         	                    sibling->color = "red";
-        	                    _Rb_tree_right_rotation(sibling);
+        	                    _avl_tree_right_rotation(sibling);
         	                    sibling = node->parent->right;
         	                }
         	                sibling->color = node->parent->color;
         	                node->parent->color = "black";
         	                sibling->right->color = "black";
-        	                _Rb_tree_left_rotation(node->parent);
+        	                _avl_tree_left_rotation(node->parent);
         	                node = _root;
         	            }
         	        }
@@ -615,9 +615,9 @@ namespace ft
         	            tree_node *sibling = node->parent->left;
         	            if (sibling->color == "red")
         	            {
-        	                _Rb_tree_swap_node_colour(sibling);
+        	                _avl_tree_swap_node_colour(sibling);
         	                node->parent->color = "red";
-        	                _Rb_tree_right_rotation(node->parent);
+        	                _avl_tree_right_rotation(node->parent);
         	                sibling = node->parent->left;
         	            }
         	            if (sibling->right->color == "black" && sibling->left->color == "black")
@@ -631,13 +631,13 @@ namespace ft
         	                {
         	                    sibling->right->color = "black";
         	                    sibling->color = "red";
-        	                    _Rb_tree_left_rotation(sibling);
+        	                    _avl_tree_left_rotation(sibling);
         	                    sibling = node->parent->left;
         	                }
         	                sibling->color = node->parent->color;
         	                node->parent->color = "black";
         	                sibling->left->color = "black";
-        	                _Rb_tree_right_rotation(node->parent);
+        	                _avl_tree_right_rotation(node->parent);
         	                node = _root;
         	            }
         	        }

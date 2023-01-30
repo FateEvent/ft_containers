@@ -1,5 +1,5 @@
-#ifndef _RB_TREE_NODE_H
-# define _RB_TREE_NODE_H
+#ifndef _AVL_TREE_NODE_H
+# define _AVL_TREE_NODE_H
 
 # include <iostream>
 
@@ -10,24 +10,24 @@ namespace ft {
 	{
 		typedef T	value_type;
 		value_type	data;
-		std::string	color;
+		size_t		height;
 		int			leaf;
 		Node		*parent;
 		Node		*left;
 		Node		*right;
 
-		Node() : data(NULL), parent(NULL), left(NULL), right(NULL), color("red") {}
+		Node() : data(NULL), parent(NULL), left(NULL), right(NULL), height(1) {}
 
-		Node(T const &data, Node *parent, int leaf) : data(data), parent(parent), left(NULL), right(NULL), color("red"), leaf(leaf) {}
+		Node(T const &data, Node *parent, int leaf) : data(data), parent(parent), left(NULL), right(NULL), height(1), leaf(leaf) {}
 
-		Node(Node const &other) : data(other.data), parent(other.parent), left(other.left), right(other.right), color(other.color), leaf(other.leaf) {}
+		Node(Node const &other) : data(other.data), parent(other.parent), left(other.left), right(other.right), height(other.height), leaf(other.leaf) {}
 
 		Node &operator=(Node const &other)
 		{
 			if (this != &other)
 			{
 				this->data = other.data;
-				this->color = other.color;
+				this->height = other.height;
 				this->leaf = other.leaf;
 				this->parent = other.parent;
 				this->left = other.left;
@@ -41,7 +41,7 @@ namespace ft {
 		friend std::ostream	&operator<< (std::ostream &o, const Node &node) {
 			o << "key: " << node.data.first;
 			o << ", value: " << node.data.second;
-			o << ", color: " << node.color << std::endl;
+			o << ", height: " << node.height << std::endl;
 			return (o);
 		}
 	};
