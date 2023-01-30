@@ -34,13 +34,13 @@ namespace ft
 			**								Member functions							**
 			\****************************************************************************/
 
-			explicit RBTree(const value_compare &comp, const allocator_type &alloc) : _comp(comp), _node_ptr(newNullNode()), _alloc_pair(alloc), _size(0)
+			explicit RBTree(const value_compare &comp, const allocator_type &alloc) : _comp(comp), _node_ptr(new_nil_leaf()), _alloc_pair(alloc), _size(0)
 			{
 				_root = _node_ptr;
 				_node_ptr->color = "black";
 			}
 
-			RBTree(const RBTree &other) : _comp(other._comp), _node_ptr(newNullNode()), _root(_node_ptr), _alloc_pair(other._alloc_pair), _size(0)
+			RBTree(const RBTree &other) : _comp(other._comp), _node_ptr(new_nil_leaf()), _root(_node_ptr), _alloc_pair(other._alloc_pair), _size(0)
 			{
 				*this = other;
 			}
@@ -380,7 +380,7 @@ namespace ft
 			**										Node								**
 			\****************************************************************************/
 
-			tree_node	*newNullNode()
+			tree_node	*new_nil_leaf()
 			{
 				tree_node	*tmp = _alloc_node.allocate(1);
 				tmp->color = "black";
@@ -522,132 +522,132 @@ namespace ft
 				return (node->right);
 			}
 
-			void    _Rb_tree_rebalancing(tree_node *node)
-        	{
-            	while (node != _root && node->parent->color == "red")
-            	{
-            	    tree_node    *node_grandma = node->parent->parent;
-            	    if (node->parent == node_grandma->right)
-            	    {
-            	        tree_node    *uncleNode = node_grandma->left;
-            	        if (uncleNode->color == "red")
-            	        {
-            	            uncleNode->color = "black";
-            	            node->parent->color = "black";
-            	            node_grandma->color = "red";
-            	            node = node_grandma;
-            	        }
-            	        else
-            	        {
-            	            if (node == node->parent->left)
-            	            {
-            	                node = node->parent;
-            	                _Rb_tree_right_rotation(node);
-            	            }
-            	            node->parent->color = "black";
-            	            node_grandma->color = "red";
-            	            _Rb_tree_left_rotation(node_grandma);
-            	        }
-            	    }
-            	    else
-            	    {
-            	        tree_node    *node_uncle = node_grandma->right;
-            	        if (node_uncle->color == "red")
-            	        {
-            	            node_uncle->color = "black";
-            	            node->parent->color = "black";
-            	            node_grandma->color = "red";
-            	            node = node_grandma;
-            	        }
-            	        else
-            	        {
-            	            if (node == node->parent->right)
-            	            {
-            	                node = node->parent;
-            	                _Rb_tree_left_rotation(node);
-            	            }
-            	            node->parent->color = "black";
-            	            node_grandma->color = "red";
-            	            _Rb_tree_right_rotation(node_grandma);
-            	        }
-            	    }                
-            	}
-            	_root->color = "black";
+			void	_Rb_tree_rebalancing(tree_node *node)
+			{
+				while (node != _root && node->parent->color == "red")
+				{
+					tree_node	*node_grandpa = node->parent->parent;
+					if (node->parent == node_grandpa->right)
+					{
+						tree_node	*uncleNode = node_grandpa->left;
+						if (uncleNode->color == "red")
+						{
+							uncleNode->color = "black";
+							node->parent->color = "black";
+							node_grandpa->color = "red";
+							node = node_grandpa;
+						}
+						else
+						{
+							if (node == node->parent->left)
+							{
+								node = node->parent;
+								_Rb_tree_right_rotation(node);
+							}
+							node->parent->color = "black";
+							node_grandpa->color = "red";
+							_Rb_tree_left_rotation(node_grandpa);
+						}
+					}
+					else
+					{
+						tree_node	*node_uncle = node_grandpa->right;
+						if (node_uncle->color == "red")
+						{
+							node_uncle->color = "black";
+							node->parent->color = "black";
+							node_grandpa->color = "red";
+							node = node_grandpa;
+						}
+						else
+						{
+							if (node == node->parent->right)
+							{
+								node = node->parent;
+								_Rb_tree_left_rotation(node);
+							}
+							node->parent->color = "black";
+							node_grandpa->color = "red";
+							_Rb_tree_right_rotation(node_grandpa);
+						}
+					}                
+				}
+				_root->color = "black";
 			}
 
-        	void    _Rb_tree_recolouring(tree_node *node)
-        	{
-        	    while (node != _root && node->color == "black")
-        	    {
-        	        if( node == node->parent->left)
-        	        {
-        	            tree_node *sibling = node->parent->right;
-        	            if (sibling->color == "red")
-        	            {
-        	                _Rb_tree_swap_node_colour(sibling);
-        	                node->parent->color = "red"; 
-        	                _Rb_tree_left_rotation(node->parent);
-        	                sibling = node->parent->right;
-        	            }
-        	            if (sibling->left->color == "black" && sibling->right->color == "black")
-        	            {
-        	                sibling->color = "red";
-        	                node = node->parent;
-        	            }
-        	            else
-        	            {
-        	                if (sibling->right->color == "black")
-        	                {
-        	                    sibling->left->color = "black";
-        	                    sibling->color = "red";
-        	                    _Rb_tree_right_rotation(sibling);
-        	                    sibling = node->parent->right;
-        	                }
-        	                sibling->color = node->parent->color;
-        	                node->parent->color = "black";
-        	                sibling->right->color = "black";
-        	                _Rb_tree_left_rotation(node->parent);
-        	                node = _root;
-        	            }
-        	        }
-        	        else
-        	        {
-        	            tree_node *sibling = node->parent->left;
-        	            if (sibling->color == "red")
-        	            {
-        	                _Rb_tree_swap_node_colour(sibling);
-        	                node->parent->color = "red";
-        	                _Rb_tree_right_rotation(node->parent);
-        	                sibling = node->parent->left;
-        	            }
-        	            if (sibling->right->color == "black" && sibling->left->color == "black")
-        	            {
-        	                sibling->color = "red";
-        	                node = node->parent;
-        	            }
-        	            else 
-        	            {
-        	                if (sibling->left->color == "black")
-        	                {
-        	                    sibling->right->color = "black";
-        	                    sibling->color = "red";
-        	                    _Rb_tree_left_rotation(sibling);
-        	                    sibling = node->parent->left;
-        	                }
-        	                sibling->color = node->parent->color;
-        	                node->parent->color = "black";
-        	                sibling->left->color = "black";
-        	                _Rb_tree_right_rotation(node->parent);
-        	                node = _root;
-        	            }
-        	        }
-        	    }
-        	    node->color = "black";
-        	}
+			void	_Rb_tree_recolouring(tree_node *node)
+			{
+				while (node != _root && node->color == "black")
+				{
+					if( node == node->parent->left)
+					{
+						tree_node *sibling = node->parent->right;
+						if (sibling->color == "red")
+						{
+							_Rb_tree_swap_node_colour(sibling);
+							node->parent->color = "red"; 
+							_Rb_tree_left_rotation(node->parent);
+							sibling = node->parent->right;
+						}
+						if (sibling->left->color == "black" && sibling->right->color == "black")
+						{
+							sibling->color = "red";
+							node = node->parent;
+						}
+						else
+						{
+							if (sibling->right->color == "black")
+							{
+								sibling->left->color = "black";
+								sibling->color = "red";
+								_Rb_tree_right_rotation(sibling);
+								sibling = node->parent->right;
+							}
+							sibling->color = node->parent->color;
+							node->parent->color = "black";
+							sibling->right->color = "black";
+							_Rb_tree_left_rotation(node->parent);
+							node = _root;
+						}
+					}
+					else
+					{
+						tree_node *sibling = node->parent->left;
+						if (sibling->color == "red")
+						{
+							_Rb_tree_swap_node_colour(sibling);
+							node->parent->color = "red";
+							_Rb_tree_right_rotation(node->parent);
+							sibling = node->parent->left;
+						}
+						if (sibling->right->color == "black" && sibling->left->color == "black")
+						{
+							sibling->color = "red";
+							node = node->parent;
+						}
+						else
+						{
+							if (sibling->left->color == "black")
+							{
+								sibling->right->color = "black";
+								sibling->color = "red";
+								_Rb_tree_left_rotation(sibling);
+								sibling = node->parent->left;
+							}
+							sibling->color = node->parent->color;
+							node->parent->color = "black";
+							sibling->left->color = "black";
+							_Rb_tree_right_rotation(node->parent);
+							node = _root;
+						}
+					}
+				}
+				node->color = "black";
+			}
 
 		public:
 			/****************************************************************************\
-			**									Modifiers								**
+			**									Getters									**
 			\****************************************************************************/
 
 			tree_node	*root() const

@@ -1,6 +1,7 @@
 #ifndef _AVL_TREE_H
 # define _AVL_TREE_H
 
+# include <algorithm>
 # include "utilities.hpp"
 # include "pair.hpp"
 # include "_avl_tree_node.hpp"
@@ -34,13 +35,13 @@ namespace ft
 			**								Member functions							**
 			\****************************************************************************/
 
-			explicit AVLTree(const value_compare &comp, const allocator_type &alloc) : _comp(comp), _node_ptr(newNullNode()), _alloc_pair(alloc), _size(0)
+			explicit AVLTree(const value_compare &comp, const allocator_type &alloc) : _comp(comp), _node_ptr(new_nil_leaf()), _alloc_pair(alloc), _size(0)
 			{
 				_root = _node_ptr;
-				_node_ptr->color = "black";
+				_node_ptr->height = 0;
 			}
 
-			AVLTree(const AVLTree &other) : _comp(other._comp), _node_ptr(newNullNode()), _root(_node_ptr), _alloc_pair(other._alloc_pair), _size(0)
+			AVLTree(const AVLTree &other) : _comp(other._comp), _node_ptr(new_nil_leaf()), _root(_node_ptr), _alloc_pair(other._alloc_pair), _size(0)
 			{
 				*this = other;
 			}
@@ -167,7 +168,6 @@ namespace ft
 				if (_root == _node_ptr)
 				{
 					_root = new_node(data, _node_ptr, 2);
-					_root->color = "black";
 					return (ft::make_pair(iterator(_root), true));
 				}
 				while (node != _node_ptr)
@@ -187,7 +187,7 @@ namespace ft
 					parent->right = node;
 				node->left->parent = node;
 				node->right->parent = node;
-				_avl_tree_rebalancing(node);
+				_root = _avl_tree_rebalancing(_root);
 				return (ft::make_pair(iterator(node), true));
 			}
 
@@ -225,41 +225,7 @@ namespace ft
 
 			void	erase(tree_node *node)
 			{
-				tree_node	*search = node;
-				tree_node	*tmp;
-				std::string	color = node->color;
-
-				if (node->left == _node_ptr)
-				{
-					tmp = node->right;
-					_avl_tree_node_insertion(node, node->right);
-				}
-				else if (node->right == _node_ptr)
-				{
-					tmp = node->left;
-					_avl_tree_node_insertion(node, node->left);
-				}
-				else
-				{
-					search = get_leftmost_node(node->right);
-					color = search->color;
-					tmp = search->right;
-					if (search->parent == node)
-						tmp->parent = search;
-					else
-					{
-						_avl_tree_node_insertion(search, search->right);
-						search->right = node->right;
-						search->right->parent = search;
-					}
-					_avl_tree_node_insertion(node, search);
-					search->left = node->left;
-					search->left->parent = search;
-					search->color = node->color;
-				}
-				if (color == "black")
-					_avl_tree_recolouring(tmp);
-				delete_node(node);
+				_avl_tree_node_deletion(node->data);
 			}
 
 			size_type	erase(const value_type &data)
@@ -377,13 +343,13 @@ namespace ft
 
 		private:
 			/****************************************************************************\
-			**										Node								**
+			**									Node									**
 			\****************************************************************************/
 
-			tree_node	*newNullNode()
+			tree_node	*new_nil_leaf()
 			{
 				tree_node	*tmp = _alloc_node.allocate(1);
-				tmp->color = "black";
+				tmp->height = 0;
 				tmp->leaf = 0;
 				tmp->parent = NULL;
 				tmp->left = _node_ptr;
@@ -395,7 +361,7 @@ namespace ft
 			{
 				tree_node	*tmp = _alloc_node.allocate(1);
 				_alloc_pair.construct(&(tmp->data), data);
-				tmp->color = "red";
+				tmp->height = 1;
 				tmp->leaf = leaf;
 				tmp->parent = parent;
 				tmp->left = _node_ptr;
@@ -432,6 +398,29 @@ namespace ft
 				return (NULL);
 			}
 
+			tree_node	*_iterative_avl_tree_search(const value_type& val) const
+			{
+				tree_node	*current(root());
+				tree_node	*prev(root());
+
+				while (current)
+				{
+					if (val == current->data)
+						return (current);
+					else if (_comp(val, current->data))
+					{
+						prev = current;
+						current = current->left;
+					}
+					else
+					{
+						prev = current;
+						current = current->right;
+					}
+				}
+				return (prev);
+			}
+
 		private:
 			/****************************************************************************\
 			**																			**
@@ -453,47 +442,179 @@ namespace ft
 				return (node);
 			}
 
-			void	_avl_tree_left_rotation(tree_node *node)
+			void	_avl_tree_transplant(tree_node *u, tree_node *v)
 			{
-				tree_node	*tmp = node->right;
-				node->right = tmp->left;
-				if (tmp->left != _node_ptr)
-					tmp->left->parent = node;
-				tmp->parent = node->parent;
-				if (node->parent == _node_ptr)
-					_root = tmp;
-				else if (node->parent && node == node->parent->left)
-					node->parent->left = tmp;
+				if (u == NULL)
+					return ;
+				else if (u->parent == NULL)
+					set_root(v);
+				else if (u->parent->left == u)
+					u->parent->left = v;
 				else
-					node->parent->right = tmp;
-				tmp->left = node;
-				node->parent = tmp;
+					u->parent->right = v;
+				if (v != NULL)
+					v->parent = u->parent;
 			}
 
-			void	_avl_tree_right_rotation(tree_node *node)
+			tree_node	*_avl_tree_successor(tree_node *node)
 			{
-				tree_node	*tmp = node->left;
-				node->left = tmp->right;
-				if (tmp->right != _node_ptr)
-					tmp->right->parent = node;
-				tmp->parent = node->parent;
-				if (node->parent == _node_ptr)
-					_root = tmp;
-				else if (node->parent && node == node->parent->right)
-					node->parent->right = tmp;
+
+				if (node->right != NULL)
+				{
+					node = node->right;
+					while(node->left != NULL)
+						node = node->left;
+					return (node);
+				}
 				else
-					node->parent->left = tmp;
-				tmp->right = node;
-				node->parent = tmp;
+				{
+					while(node->parent != NULL && node->parent->right == node)
+						node = node->parent;
+					return (node->parent);
+				}
 			}
 
-			void	_avl_tree_swap_node_colour(tree_node *node)
+			void	_avl_tree_node_deletion(const value_type& val)
 			{
-				if (node->color == "red")
-					node->color = "black";
-				else
-					node->color = "red";
+				tree_node	*p(NULL);
+				tree_node	*parent(NULL);
+				tree_node	*succ(NULL);
+
+				p = search(root(), val);
+				if (!p)
+					return ;
+				--_size;
+				if (p->left == NULL && p->right == NULL)	// souci
+				{
+					parent = p->parent;
+					if (parent->left == p)
+						parent->left = NULL;
+					else
+					{
+						std::cout << "miao:" << p->data.first << std::endl;
+						parent->right = NULL;
+					}
+					std::cout << "miao:" << p->data.first << std::endl;
+					delete_node(p);
+					set_root(balance_tree(root()));
+					return ;
+				}
+				if (p->left == NULL)
+				{
+					parent = p->parent;
+					if (parent->left == p)
+						parent->left = p->right;
+					else
+						parent->right = p->right;
+					delete_node(p);
+					set_root(balance_tree(root()));
+					return ;
+				}
+				if (p->right == NULL)
+				{
+					parent = p->parent;
+					if (parent->left == p)
+						parent->left = p->left;
+					else
+						parent->right = p->left;
+					delete_node(p);	
+					set_root(balance_tree(root()));
+					return ;
+				}
+				succ = _avl_tree_successor(p);
+				if (p->right != succ)
+				{
+					_avl_tree_transplant(succ, succ->right);
+					succ->right = p->right;
+					succ->right->parent = succ;
+				}
+				_avl_tree_transplant(p, succ);
+				succ->left = p->left;
+				succ->left->parent = succ;
+				delete_node(p);
+				recomp_height(succ);
+				set_root(balance_tree(root()));
+				return ;
 			}
+
+			tree_node	*_avl_tree_rr_rotation(tree_node *root)
+			{
+				tree_node *temp = root->right;
+				root->right = temp->left;
+				if (temp->left != NULL)
+					temp->left->parent = root;
+				temp->left = root;
+				temp->parent = root->parent;
+				root->parent = temp;
+				if (temp->parent != NULL
+					&& _comp(root->data, temp->parent->data)) {
+					temp->parent->left = temp;
+				}
+				else {
+					if (temp->parent != NULL)
+						temp->parent->right = temp;
+				}
+				root = temp;
+				recomp_height(root->left);
+				recomp_height(root->right);
+				return (root);
+			}
+			
+			tree_node	*_avl_tree_rl_rotation(tree_node *root)
+			{
+				root->right = _avl_tree_ll_rotation(root->right);
+				return (_avl_tree_rr_rotation(root));
+			}
+
+			tree_node	*_avl_tree_lr_rotation(tree_node *root)
+			{
+				root->left = _avl_tree_rr_rotation(root->left);
+				return (_avl_tree_ll_rotation(root));
+			}
+
+			tree_node	*_avl_tree_ll_rotation(tree_node *root)
+			{
+				tree_node *temp = root->left;
+				root->left = temp->right;
+				if (temp->right != NULL)
+					temp->right->parent = root;
+				temp->right = root;
+				temp->parent = root->parent;
+				root->parent = temp;
+				if (temp->parent != NULL
+					&& _comp(root->data, temp->parent->data)) {
+					temp->parent->left = temp;
+				}
+				else {
+					if (temp->parent != NULL)
+						temp->parent->right = temp;
+				}
+				root = temp;
+				recomp_height(root->left);
+				recomp_height(root->right);
+				return (root);
+			}
+
+			static int	calculate_height(tree_node *temp)
+			{
+				int h = 0;
+				if (temp != NULL) {
+					int l_height = calculate_height(temp->left);
+					int r_height = calculate_height(temp->right);
+					int max_height = std::max(l_height, r_height);
+					h = max_height + 1;
+				}
+				return h;
+			}
+
+			int	diff(tree_node *temp)
+			{
+				int l_height = calculate_height(temp->left);
+				int r_height = calculate_height(temp->right);
+				int balance_factor = l_height - r_height;
+				return (balance_factor);
+			}
+
 
 			void	_avl_tree_node_insertion(tree_node *new_node, tree_node *node)
 			{
@@ -522,132 +643,46 @@ namespace ft
 				return (node->right);
 			}
 
-			void    _avl_tree_rebalancing(tree_node *node)
-        	{
-            	while (node != _root && node->parent->color == "red")
-            	{
-            	    tree_node    *node_grandma = node->parent->parent;
-            	    if (node->parent == node_grandma->right)
-            	    {
-            	        tree_node    *uncleNode = node_grandma->left;
-            	        if (uncleNode->color == "red")
-            	        {
-            	            uncleNode->color = "black";
-            	            node->parent->color = "black";
-            	            node_grandma->color = "red";
-            	            node = node_grandma;
-            	        }
-            	        else
-            	        {
-            	            if (node == node->parent->left)
-            	            {
-            	                node = node->parent;
-            	                _avl_tree_right_rotation(node);
-            	            }
-            	            node->parent->color = "black";
-            	            node_grandma->color = "red";
-            	            _avl_tree_left_rotation(node_grandma);
-            	        }
-            	    }
-            	    else
-            	    {
-            	        tree_node    *node_uncle = node_grandma->right;
-            	        if (node_uncle->color == "red")
-            	        {
-            	            node_uncle->color = "black";
-            	            node->parent->color = "black";
-            	            node_grandma->color = "red";
-            	            node = node_grandma;
-            	        }
-            	        else
-            	        {
-            	            if (node == node->parent->right)
-            	            {
-            	                node = node->parent;
-            	                _avl_tree_left_rotation(node);
-            	            }
-            	            node->parent->color = "black";
-            	            node_grandma->color = "red";
-            	            _avl_tree_right_rotation(node_grandma);
-            	        }
-            	    }                
-            	}
-            	_root->color = "black";
+			tree_node	*balance(tree_node *temp)
+			{
+				int balance_factor = diff(temp);
+				if (balance_factor > 1) {
+					if (diff(temp->left) > 0)
+						temp = _avl_tree_ll_rotation(temp);
+					else
+						temp = _avl_tree_lr_rotation(temp);
+				}
+				else if (balance_factor < -1) {
+					if (diff(temp->right) > 0)
+						temp = _avl_tree_rl_rotation(temp);
+					else
+						temp = _avl_tree_rr_rotation(temp);
+				}
+				return (temp);
 			}
 
-        	void    _avl_tree_recolouring(tree_node *node)
-        	{
-        	    while (node != _root && node->color == "black")
-        	    {
-        	        if( node == node->parent->left)
-        	        {
-        	            tree_node *sibling = node->parent->right;
-        	            if (sibling->color == "red")
-        	            {
-        	                _avl_tree_swap_node_colour(sibling);
-        	                node->parent->color = "red"; 
-        	                _avl_tree_left_rotation(node->parent);
-        	                sibling = node->parent->right;
-        	            }
-        	            if (sibling->left->color == "black" && sibling->right->color == "black")
-        	            {
-        	                sibling->color = "red";
-        	                node = node->parent;
-        	            }
-        	            else
-        	            {
-        	                if (sibling->right->color == "black")
-        	                {
-        	                    sibling->left->color = "black";
-        	                    sibling->color = "red";
-        	                    _avl_tree_right_rotation(sibling);
-        	                    sibling = node->parent->right;
-        	                }
-        	                sibling->color = node->parent->color;
-        	                node->parent->color = "black";
-        	                sibling->right->color = "black";
-        	                _avl_tree_left_rotation(node->parent);
-        	                node = _root;
-        	            }
-        	        }
-        	        else
-        	        {
-        	            tree_node *sibling = node->parent->left;
-        	            if (sibling->color == "red")
-        	            {
-        	                _avl_tree_swap_node_colour(sibling);
-        	                node->parent->color = "red";
-        	                _avl_tree_right_rotation(node->parent);
-        	                sibling = node->parent->left;
-        	            }
-        	            if (sibling->right->color == "black" && sibling->left->color == "black")
-        	            {
-        	                sibling->color = "red";
-        	                node = node->parent;
-        	            }
-        	            else 
-        	            {
-        	                if (sibling->left->color == "black")
-        	                {
-        	                    sibling->right->color = "black";
-        	                    sibling->color = "red";
-        	                    _avl_tree_left_rotation(sibling);
-        	                    sibling = node->parent->left;
-        	                }
-        	                sibling->color = node->parent->color;
-        	                node->parent->color = "black";
-        	                sibling->left->color = "black";
-        	                _avl_tree_right_rotation(node->parent);
-        	                node = _root;
-        	            }
-        	        }
-        	    }
-        	    node->color = "black";
-        	}
+			tree_node	*_avl_tree_rebalancing(tree_node *root)
+			{
+				if (root == _node_ptr)
+					return (NULL);
+				root->left = _avl_tree_rebalancing(root->left);
+				root->right = _avl_tree_rebalancing(root->right);
+				root = balance(root);
+				return (root);
+			}
+
+			static void	recomp_height(tree_node *_x)
+			{
+				while (_x != NULL)
+				{
+					_x->_height = calculate_height(_x);
+					_x = _x->parent;
+				}
+			}
 
 		public:
 			/****************************************************************************\
-			**									Modifiers								**
+			**									Getters									**
 			\****************************************************************************/
 
 			tree_node	*root() const
