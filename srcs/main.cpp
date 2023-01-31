@@ -217,7 +217,12 @@ int main(int argc, char** argv) {
 
 	// --> My tests <-- //
 	std::cout << "// --> My tests <-- //" << std::endl << std::endl;
-/*
+
+	timeval	start;
+	gettimeofday(&start, NULL);
+
+	std::cout << "// --> Vector <-- //" << std::endl << std::endl;
+
 	MutantStack<char> iterable_stack;
 	for (char letter = 'a'; letter <= 'z'; letter++)
 		iterable_stack.push(letter);
@@ -301,8 +306,9 @@ int main(int argc, char** argv) {
 	std::cout << "What the deck contains now:" << std::endl;
 	for (ft::vector<char>::iterator it = newDeck.begin(); it != newDeck.end(); it++)
 		std::cout << *it << std::endl;
-*/
-/*
+
+	std::cout << "// --> Map <-- //" << std::endl << std::endl;
+
 	ft::pair<char, int> b = ft::make_pair('b', 5);
 	ft::pair<char, int> c = ft::make_pair('c', 3);
 	ft::pair<char, int> d = ft::make_pair('d', 15);
@@ -323,10 +329,6 @@ int main(int argc, char** argv) {
 	tree.insert(tree.begin(), l);
 	std::cout << "tree.begin()->first" << std::endl; 
 	std::cout << tree.begin()->first << std::endl;
-	if (tree.begin().node_base()->right())
-		std::cout << tree.begin().node_base()->right()->data().first << std::endl;
-	if (tree.begin().node_base()->left())
-		std::cout << tree.begin().node_base()->left()->data().first << std::endl;
 
 	std::cout << std::endl;
 
@@ -357,9 +359,6 @@ int main(int argc, char** argv) {
 	}
 	std::cout << tree['a'] << std::endl;
 	std::cout << tree['r'] << std::endl;
-*/
-	timeval	start;
-	gettimeofday(&start, NULL);
 
 	std::list<T3> lst;
 	unsigned int lst_size = 10;
@@ -373,10 +372,6 @@ int main(int argc, char** argv) {
 	ft_const_bound(mp, 5);
 	ft_const_bound(mp, 10);
 	ft_const_bound(mp, 50);
-
-	for (int i = 0; i < 50000; i++)
-		std::cout << "ghgh" << std::endl;
-	printSize(mp);
 
 	mp.lower_bound(3)->second = 404;
 	mp.upper_bound(7)->second = 842;

@@ -90,9 +90,9 @@ namespace ft
 
 		mapped_type&	at(const key_type& k)
 		{
-			tree_node	*found = _tree.search(_tree.root(), k);
+			tree_node	*found = _tree.search(_tree.root(), ft::make_pair(k, mapped_type()));
 			if (found)
-				return (found->data().second);
+				return (found->data.second);
 			throw(std::out_of_range("map"));
 		}
 
@@ -266,7 +266,7 @@ namespace ft
 		value_compare	value_comp() const { return value_compare(_key_comp); }
 
 	private :
-		value_type	get_value_type(const Key &key) const
+		value_type	get_value_type(const key_type &key) const
 		{
 			return (ft::make_pair(key, mapped_type()));
 		}

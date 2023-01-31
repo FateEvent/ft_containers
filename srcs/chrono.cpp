@@ -34,7 +34,7 @@ void	timerDisplay(struct timeval *start, struct timeval *end)
 	std::cout << "The operation took " << time_diff(start, end) << " nanoseconds to complete." << std::endl;
 }
 
-long	time_diff(struct timeval *start, struct timeval *end)
+long double	time_diff(struct timeval *start, struct timeval *end)
 {
 	long double	sec;
 	long double	usec;
@@ -44,11 +44,11 @@ long	time_diff(struct timeval *start, struct timeval *end)
 	return (sec * 1000 + usec / 1000);
 }
 
-long	get_the_time()
+long double	get_the_time()
 {
 	struct timeval	now;
-	long			sec;
-	long			usec;
+	long double		sec;
+	long double		usec;
 
 	gettimeofday(&now, NULL);
 	sec = now.tv_sec;

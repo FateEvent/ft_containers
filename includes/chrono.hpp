@@ -16,10 +16,10 @@ typedef struct s_time
 	char		seconds[2];
 }				T_time;
 
-void	displayClock(T_time onceUponATime, std::string header);
-T_time	getTimeStamp();
-void	timerDisplay(struct timeval *start, struct timeval *end);
-long	time_diff(struct timeval *start, struct timeval *end);
-long	get_the_time(void);
+void		displayClock(T_time onceUponATime, std::string header);
+T_time		getTimeStamp();
+void		timerDisplay(struct timeval *start, struct timeval *end);
+long double	time_diff(struct timeval *start, struct timeval *end);
+long double	get_the_time(void);
 
 #endif

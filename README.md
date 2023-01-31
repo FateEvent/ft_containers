@@ -58,3 +58,4 @@ More specifically about red-black trees:
 For a timer in C++:
 * <https://linuxhint.com/timer-function-cpp>;
 * <https://learnenglishkids.britishcouncil.org/how-videos/how-tell-the-time>;
+* <https://stackoverflow.com/questions/12340824/how-to-compare-performance-of-two-pieces-of-codes>;
