@@ -47,22 +47,14 @@ Generally about binary search trees (BST):
 * <https://en.wikipedia.org/wiki/Tree_traversal>;
 * <https://www.geeksforgeeks.org/insert-a-node-in-binary-search-tree-iteratively>;
 
-More specifically about AVL trees:
-* __L'algorithmique__, pp. 700... .
-* <https://en.wikipedia.org/wiki/AVL_tree>;
-* <https://www.geeksforgeeks.org/implementation-of-avl-tree-using-graphics-in-cpp>;
-* <https://ebrary.net/25925/computer_science/tree_iterative_insert>;
-* <https://stackoverflow.com/questions/66536347/delete-function-binary-search-tree-bst-with-parent-passing-the-tree-pointer-as-a>;
-* <http://www.cs.emory.edu/~cheung/Courses/253/Syllabus/Trees/AVL-delete.html>;
-* <https://stackoverflow.com/questions/28708526/maintaining-parent-nodes-during-avl-rotation-in-c>;
-* <https://www.geeksforgeeks.org/avl-trees-containing-a-parent-node-pointer>;
-* <https://www.codingninjas.com/codestudio/library/insertion-searching-and-deletion-in-avl-trees-containing-a-parent-node-pointer>;
-* <https://github.com/jgreitemann/avl-tree>.
-
-And red-black trees:
+More specifically about red-black trees:
 * <https://en.wikipedia.org/wiki/Red%E2%80%93black_tree>;
 * <https://www.cs.usfca.edu/~galles/visualization/RedBlack.html>;
 * <https://www.geeksforgeeks.org/introduction-to-red-black-tree>;
 * <https://www.geeksforgeeks.org/insertion-in-red-black-tree>;
 * <https://www.cs.auckland.ac.nz/software/AlgAnim/red_black.html>;
 * <https://www.geeksforgeeks.org/deletion-in-red-black-tree>.
+
+For a timer in C++:
+* <https://linuxhint.com/timer-function-cpp>;
+* <https://learnenglishkids.britishcouncil.org/how-videos/how-tell-the-time>;

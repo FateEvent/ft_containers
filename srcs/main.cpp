@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include "chrono.hpp"
 #if 0 //CREATE A REAL STL EXAMPLE
 	#include <map>
 	#include <stack>
@@ -8,7 +9,6 @@
 	namespace ft = std;
 #else
 	#include <map.hpp>
-	#include <set.hpp>
 	#include <stack.hpp>
 	#include <vector.hpp>
 #endif
@@ -313,9 +313,7 @@ int main(int argc, char** argv) {
 
 	tree.insert(ft::make_pair('a', 1));
 	tree.insert(ft::make_pair('c', 4));
-	tree.print_tree();
 	tree.insert(b);
-	tree.print_tree();
 	std::cout << std::endl;
 	tree.insert(c);
 	tree.insert(d);
@@ -330,18 +328,11 @@ int main(int argc, char** argv) {
 	if (tree.begin().node_base()->left())
 		std::cout << tree.begin().node_base()->left()->data().first << std::endl;
 
-
-	tree.level_order_traversal(tree.protoroot(), tree.print_node);
-
 	std::cout << std::endl;
 
 	tree.erase('c');
-	tree.print_tree();
 	tree.erase('d');
-	std::cout << tree.root()->height() << std::endl;
-	tree.print_tree();
 	tree.erase('f');
-	tree.print_tree();
 
 	std::cout << (tree.find('c'))->first << std::endl;
 	std::cout << (tree.find('a'))->first << std::endl;
@@ -367,6 +358,9 @@ int main(int argc, char** argv) {
 	std::cout << tree['a'] << std::endl;
 	std::cout << tree['r'] << std::endl;
 */
+	timeval	start;
+	gettimeofday(&start, NULL);
+
 	std::list<T3> lst;
 	unsigned int lst_size = 10;
 	for (unsigned int i = 0; i < lst_size; ++i)
@@ -380,6 +374,8 @@ int main(int argc, char** argv) {
 	ft_const_bound(mp, 10);
 	ft_const_bound(mp, 50);
 
+	for (int i = 0; i < 50000; i++)
+		std::cout << "ghgh" << std::endl;
 	printSize(mp);
 
 	mp.lower_bound(3)->second = 404;
@@ -388,63 +384,9 @@ int main(int argc, char** argv) {
 	ft_bound(mp, 7);
 
 	printSize(mp);
-/*
-	ft::pair<char, int> b = ft::make_pair('b', 5);
-	ft::pair<char, int> c = ft::make_pair('c', 3);
-	ft::pair<char, int> d = ft::make_pair('d', 15);
-	ft::pair<char, int> f = ft::make_pair('f', 6);
-	ft::pair<char, int> l = ft::make_pair('l', -1);
 
-	ft::set<char, int> tree;
+	timeval	end;
+	gettimeofday(&end, NULL);
 
-	tree.insert(tree.begin(), ft::make_pair('a', 1));
-	std::cout << (tree.begin())->first << std::endl;
-	tree.insert(ft::make_pair('c', 4));
-	std::cout << (tree.begin())->first << std::endl;
-	tree.print_tree();
-	tree.insert(b);
-	tree.print_tree();
-	std::cout << std::endl;
-	tree.insert(c);
-	tree.insert(d);
-	tree.insert(f);
-	tree.insert(l);
-
-	tree.print_tree();
-//	tree.level_order_traversal(tree.protoroot(), tree.print_node);
-
-	std::cout << std::endl;
-
-	tree.erase('c');
-	tree.print_tree();
-	tree.erase('d');
-	std::cout << tree.root()->height() << std::endl;
-	tree.print_tree();
-	tree.erase('f');
-	tree.print_tree();
-
-	std::cout << (tree.find('c'))->first << std::endl;
-	std::cout << (tree.find('a'))->first << std::endl;
-
-	ft::set<char, int>::iterator it = tree.begin();
-	std::cout << it->first << std::endl;
-	std::cout << &it << std::endl;
-	it++;
-	it++;
-	std::cout << it->first << std::endl;
-	it--;
-	std::cout << it->first << std::endl;
-	it--;
-	std::cout << it->first << std::endl;
-
-	std::cout << tree.at('a') << std::endl;
-	try {
-		std::cout << tree.at('c') << std::endl;
-	}
-	catch (ContainerException& e){
-		std::cout << e.what() << std::endl;
-	}
-	std::cout << tree['a'] << std::endl;
-	std::cout << tree['r'] << std::endl;
-*/
+	timerDisplay(&start, &end);
 }
