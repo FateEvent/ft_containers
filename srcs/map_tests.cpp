@@ -114,27 +114,27 @@ int main() {
 	std::cout << "tree.begin()->first" << std::endl; 
 	std::cout << tree.begin()->first << std::endl;
 
-	std::cout << std::endl;
+	std::cout << "miao" << std::endl;
 
 	tree.erase('c');
 	tree.erase('d');
 	tree.erase('f');
 
-	std::cout << (tree.find('c'))->first << std::endl;
-	std::cout << (tree.find('a'))->first << std::endl;
+	ft::map<char, int>::iterator	it = tree.find('c');
+	if (it != tree.end())
+		std::cout << it->first << std::endl;
+	
+	it = tree.find('a');
+	if (it != tree.end())
+		std::cout << it->first << std::endl;
+	
+	it = tree.find('a');
+	if (it != tree.end())
+		std::cout << it->first << std::endl;
 
 	ft::map<char, int> lemontree(tree);
 
-	ft::map<char, int>::iterator it = tree.begin();
-	std::cout << it->first << std::endl;
-	std::cout << &it << std::endl;
-	it++;
-	it++;
-	std::cout << it->first << std::endl;
-	it--;
-	std::cout << it->first << std::endl;
-	it--;
-	std::cout << it->first << std::endl;
+	print_tree(lemontree);
 
 	std::cout << tree.at('a') << std::endl;
 	try {
@@ -146,7 +146,7 @@ int main() {
 	std::cout << tree['a'] << std::endl;
 	std::cout << tree['r'] << std::endl;
 
-	ft::map<int, std::string> mp;
+	ft::map<int, std::string>	mp;
 
 	mp.insert(ft::make_pair<int, std::string>(1, "American Elm"));
 	mp.insert(ft::make_pair<int, std::string>(15, "Yellow Birch"));
