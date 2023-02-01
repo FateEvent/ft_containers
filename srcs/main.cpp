@@ -176,8 +176,8 @@ int main(int argc, char** argv) {
 	ft::stack<int> stack_int;
 	ft::vector<Buffer> vector_buffer;
 	ft::stack<Buffer, std::vector<Buffer> > stack_deq_buffer;
-//	ft::map<int, int> map_int;
-/*
+	ft::map<int, int> map_int;
+
 	for (int i = 0; i < COUNT; i++)
 		vector_buffer.push_back(Buffer());
 
@@ -201,8 +201,8 @@ int main(int argc, char** argv) {
 	{
 		//NORMAL ! :P
 	}
-*/
-/*	for (int i = 0; i < COUNT; ++i)
+
+	for (int i = 0; i < COUNT; ++i)
 		map_int.insert(ft::make_pair(rand(), rand()));
 
 	int sum = 0;
@@ -213,9 +213,8 @@ int main(int argc, char** argv) {
 	}
 	std::cout << "should be constant with the same seed: " << sum << std::endl;
 		ft::map<int, int> copy = map_int;
-*/
 
-	// --> My tests <-- //
+
 	std::cout << "// --> My tests <-- //" << std::endl << std::endl;
 
 	timeval	start;
