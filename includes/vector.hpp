@@ -30,6 +30,10 @@ namespace ft
 		typedef ft::reverse_iterator<const_iterator>					const_reverse_iterator;
 
 	public:
+		/****************************************************************************\
+		**								Member functions							**
+		\****************************************************************************/
+
 		vector() : _size(), _capacity(), _v(NULL) {}
 
 		explicit vector( const Allocator& alloc ) : _size(), _capacity(), _alloc(alloc), _v(NULL) {}
@@ -92,6 +96,73 @@ namespace ft
 			return (*this);
 		}
 
+		allocator_type	get_allocator() const { return _alloc; }
+
+		/****************************************************************************\
+		**								Element access								**
+		\****************************************************************************/
+
+		reference	at( size_type pos ) {
+			if (pos >= size())
+				throw (_out_of_range(pos));
+			else
+				return (_v[pos]);
+		};
+		
+		const_reference	at( size_type pos ) const {
+			if (pos >= size())
+				throw (_out_of_range(pos));
+			else
+				return (_v[pos]);
+		};
+
+		reference		operator[]( size_type pos ) { return _v[pos]; };
+
+		const_reference	operator[]( size_type pos ) const { return _v[pos]; }
+
+		reference front() { return (*begin()); }
+
+		const_reference front() const { return (*begin()); }
+
+		reference back() { return *(end() - 1); };
+
+		const_reference back() const { return *(end() - 1); };
+
+		value_type*	data() { return (size() ? _v : NULL); };
+
+		const value_type*	data() const { return (size() ? _v : NULL); };
+
+		/****************************************************************************\
+		**									Iterators								**
+		\****************************************************************************/
+
+		iterator				begin()	{ return (iterator(_v)); }
+		const_iterator			begin() const { return (const_iterator(_v)); }
+		iterator				end() { return (iterator(_v + size())); }
+		const_iterator			end() const { return (const_iterator(_v + size())); }
+
+		reverse_iterator		rbegin() { return (reverse_iterator(&_v[_size])); }
+		const_reverse_iterator	rbegin() const { return (const_reverse_iterator(&_v[_size])); }
+		reverse_iterator		rend() { return (reverse_iterator(begin())); }
+		const_reverse_iterator	rend() const { return (const_reverse_iterator(begin())); }
+
+		/****************************************************************************\
+		**									Capacity								**
+		\****************************************************************************/
+
+		bool empty() const { return (!size()); }
+
+		size_type	size() const { return (_size); }
+
+		size_type	max_size() const { return std::min<size_type>(_alloc.max_size(),
+								std::numeric_limits<difference_type>::max()); }
+		
+		size_type	capacity() const { return _capacity; }
+
+		/****************************************************************************\
+		**									Modifiers								**
+		\****************************************************************************/
+
 		void	assign( size_type count, const T& value ) {
 			clear();
 			if (capacity() < count)
@@ -119,54 +190,6 @@ namespace ft
 				_alloc.construct(&_v[_size++], *first);
 		}
 
-		allocator_type	get_allocator() const { return _alloc; }
-
-		reference	at( size_type pos ) {
-			if (pos >= size())
-				throw (_out_of_range(pos));
-			else
-				return (_v[pos]);
-		};
-		
-		const_reference	at( size_type pos ) const {
-			if (pos >= size())
-				throw (_out_of_range(pos));
-			else
-				return (_v[pos]);
-		};
-
-		reference		operator[]( size_type pos ) { return _v[pos]; };
-		const_reference	operator[]( size_type pos ) const { return _v[pos]; }
-
-		reference front() { return (*begin()); }
-
-		const_reference front() const { return (*begin()); }
-
-		reference back() { return *(end() - 1); };
-
-		const_reference back() const { return *(end() - 1); };
-
-		value_type*	data() { return (size() ? _v : NULL); };
-
-		const value_type*	data() const { return (size() ? _v : NULL); };
-
-		iterator				begin()	{ return (iterator(_v)); }
-		const_iterator			begin() const { return (const_iterator(_v)); }
-		iterator				end() { return (iterator(_v + size())); }
-		const_iterator			end() const { return (const_iterator(_v + size())); }
-
-		reverse_iterator		rbegin() { return (reverse_iterator(&_v[_size])); }
-		const_reverse_iterator	rbegin() const { return (const_reverse_iterator(&_v[_size])); }
-		reverse_iterator		rend() { return (reverse_iterator(begin())); }
-		const_reverse_iterator	rend() const { return (const_reverse_iterator(begin())); }
-		
-		bool empty() const { return (!size()); }
-
-		size_type	size() const { return (_size); }
-
-		size_type	max_size() const { return std::min<size_type>(_alloc.max_size(),
-								std::numeric_limits<difference_type>::max()); }
-
 		void	reserve(size_type n)
 		{
 			if (n > max_size())
@@ -184,8 +207,6 @@ namespace ft
 				_v = tmp;
 			}
 		}
-
-		size_type	capacity() const { return _capacity; }
 
 		void	clear() {
 			for (iterator p = begin(); p != end(); ++p)
@@ -382,10 +403,6 @@ namespace ft
 		}
 
 	private:
-		size_type		_size;
-		size_type		_capacity;
-		allocator_type	_alloc;
-		pointer			_v;
 
 		void	_extend()
 		{
@@ -416,6 +433,11 @@ namespace ft
 			" >= this->size() (which is " << size() << ")";
 			return (std::out_of_range(ss.str()));
 		};
+
+		size_type		_size;
+		size_type		_capacity;
+		allocator_type	_alloc;
+		pointer			_v;
 	};
 
 	template<class T, class Alloc>

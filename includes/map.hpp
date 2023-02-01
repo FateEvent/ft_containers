@@ -266,12 +266,13 @@ namespace ft
 		value_compare	value_comp() const { return value_compare(_key_comp); }
 
 	private :
+
 		value_type	get_value_type(const key_type &key) const
 		{
 			return (ft::make_pair(key, mapped_type()));
 		}
 
-		Rb_tree		_tree;
+		Rb_tree			_tree;
 		allocator_type	_alloc_pair;
 		key_compare		_key_comp;
 	};
