@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <stdlib.h>
+#include <vector>
 #include <stack.hpp>
 #include <vector.hpp>
 
