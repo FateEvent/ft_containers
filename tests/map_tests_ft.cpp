@@ -1,18 +1,7 @@
 #include <iostream>
 #include <string>
-#include <vector>
-#include <list>
 #include <stdlib.h>
-#if 0 //CREATE A REAL STL EXAMPLE
-	#include <map>
-	#include <stack>
-	#include <vector>
-	namespace ft = std;
-#else
-	#include <map.hpp>
-	#include <stack.hpp>
-	#include <vector.hpp>
-#endif
+#include <map.hpp>
 
 template <typename T>
 std::string	print_pair(const T &iterator, bool nl = true, std::ostream &o = std::cout)
@@ -36,19 +25,6 @@ void	print_tree(T_MAP const &mp, bool print_content = 1)
 			std::cout << "- " << print_pair(it, false) << std::endl;
 	}
 	std::cout << "###############################################" << std::endl;
-}
-
-template <typename T1, typename T2>
-void	reverse_print(ft::map<T1, T2> &mp)
-{
-	typename ft::map<T1, T2>::iterator it = mp.end(), ite = mp.begin();
-
-	std::cout << "reverse_print:" << std::endl;
-	while (it != ite) {
-		it--;
-		std::cout << "-> " << print_pair(it, false) << std::endl;
-	}
-	std::cout << "_______________________________________________" << std::endl;
 }
 
 #define _pair ft::pair
@@ -114,8 +90,6 @@ int main() {
 	std::cout << "tree.begin()->first" << std::endl; 
 	std::cout << tree.begin()->first << std::endl;
 
-	std::cout << "miao" << std::endl;
-
 	tree.erase('c');
 	tree.erase('d');
 	tree.erase('f');
@@ -175,5 +149,11 @@ int main() {
 	ft_bound(cherrytree, 5);
 	ft_bound(cherrytree, 7);
 
+	cherrytree.erase(cherrytree.begin(), cherrytree.end());
 	print_tree(cherrytree);
+	std::cout << cherrytree.empty() << std::endl;
+
+	mp.clear();
+	print_tree(mp);
+	std::cout << mp.empty() << std::endl;
 }

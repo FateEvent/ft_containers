@@ -197,7 +197,7 @@ namespace ft
 			return (_tree.find(ft::make_pair(key, mapped_type())));
 		}
 
-		const_iterator	find (const key_type& key) const {
+		const_iterator	find(const key_type& key) const {
 			return (_tree.find(ft::make_pair(key, mapped_type())));
 		}
 

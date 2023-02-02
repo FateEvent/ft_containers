@@ -506,22 +506,6 @@ namespace ft
 				node->parent = new_node->parent;
 			}
 
-			tree_node	*replace_node(tree_node *node)
-			{
-				if (!node || (!node->left && !node->right))
-					return (NULL);
-				if (node->left && node->right)
-				{
-					tree_node	*tmp = node->right;
-					while (tmp->left != NULL)
-						tmp = tmp->left;
-					return (tmp);
-				}
-				if (node->right)
-					return (node->left);
-				return (node->right);
-			}
-
 			void	_Rb_tree_rebalancing(tree_node *node)
 			{
 				while (node != _root && node->parent->color == "red")
