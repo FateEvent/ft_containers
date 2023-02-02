@@ -9,7 +9,7 @@ CPP_EXTENSION = .cpp
 #		눈_눈			SOURCES			눈_눈
 
 MAIN_PATH	=	
-MAIN_FILES	=	vector_tests_ft #stack_tests_ft #main chrono
+MAIN_FILES	=	vector_tests_std #stack_tests_ft #main chrono
 SRCS_FILES	+=	$(addprefix $(MAIN_PATH), $(MAIN_FILES))
 
 SRCS_FILES_EXT	+=	$(addsuffix $(CPP_EXTENSION), $(SRCS_FILES))
