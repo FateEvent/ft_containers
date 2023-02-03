@@ -93,7 +93,7 @@ namespace ft
 			tree_node	*found = _tree.search(_tree.root(), ft::make_pair(k, mapped_type()));
 			if (found)
 				return (found->data.second);
-			throw(std::out_of_range("map"));
+			throw(std::out_of_range("map::at:  key not found"));
 		}
 
 		const mapped_type&	at(const key_type& k) const
