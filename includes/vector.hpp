@@ -48,14 +48,8 @@ namespace ft
 
 		template <class InputIt>
 		vector( InputIt first, InputIt last, const Allocator& alloc = Allocator(),
-				typename ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::value* = 0 ) : _alloc(alloc), _v(NULL)
+				typename ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::value* = 0 ) : _size(), _capacity(), _alloc(alloc), _v(NULL)
 		{
-			size_type	count(0);
-
-			for (InputIt p = first; p != last; ++p)
-				count++;
-			_size = _capacity = count;
-			_v = _alloc.allocate(capacity());
 			assign(first, last);
 		}
 
@@ -164,6 +158,8 @@ namespace ft
 		\****************************************************************************/
 
 		void	assign( size_type count, const T& value ) {
+			if (count < 0)
+                throw std::length_error("Vector::  assign");
 			clear();
 			if (capacity() < count)
 				reserve(count);
@@ -179,6 +175,8 @@ namespace ft
 
 			for (InputIt p = first; p != last; ++p)
 				pos++;
+			if (pos < 0)
+                throw std::length_error("Vector::  assign");
 			clear();
 			if (pos > capacity())
 			{
@@ -193,17 +191,17 @@ namespace ft
 		void	reserve(size_type n)
 		{
 			if (n > max_size())
-				throw std::length_error("length_error");
+				throw std::length_error("vector::  reserve");
 			if (n != 0 && n > _capacity)
 			{
 				pointer	tmp = _alloc.allocate(n);
 
-				_capacity = n;
-				for (size_t i = 0; i < _size; i++)
-					_alloc.construct(&tmp[i], _v[i]);
-				for (size_t i = 0; i < _size; i++)
-					_alloc.destroy(&_v[i]);
+				for(size_type i = 0; i < _size; i++)
+                    _alloc.construct(&tmp[i], _v[i]);
+                for(size_type i = 0; i < _size; i++)
+                    _alloc.destroy(&_v[i]);
 				_alloc.deallocate(_v, _capacity);
+				_capacity = n;
 				_v = tmp;
 			}
 		}
@@ -230,7 +228,7 @@ namespace ft
 
 			if (capacity() == 0)
 				_extend();
-			if (size() + count >= capacity())
+			if (size() + count > capacity())
 				reserve(size() + count);
 			vector temp(begin() + dist, end());
 
@@ -256,7 +254,7 @@ namespace ft
 
 			if (capacity() == 0)
 				_extend();
-			if (size() + count >= capacity())
+			if (size() + count > capacity())
 				reserve(size() + count);
 			vector		temp(this->begin() + dist, this->end());
 
@@ -304,10 +302,10 @@ namespace ft
 
 		void	push_back(const value_type& value)
 		{
-			if (capacity() == 0 || size() == capacity())
-				_extend();
-			_alloc.construct(&*(_v + size()), value);
-			++_size;
+			if (_size == _capacity)
+				resize(_size + 1, value);
+			else
+				_alloc.construct(&_v[_size++], value);
 		}
 
 		void	pop_back()
@@ -349,49 +347,30 @@ namespace ft
 			}
 		}
 
-		void	resize(size_type count, value_type val = value_type())
+		void	resize(size_type n, value_type val = value_type())
 		{
-			if (count <= max_size())
+			if (n < size())
 			{
-				if (count > capacity() && count < capacity() * 2)
-				{
-					pointer	temp = _alloc.allocate(capacity() * 2);
-					iterator p = temp; 
-
-					std::copy(begin(), end(), p);
-					for(iterator q = p + size(); q < p + count; ++q)
-						_alloc.construct(&*q, val);
-					_v = temp;
-					_size = count;
-					_capacity *= 2;
-				}
-				else if (count > capacity() * 2)
-				{
-					pointer	temp = _alloc.allocate(count);
-					iterator p = temp;
-
-					std::copy(begin(), end(), p);
-					for(iterator q = p + size(); q < p + count; ++q)
-						_alloc.construct(&*q, val);
-					_alloc.deallocate(_v, capacity());
-					_v = temp;
-					_size = _capacity = count;
-				}
-				else if (count > size())
-				{
-					for (iterator p = end(); p < _v + count; ++p)
-						_alloc.construct(&*p, val);
-					_size = count;
-				}
-				else if (count < size())
-				{
-					for (iterator p = _v + count; p < _v + size(); ++p)
-						_alloc.destroy(&*p);
-					_size = count;
-				}
+				while (n != _size)
+					pop_back();
 			}
 			else
-				throw (_out_of_range(count));
+			{
+				if (n > _capacity)
+				{
+					if (_capacity == 0)
+						reserve(n);
+					else if (n > _capacity * 2)
+						reserve(n);
+					else
+						reserve(_capacity * 2);
+				}
+				while (n != _size)
+				{
+					_alloc.construct(&_v[_size], val);
+					_size++;
+				}
+			}
 		}
 
 		void	swap(vector& other)
