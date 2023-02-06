@@ -197,9 +197,10 @@ namespace ft
 				pointer	tmp = _alloc.allocate(n);
 
 				for(size_type i = 0; i < _size; i++)
+				{
                     _alloc.construct(&tmp[i], _v[i]);
-                for(size_type i = 0; i < _size; i++)
                     _alloc.destroy(&_v[i]);
+				}
 				_alloc.deallocate(_v, _capacity);
 				_capacity = n;
 				_v = tmp;
@@ -226,8 +227,6 @@ namespace ft
 		{
 			difference_type dist = pos - begin();
 
-			if (capacity() == 0)
-				_extend();
 			if (size() + count > capacity())
 				reserve(size() + count);
 			vector temp(begin() + dist, end());
@@ -252,8 +251,6 @@ namespace ft
 				count++;
 			difference_type		dist = pos - this->begin();
 
-			if (capacity() == 0)
-				_extend();
 			if (size() + count > capacity())
 				reserve(size() + count);
 			vector		temp(this->begin() + dist, this->end());
@@ -302,10 +299,14 @@ namespace ft
 
 		void	push_back(const value_type& value)
 		{
-			if (_size == _capacity)
-				resize(_size + 1, value);
-			else
-				_alloc.construct(&_v[_size++], value);
+			if (_capacity < _size + 1) {
+				if (_size == 0)
+					reserve(1);
+				else
+					reserve(_size * 2);
+			}
+			_alloc.construct(&_v[_size], value);
+			_size++;
 		}
 
 		void	pop_back()
@@ -319,33 +320,7 @@ namespace ft
 			}
 		}
 
-		void push_front( const value_type& value )
-		{
-			insert(begin() + 1, value);
-		}
-		
-		void pop_front()
-		{
-			if (size())
-			{
-				pointer	first = _v;
-
-				_alloc.destroy(&*first);
-				if (size() - 1 == capacity() / 2)
-				{
-					pointer	temp = _alloc.allocate(capacity() / 2);
-					iterator p = temp;
-
-					std::copy(begin() + 1, end(), p);
-					_alloc.deallocate(_v, capacity());
-					_capacity /= 2;
-					_v = temp;
-				}
-				else
-					std::copy(begin() + 1, end(), _v);
-				--_size;
-			}
-		}
+	public:
 
 		void	resize(size_type n, value_type val = value_type())
 		{
@@ -403,6 +378,33 @@ namespace ft
 				_capacity *= 2;
 			}
 		};
+
+		void push_front( const value_type& value )
+		{
+			insert(begin() + 1, value);
+		}
+		
+		void pop_front()
+		{
+			if (size())
+			{
+				pointer	first = _v;
+
+				_alloc.destroy(&*first);
+				if (size() - 1 == capacity() / 2)
+				{
+					pointer	temp = _alloc.allocate(capacity() / 2);
+					iterator p = temp;
+
+					std::copy(begin() + 1, end(), p);
+					_alloc.deallocate(_v, capacity());
+					_v = temp;
+				}
+				else
+					std::copy(begin() + 1, end(), _v);
+				--_size;
+			}
+		}
 
 		std::out_of_range	_out_of_range(size_type pos) const
 		{
