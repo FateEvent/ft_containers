@@ -320,7 +320,32 @@ namespace ft
 			}
 		}
 
-	public:
+		void push_front( const value_type& value )
+		{
+			insert(begin() + 1, value);
+		}
+		
+		void pop_front()
+		{
+			if (size())
+			{
+				pointer	first = _v;
+
+				_alloc.destroy(&*first);
+				if (size() - 1 == capacity() / 2)
+				{
+					pointer	temp = _alloc.allocate(capacity() / 2);
+					iterator p = temp;
+
+					std::copy(begin() + 1, end(), p);
+					_alloc.deallocate(_v, capacity());
+					_v = temp;
+				}
+				else
+					std::copy(begin() + 1, end(), _v);
+				--_size;
+			}
+		}
 
 		void	resize(size_type n, value_type val = value_type())
 		{
@@ -378,33 +403,6 @@ namespace ft
 				_capacity *= 2;
 			}
 		};
-
-		void push_front( const value_type& value )
-		{
-			insert(begin() + 1, value);
-		}
-		
-		void pop_front()
-		{
-			if (size())
-			{
-				pointer	first = _v;
-
-				_alloc.destroy(&*first);
-				if (size() - 1 == capacity() / 2)
-				{
-					pointer	temp = _alloc.allocate(capacity() / 2);
-					iterator p = temp;
-
-					std::copy(begin() + 1, end(), p);
-					_alloc.deallocate(_v, capacity());
-					_v = temp;
-				}
-				else
-					std::copy(begin() + 1, end(), _v);
-				--_size;
-			}
-		}
 
 		std::out_of_range	_out_of_range(size_type pos) const
 		{
