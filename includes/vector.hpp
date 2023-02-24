@@ -159,7 +159,7 @@ namespace ft
 
 		void	assign( size_type count, const T& value ) {
 			if (count < 0)
-                throw std::length_error("Vector::  assign");
+                throw (std::length_error("Vector::  assign"));
 			clear();
 			if (capacity() < count)
 				reserve(count);
@@ -176,7 +176,7 @@ namespace ft
 			for (InputIt p = first; p != last; ++p)
 				pos++;
 			if (pos < 0)
-                throw std::length_error("Vector::  assign");
+                throw (std::length_error("Vector::  assign"));
 			clear();
 			if (pos > capacity())
 			{
